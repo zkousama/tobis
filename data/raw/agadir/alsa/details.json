@@ -1,0 +1,10728 @@
+{
+ "L-AE": {
+  "horario": {
+   "horarios": [
+    {
+     "verano": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "vacacionesEscolares": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "invierno": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "ramadan": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "tarifa": {
+   "tarifa": [
+    {
+     "normal": "",
+     "ikhlas": "",
+     "transbordos": "",
+     "idaVuelta": ""
+    }
+   ]
+  }
+ },
+ "L1": {
+  "horario": {
+   "horarios": [
+    {
+     "verano": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "vacacionesEscolares": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "invierno": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "ramadan": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "tarifa": {
+   "tarifa": [
+    {
+     "normal": "",
+     "ikhlas": "",
+     "transbordos": "",
+     "idaVuelta": ""
+    }
+   ]
+  }
+ },
+ "L2": {
+  "horario": {
+   "horarios": [
+    {
+     "verano": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "vacacionesEscolares": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "invierno": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "ramadan": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "tarifa": {
+   "tarifa": [
+    {
+     "normal": "4.00",
+     "ikhlas": "3.60",
+     "transbordos": "0.40",
+     "idaVuelta": ""
+    }
+   ]
+  }
+ },
+ "L3": {
+  "horario": {
+   "horarios": [
+    {
+     "verano": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "vacacionesEscolares": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "invierno": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "ramadan": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "tarifa": {
+   "tarifa": [
+    {
+     "normal": "4.00",
+     "ikhlas": "3.60",
+     "transbordos": "0.40",
+     "idaVuelta": ""
+    }
+   ]
+  }
+ },
+ "L5": {
+  "horario": {
+   "horarios": [
+    {
+     "verano": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "vacacionesEscolares": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "invierno": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "ramadan": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "tarifa": {
+   "tarifa": [
+    {
+     "normal": "4.00",
+     "ikhlas": "3.60",
+     "transbordos": "0.40",
+     "idaVuelta": ""
+    }
+   ]
+  }
+ },
+ "L6": {
+  "horario": {
+   "horarios": [
+    {
+     "verano": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "vacacionesEscolares": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "invierno": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "ramadan": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "tarifa": {
+   "tarifa": [
+    {
+     "normal": "3.50",
+     "ikhlas": "3.00",
+     "transbordos": "1.00",
+     "idaVuelta": ""
+    }
+   ]
+  }
+ },
+ "L8": {
+  "horario": {
+   "horarios": [
+    {
+     "verano": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "vacacionesEscolares": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "invierno": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "ramadan": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "tarifa": {
+   "tarifa": [
+    {
+     "normal": "2.50",
+     "ikhlas": "2.00",
+     "transbordos": "2.00",
+     "idaVuelta": ""
+    }
+   ]
+  }
+ },
+ "L9": {
+  "horario": {
+   "horarios": [
+    {
+     "verano": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "vacacionesEscolares": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "invierno": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "ramadan": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "tarifa": {
+   "tarifa": [
+    {
+     "normal": "4.00",
+     "ikhlas": "3.60",
+     "transbordos": "0.40",
+     "idaVuelta": ""
+    }
+   ]
+  }
+ },
+ "L10": {
+  "horario": {
+   "horarios": [
+    {
+     "verano": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "vacacionesEscolares": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "invierno": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "ramadan": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "tarifa": {
+   "tarifa": [
+    {
+     "normal": "2.50",
+     "ikhlas": "2.00",
+     "transbordos": "2.00",
+     "idaVuelta": ""
+    }
+   ]
+  }
+ },
+ "L11": {
+  "horario": {
+   "horarios": [
+    {
+     "verano": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "vacacionesEscolares": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "invierno": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "ramadan": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "tarifa": {
+   "tarifa": [
+    {
+     "normal": "4.00",
+     "ikhlas": "3.60",
+     "transbordos": "0.40",
+     "idaVuelta": ""
+    }
+   ]
+  }
+ },
+ "L12": {
+  "horario": {
+   "horarios": [
+    {
+     "verano": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "vacacionesEscolares": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "invierno": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "ramadan": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "tarifa": {
+   "tarifa": [
+    {
+     "normal": "4.00",
+     "ikhlas": "3.60",
+     "transbordos": "0.40",
+     "idaVuelta": ""
+    }
+   ]
+  }
+ },
+ "L13": {
+  "horario": {
+   "horarios": [
+    {
+     "verano": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "vacacionesEscolares": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "invierno": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "ramadan": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "tarifa": {
+   "tarifa": [
+    {
+     "normal": "3.50",
+     "ikhlas": "3.00",
+     "transbordos": "1.00",
+     "idaVuelta": ""
+    }
+   ]
+  }
+ },
+ "L14": {
+  "horario": {
+   "horarios": [
+    {
+     "verano": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "vacacionesEscolares": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "invierno": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "ramadan": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "tarifa": {
+   "tarifa": [
+    {
+     "normal": "3.50",
+     "ikhlas": "3.00",
+     "transbordos": "1.00",
+     "idaVuelta": ""
+    }
+   ]
+  }
+ },
+ "L15": {
+  "horario": {
+   "horarios": [
+    {
+     "verano": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "vacacionesEscolares": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "invierno": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "ramadan": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "tarifa": {
+   "tarifa": [
+    {
+     "normal": "4.00",
+     "ikhlas": "3.60",
+     "transbordos": "0.40",
+     "idaVuelta": ""
+    }
+   ]
+  }
+ },
+ "L16": {
+  "horario": {
+   "horarios": [
+    {
+     "verano": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "vacacionesEscolares": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "invierno": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "ramadan": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "tarifa": {
+   "tarifa": [
+    {
+     "normal": "4.00",
+     "ikhlas": "3.60",
+     "transbordos": "0.40",
+     "idaVuelta": ""
+    }
+   ]
+  }
+ },
+ "L20": {
+  "horario": {
+   "horarios": [
+    {
+     "verano": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "vacacionesEscolares": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "invierno": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "ramadan": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "tarifa": {
+   "tarifa": [
+    {
+     "normal": "4.00",
+     "ikhlas": "3.60",
+     "transbordos": "0.40",
+     "idaVuelta": ""
+    }
+   ]
+  }
+ },
+ "L21": {
+  "horario": {
+   "horarios": [
+    {
+     "verano": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "vacacionesEscolares": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "invierno": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "ramadan": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "tarifa": {
+   "tarifa": [
+    {
+     "normal": "3.50",
+     "ikhlas": "3.00",
+     "transbordos": "1.00",
+     "idaVuelta": ""
+    }
+   ]
+  }
+ },
+ "L22": {
+  "horario": {
+   "horarios": [
+    {
+     "verano": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "vacacionesEscolares": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "invierno": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "ramadan": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "tarifa": {
+   "tarifa": [
+    {
+     "normal": "4.00",
+     "ikhlas": "3.60",
+     "transbordos": "0.40",
+     "idaVuelta": ""
+    }
+   ]
+  }
+ },
+ "L23": {
+  "horario": {
+   "horarios": [
+    {
+     "verano": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "vacacionesEscolares": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "invierno": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "ramadan": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "tarifa": {
+   "tarifa": [
+    {
+     "normal": "3.50",
+     "ikhlas": "3.00",
+     "transbordos": "1.00",
+     "idaVuelta": ""
+    }
+   ]
+  }
+ },
+ "L24": {
+  "horario": {
+   "horarios": [
+    {
+     "verano": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "vacacionesEscolares": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "invierno": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "ramadan": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "tarifa": {
+   "tarifa": [
+    {
+     "normal": "4.00",
+     "ikhlas": "4.00",
+     "transbordos": "0.00",
+     "idaVuelta": ""
+    }
+   ]
+  }
+ },
+ "L26": {
+  "horario": {
+   "horarios": [
+    {
+     "verano": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": "06:30"
+        },
+        {
+         "fin": "06:30"
+        },
+        {
+         "inicio": "21:00"
+        },
+        {
+         "fin": "21:00"
+        },
+        {
+         "frecuencia": "30"
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": "06:30"
+        },
+        {
+         "fin": "06:30"
+        },
+        {
+         "inicio": "21:00"
+        },
+        {
+         "fin": "21:00"
+        },
+        {
+         "frecuencia": "30"
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": "06:30"
+        },
+        {
+         "fin": "06:30"
+        },
+        {
+         "inicio": "21:00"
+        },
+        {
+         "fin": "21:00"
+        },
+        {
+         "frecuencia": "30"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "vacacionesEscolares": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": "06:30"
+        },
+        {
+         "fin": "06:30"
+        },
+        {
+         "inicio": "21:00"
+        },
+        {
+         "fin": "21:00"
+        },
+        {
+         "frecuencia": "30"
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": "06:30"
+        },
+        {
+         "fin": "06:30"
+        },
+        {
+         "inicio": "21:00"
+        },
+        {
+         "fin": "21:00"
+        },
+        {
+         "frecuencia": "30"
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": "06:30"
+        },
+        {
+         "fin": "06:30"
+        },
+        {
+         "inicio": "21:00"
+        },
+        {
+         "fin": "21:00"
+        },
+        {
+         "frecuencia": "30"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "invierno": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": "06:30"
+        },
+        {
+         "fin": "06:30"
+        },
+        {
+         "inicio": "21:00"
+        },
+        {
+         "fin": "21:00"
+        },
+        {
+         "frecuencia": "30"
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": "06:30"
+        },
+        {
+         "fin": "06:30"
+        },
+        {
+         "inicio": "21:00"
+        },
+        {
+         "fin": "21:00"
+        },
+        {
+         "frecuencia": "30"
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": "06:30"
+        },
+        {
+         "fin": "06:30"
+        },
+        {
+         "inicio": "21:00"
+        },
+        {
+         "fin": "21:00"
+        },
+        {
+         "frecuencia": "30"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "ramadan": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": "06:30"
+        },
+        {
+         "fin": "06:30"
+        },
+        {
+         "inicio": "21:00"
+        },
+        {
+         "fin": "21:00"
+        },
+        {
+         "frecuencia": "30"
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": "06:30"
+        },
+        {
+         "fin": "06:30"
+        },
+        {
+         "inicio": "21:00"
+        },
+        {
+         "fin": "21:00"
+        },
+        {
+         "frecuencia": "30"
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": "06:30"
+        },
+        {
+         "fin": "06:30"
+        },
+        {
+         "inicio": "21:00"
+        },
+        {
+         "fin": "21:00"
+        },
+        {
+         "frecuencia": "30"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "tarifa": {
+   "tarifa": [
+    {
+     "normal": "4.00",
+     "ikhlas": "3.60",
+     "transbordos": "0.40",
+     "idaVuelta": ""
+    }
+   ]
+  }
+ },
+ "L27": {
+  "horario": {
+   "horarios": [
+    {
+     "verano": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "vacacionesEscolares": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "invierno": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "ramadan": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "tarifa": {
+   "tarifa": [
+    {
+     "normal": "4",
+     "ikhlas": "3.60",
+     "transbordos": "0.40",
+     "idaVuelta": ""
+    }
+   ]
+  }
+ },
+ "L31": {
+  "horario": {
+   "horarios": [
+    {
+     "verano": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "vacacionesEscolares": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "invierno": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "ramadan": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "tarifa": {
+   "tarifa": [
+    {
+     "barrios_ar_SA": "ساحة سلام,الحسنية,أورير"
+    },
+    {
+     "barrios_fr_FR": "Place Salam,Hassania,Aourir"
+    },
+    {
+     "codigo": "0-1-4.00,0-2-5.50,1-2-4.00"
+    },
+    {
+     "codigoIkhlas": "0-1-3.60,0-2-4.50,1-2-3.60"
+    }
+   ]
+  }
+ },
+ "L32": {
+  "horario": {
+   "horarios": [
+    {
+     "verano": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "vacacionesEscolares": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "invierno": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "ramadan": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "tarifa": {
+   "tarifa": [
+    {
+     "barrios_ar_SA": "ساحة سلام,تغازوت,تمراغت,أورير"
+    },
+    {
+     "barrios_fr_FR": "Place Salam,Taghazout,Tamraght,Aourir"
+    },
+    {
+     "codigo": "0-1-7.50,0-2-5.50,0-3-5.50,1-2-5.50,1-3-5.50,2-3-5.50"
+    },
+    {
+     "codigoIkhlas": "0-1-6.30,0-2-4.50,0-3-4.50,1-2-4.50,1-3-4.50,2-3-4.50"
+    }
+   ]
+  }
+ },
+ "L33": {
+  "horario": {
+   "horarios": [
+    {
+     "verano": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "vacacionesEscolares": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "invierno": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "ramadan": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "tarifa": {
+   "tarifa": [
+    {
+     "barrios_ar_SA": "ساحة سلام,تمري,إيمي ودّار,تغازوت"
+    },
+    {
+     "barrios_fr_FR": "Place Salam,Tamri,Imiouadar,Taghazout"
+    },
+    {
+     "codigo": "0-1-9.00,0-2-9.00,0-3-7.50,1-2-5.50,1-3-9.00,2-3-5.50"
+    },
+    {
+     "codigoIkhlas": "0-1-8.10,0-2-8.10,0-3-6.30,1-2-4.50,1-3-8.10,2-3-4.50"
+    }
+   ]
+  }
+ },
+ "L34": {
+  "horario": {
+   "horarios": [
+    {
+     "verano": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "vacacionesEscolares": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "invierno": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "ramadan": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "tarifa": {
+   "tarifa": [
+    {
+     "normal": "-",
+     "ikhlas": "-",
+     "transbordos": "-",
+     "idaVuelta": "-"
+    }
+   ]
+  }
+ },
+ "L35": {
+  "horario": {
+   "horarios": [
+    {
+     "verano": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "vacacionesEscolares": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "invierno": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "ramadan": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "tarifa": {
+   "tarifa": [
+    {
+     "barrios_ar_SA": "ساحة إنزكان,التمسية,أزرو"
+    },
+    {
+     "barrios_fr_FR": "Place Inezgane,Temsia,Azrou"
+    },
+    {
+     "codigo": "0-1-4.00,0-2-4.00,1-2-4.00"
+    },
+    {
+     "codigoIkhlas": "0-1-3.60,0-2-3.60,1-2-3.60"
+    }
+   ]
+  }
+ },
+ "L36": {
+  "horario": {
+   "horarios": [
+    {
+     "verano": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "vacacionesEscolares": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "invierno": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "ramadan": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "tarifa": {
+   "tarifa": [
+    {
+     "barrios_ar_SA": "ساحة انزكان,أولاد تايمة,أولاد داحو,جرف,ايت موسى,التمسية,ايت ملول"
+    },
+    {
+     "barrios_fr_FR": "Place Inezgane,Ouled Teima,Ouled Dahou,Jorf,Ait Moussa,Temsia,Ait Melloul"
+    },
+    {
+     "codigo": "0-1-11.00,0-2-7.50,0-3-6.50,0-4-5.50,0-5-4.50,0-6-3.50,1-2-4.50,1-3-5.50,1-4-7.50,1-5-7.50,1-6-9.00,2-3-4.50,2-4-4.50,2-5-4.50,2-6-7.50,3-4-4.50,3-5-4.50,3-6-6.50,4-5-4.50,4-6-5.50,5-6-4.50"
+    },
+    {
+     "codigoIkhlas": "0-1-9.90,0-2-6.30,0-3-5.40,0-4-4.50,0-5-3.60,0-6-3.00,1-2-3.60,1-3-4.50,1-4-6.30,1-5-6.30,1-6-8.10,2-3-3.60,2-4-3.60,2-5-3.60,2-6-6.30,3-4-3.60,3-5-3.60,3-6-5.40,4-5-3.60,4-6-4.50,5-6-3.6"
+    }
+   ]
+  }
+ },
+ "L37": {
+  "horario": {
+   "horarios": [
+    {
+     "verano": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "vacacionesEscolares": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "invierno": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "ramadan": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "tarifa": {
+   "tarifa": [
+    {
+     "barrios_ar_SA": "ساحة انزكان,ايت ملول,المطار,لڭفيفات"
+    },
+    {
+     "barrios_fr_FR": "Place Inezgane,Ait Melloul,Aeroport,Elgfifat"
+    },
+    {
+     "codigo": "0-1-3.50,0-2-5.50,0-3-8.50,1-2-4.50,1-3-8.50,2-3-4.50"
+    },
+    {
+     "codigoIkhlas": "0-1-3.00,0-2-4.50,0-3-7.20,1-2-3.60,1-3-7.20,2-3-3.60"
+    }
+   ]
+  }
+ },
+ "L38": {
+  "horario": {
+   "horarios": [
+    {
+     "verano": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "vacacionesEscolares": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "invierno": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "ramadan": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "tarifa": {
+   "tarifa": [
+    {
+     "barrios_ar_SA": "ساحة انزكان,دراركة,تاماعيت"
+    },
+    {
+     "barrios_fr_FR": "Place Inezgane,Drarga,Tamaait"
+    },
+    {
+     "codigo": "0-1-4.00,0-2-6.50,1-2-4.50"
+    },
+    {
+     "codigoIkhlas": "0-1-3.60,0-2-5.40,1-2-3.60"
+    }
+   ]
+  }
+ },
+ "L39": {
+  "horario": {
+   "horarios": [
+    {
+     "verano": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "vacacionesEscolares": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "invierno": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "ramadan": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "tarifa": {
+   "tarifa": [
+    {
+     "normal": "3.00",
+     "ikhlas": "3.00",
+     "transbordos": "-",
+     "idaVuelta": ""
+    }
+   ]
+  }
+ },
+ "L40": {
+  "horario": {
+   "horarios": [
+    {
+     "verano": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "vacacionesEscolares": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "invierno": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "ramadan": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "tarifa": {
+   "tarifa": [
+    {
+     "barrios_ar_SA": "ساحة انزكان,لقليعة,بيوكرى"
+    },
+    {
+     "barrios_fr_FR": "Place Inezgane,Leqliaa,Biougra"
+    },
+    {
+     "codigo": "0-1-4,0-2-7,1-2-4"
+    },
+    {
+     "codigoIkhlas": "0-1-3.6,0-2-6.3,1-2-3.6"
+    }
+   ]
+  }
+ },
+ "L41": {
+  "horario": {
+   "horarios": [
+    {
+     "verano": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "vacacionesEscolares": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "invierno": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "ramadan": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "tarifa": {
+   "tarifa": [
+    {
+     "barrios_ar_SA": "ساحة انزكان,بيوكرى,ايت عميرة,ايت ميمون,سيدي بيبي"
+    },
+    {
+     "barrios_fr_FR": "Place Inezgane,Biougra,Ait Amira,Ait Mimoun,Sidi Bibi"
+    },
+    {
+     "codigo": "0-1-8.00,0-2-8.00,0-3-6.50,0-4-6.00,1-2-4.00,1-3-6.50,1-4-7.50,2-3-4.00,2-4-5.00,3-4-4.00"
+    },
+    {
+     "codigoIkhlas": "0-1-7.20,0-2-7.20,0-3-5.40,0-4-5.40,1-2-3.60,1-3-5.40,1-4-6.30,2-3-3.60,2-4-4.50,3-4-3.60"
+    }
+   ]
+  }
+ },
+ "L42": {
+  "horario": {
+   "horarios": [
+    {
+     "verano": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "vacacionesEscolares": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "invierno": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "ramadan": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "tarifa": {
+   "tarifa": [
+    {
+     "barrios_ar_SA": "ساحة انزكان,ماسة,بلفع,ايت ميمون,سيدي بيبي"
+    },
+    {
+     "barrios_fr_FR": "Place Inezgane,Massa,Belfaa,Ait Mimoun,Sidi Bibi"
+    },
+    {
+     "codigo": "0-1-11.00,0-2-9.00,0-3-6.50,0-4-6.00,1-2-5.00,1-3-7.00,1-4-10.00,2-3-4.50,2-4-8.00,3-4-4.00"
+    },
+    {
+     "codigoIkhlas": "0-1-9.90,0-2-8.10,0-3-5.40,0-4-5.40,1-2-4.50,1-3-6.30,1-4-9.00,2-3-3.60,2-4-7.20,3-4-3.60"
+    }
+   ]
+  }
+ },
+ "L43": {
+  "horario": {
+   "horarios": [
+    {
+     "verano": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "vacacionesEscolares": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "invierno": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "ramadan": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "tarifa": {
+   "tarifa": [
+    {
+     "barrios_ar_SA": "بيوكرى,إمي مقورن,ايت باها"
+    },
+    {
+     "barrios_fr_FR": "Biougra,Imimkkorne,Ait Baha"
+    },
+    {
+     "codigo": "0-1-4.50,0-2-7.00,1-2-4.50"
+    },
+    {
+     "codigoIkhlas": "0-1-3.60,0-2-6.30,1-2-3.60"
+    }
+   ]
+  }
+ },
+ "L72": {
+  "horario": {
+   "horarios": [
+    {
+     "verano": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "vacacionesEscolares": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "invierno": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "ramadan": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "tarifa": {
+   "tarifa": [
+    {
+     "normal": "-",
+     "ikhlas": "-",
+     "transbordos": "-",
+     "idaVuelta": "-"
+    }
+   ]
+  }
+ },
+ "L73": {
+  "horario": {
+   "horarios": [
+    {
+     "verano": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "vacacionesEscolares": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "invierno": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "ramadan": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "tarifa": {
+   "tarifa": [
+    {
+     "normal": "-",
+     "ikhlas": "-",
+     "transbordos": "-",
+     "idaVuelta": "-"
+    }
+   ]
+  }
+ },
+ "L95": {
+  "horario": {
+   "horarios": [
+    {
+     "verano": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "vacacionesEscolares": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "invierno": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "ramadan": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "tarifa": {
+   "tarifa": [
+    {
+     "normal": "4.00",
+     "ikhlas": "4.00",
+     "transbordos": "0.00",
+     "idaVuelta": ""
+    }
+   ]
+  }
+ },
+ "L97": {
+  "horario": {
+   "horarios": [
+    {
+     "verano": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "vacacionesEscolares": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "invierno": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "ramadan": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "tarifa": {
+   "tarifa": [
+    {
+     "normal": "3.50",
+     "ikhlas": "3.00",
+     "transbordos": "1.00",
+     "idaVuelta": ""
+    }
+   ]
+  }
+ },
+ "L98": {
+  "horario": {
+   "horarios": [
+    {
+     "verano": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "vacacionesEscolares": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "invierno": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "ramadan": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "inicio": ""
+        },
+        {
+         "fin": ""
+        },
+        {
+         "frecuencia": ""
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "tarifa": {
+   "tarifa": [
+    {
+     "normal": "3.50",
+     "ikhlas": "3.00",
+     "transbordos": "1.00",
+     "idaVuelta": ""
+    }
+   ]
+  }
+ },
+ "L99": {
+  "horario": {
+   "horarios": [
+    {
+     "verano": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "inicio": "6:25"
+        },
+        {
+         "fin": "10:30"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "vacacionesEscolares": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": "-"
+        },
+        {
+         "fin": "-"
+        },
+        {
+         "inicio": "-"
+        },
+        {
+         "fin": "-"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": "-"
+        },
+        {
+         "fin": "-"
+        },
+        {
+         "inicio": "-"
+        },
+        {
+         "fin": "-"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": "-"
+        },
+        {
+         "fin": "-"
+        },
+        {
+         "inicio": "-"
+        },
+        {
+         "fin": "-"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "invierno": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": "-"
+        },
+        {
+         "fin": "-"
+        },
+        {
+         "inicio": "-"
+        },
+        {
+         "fin": "-"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": "-"
+        },
+        {
+         "fin": "-"
+        },
+        {
+         "inicio": "-"
+        },
+        {
+         "fin": "-"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": "-"
+        },
+        {
+         "fin": "-"
+        },
+        {
+         "inicio": "-"
+        },
+        {
+         "fin": "-"
+        },
+        {
+         "frecuencia": "10"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "ramadan": [
+      {
+       "lunesViernes": [
+        {
+         "inicio": "13:00"
+        },
+        {
+         "fin": "20:50"
+        },
+        {
+         "inicio": "13:00"
+        },
+        {
+         "fin": "21:20"
+        },
+        {
+         "frecuencia": "30"
+        }
+       ]
+      },
+      {
+       "sabado": [
+        {
+         "inicio": "13:00"
+        },
+        {
+         "fin": "20:50"
+        },
+        {
+         "inicio": "13:00"
+        },
+        {
+         "fin": "21:20"
+        },
+        {
+         "frecuencia": "30"
+        }
+       ]
+      },
+      {
+       "domingo": [
+        {
+         "inicio": "13:00"
+        },
+        {
+         "fin": "20:50"
+        },
+        {
+         "inicio": "13:00"
+        },
+        {
+         "fin": "21:20"
+        },
+        {
+         "frecuencia": "30"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "tarifa": {
+   "tarifa": [
+    {
+     "normal": "-",
+     "ikhlas": "-",
+     "transbordos": "-",
+     "idaVuelta": "-"
+    }
+   ]
+  }
+ }
+}

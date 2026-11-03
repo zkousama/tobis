@@ -1,0 +1,100 @@
+{
+  "id": "agadir",
+  "name": {
+    "fr": "Grand Agadir",
+    "ar": "أكادير الكبير",
+    "en": "Greater Agadir"
+  },
+  "bbox": [
+    -9.95,
+    29.92,
+    -9.08,
+    30.78
+  ],
+  "center": [
+    -9.58,
+    30.41
+  ],
+  "zoom": 12,
+  "networks": [
+    "ALSA Agadir",
+    "Amalway"
+  ],
+  "sources": [
+    "osm",
+    "alsa"
+  ],
+  "brt": {
+    "name": "Amalway Trambus",
+    "source": "https://beta.amalway.ma/#/reseau (fetched 2026-11-03)",
+    "headwayMin": 10,
+    "firstBus": "06:00",
+    "fare": {
+      "kind": "flat",
+      "normal": 5,
+      "firstCard": 10,
+      "note": "NFC card 5 DH + first trip"
+    },
+    "stations": [
+      "Port",
+      "Marina",
+      "Mohammed V",
+      "Wilaya",
+      "Place Al Amal",
+      "Rue de la Foire",
+      "Al Inbiaat",
+      "Al Mouquaquama",
+      "Abattoir",
+      "Al Kamba",
+      "Hay Al Hassani",
+      "Souk Al Ahad",
+      "Amsernat",
+      "Al Massira",
+      "Al Fidiya",
+      "Dakhla",
+      "Hassan I",
+      "Place Al Ouid",
+      "Salam",
+      "Facultés",
+      "Al Houda",
+      "Al Mahaj",
+      "Ajdir",
+      "Place Argane",
+      "Ahl Souss",
+      "Tassila",
+      "Targa",
+      "Sidi Fares",
+      "Azaghar",
+      "Assaka",
+      "Soubri",
+      "Souk Lakhmis",
+      "Azzaitoune",
+      "El Hajeb"
+    ],
+    "osmNames": {
+      "Port": "Port Terminus",
+      "Al Mouquaquama": "La Résistance",
+      "Abattoir": "Abattoirs",
+      "Al Kamba": "Al Kamra",
+      "Hay Al Hassani": "Hay El Hassani",
+      "Souk Al Ahad": "Souk El Had",
+      "Amsernat": "Amsirnat",
+      "Al Fidiya": "Al Fadia",
+      "Place Al Ouid": "Place Al Wid",
+      "Al Mahaj": "L'avenue",
+      "Soubri": "Essaouiri",
+      "Azaghar": "Azghar",
+      "Place Argane": "Place Argan",
+      "El Hajeb": "El Hajeb",
+      "Souk Lakhmis": "Souk Lkhmis",
+      "Al Inbiaat": "Al  Inbiâat",
+      "Rue de la Foire": "Rue de la foire"
+    },
+    "amalbusTransfers": [
+      "Souk Al Ahad",
+      "Al Massira",
+      "Facultés",
+      "Souk Lakhmis"
+    ]
+  }
+}

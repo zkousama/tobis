@@ -1,0 +1,734 @@
+{
+  "gaps": [
+    {
+      "rel": "alsa:L12:return",
+      "ref": "12",
+      "straightLegs": 2,
+      "of": 34
+    },
+    {
+      "rel": "alsa:L42:outgoing",
+      "ref": "42",
+      "straightLegs": 2,
+      "of": 86
+    },
+    {
+      "rel": "alsa:L42:return",
+      "ref": "42",
+      "straightLegs": 2,
+      "of": 86
+    },
+    {
+      "rel": "alsa:L43:outgoing",
+      "ref": "43",
+      "straightLegs": 6,
+      "of": 15
+    },
+    {
+      "rel": "alsa:L43:return",
+      "ref": "43",
+      "straightLegs": 2,
+      "of": 16
+    }
+  ],
+  "noStops": [
+    {
+      "rel": "L10:return",
+      "ref": "10",
+      "name": " INEZGANE - LAKHCHICHAT",
+      "stops": 0
+    },
+    {
+      "rel": "L95:outgoing",
+      "ref": "95",
+      "name": " EXPRESS P.E VALLEE DES OISEAUX - AIT MELLOUL",
+      "stops": 0
+    }
+  ],
+  "farStops": [],
+  "untrusted": [],
+  "reordered": [],
+  "sides": [
+    {
+      "rel": "alsa:L-AE:outgoing",
+      "ref": "AE",
+      "clean": true,
+      "right": 8,
+      "n": 11,
+      "share": 0.7272727272727273
+    },
+    {
+      "rel": "alsa:L-AE:return",
+      "ref": "AE",
+      "clean": true,
+      "right": 10,
+      "n": 11,
+      "share": 0.9090909090909091
+    },
+    {
+      "rel": "alsa:L1:outgoing",
+      "ref": "1",
+      "clean": true,
+      "right": 8,
+      "n": 9,
+      "share": 0.8888888888888888
+    },
+    {
+      "rel": "alsa:L1:return",
+      "ref": "1",
+      "clean": true,
+      "right": 8,
+      "n": 9,
+      "share": 0.8888888888888888
+    },
+    {
+      "rel": "alsa:L2:outgoing",
+      "ref": "2",
+      "clean": true,
+      "right": 22,
+      "n": 24,
+      "share": 0.9166666666666666
+    },
+    {
+      "rel": "alsa:L2:return",
+      "ref": "2",
+      "clean": true,
+      "right": 21,
+      "n": 24,
+      "share": 0.875
+    },
+    {
+      "rel": "alsa:L3:outgoing",
+      "ref": "3",
+      "clean": true,
+      "right": 18,
+      "n": 24,
+      "share": 0.75
+    },
+    {
+      "rel": "alsa:L3:return",
+      "ref": "3",
+      "clean": true,
+      "right": 21,
+      "n": 30,
+      "share": 0.7
+    },
+    {
+      "rel": "alsa:L5:outgoing",
+      "ref": "5",
+      "clean": true,
+      "right": 27,
+      "n": 30,
+      "share": 0.9
+    },
+    {
+      "rel": "alsa:L5:return",
+      "ref": "5",
+      "clean": true,
+      "right": 25,
+      "n": 30,
+      "share": 0.8333333333333334
+    },
+    {
+      "rel": "alsa:L6:outgoing",
+      "ref": "6",
+      "clean": true,
+      "right": 16,
+      "n": 16,
+      "share": 1
+    },
+    {
+      "rel": "alsa:L6:return",
+      "ref": "6",
+      "clean": true,
+      "right": 14,
+      "n": 19,
+      "share": 0.7368421052631579
+    },
+    {
+      "rel": "alsa:L8:outgoing",
+      "ref": "8",
+      "clean": true,
+      "right": 21,
+      "n": 26,
+      "share": 0.8076923076923077
+    },
+    {
+      "rel": "alsa:L8:return",
+      "ref": "8",
+      "clean": true,
+      "right": 22,
+      "n": 25,
+      "share": 0.88
+    },
+    {
+      "rel": "alsa:L9:outgoing",
+      "ref": "9",
+      "clean": true,
+      "right": 11,
+      "n": 12,
+      "share": 0.9166666666666666
+    },
+    {
+      "rel": "alsa:L9:return",
+      "ref": "9",
+      "clean": true,
+      "right": 11,
+      "n": 13,
+      "share": 0.8461538461538461
+    },
+    {
+      "rel": "alsa:L10:outgoing",
+      "ref": "10",
+      "clean": true,
+      "right": 11,
+      "n": 12,
+      "share": 0.9166666666666666
+    },
+    {
+      "rel": "alsa:L11:outgoing",
+      "ref": "11",
+      "clean": true,
+      "right": 15,
+      "n": 19,
+      "share": 0.7894736842105263
+    },
+    {
+      "rel": "alsa:L11:return",
+      "ref": "11",
+      "clean": true,
+      "right": 18,
+      "n": 20,
+      "share": 0.9
+    },
+    {
+      "rel": "alsa:L12:outgoing",
+      "ref": "12",
+      "clean": true,
+      "right": 25,
+      "n": 30,
+      "share": 0.8333333333333334
+    },
+    {
+      "rel": "alsa:L12:return",
+      "ref": "12",
+      "clean": true,
+      "right": 27,
+      "n": 32,
+      "share": 0.84375
+    },
+    {
+      "rel": "alsa:L13:outgoing",
+      "ref": "13",
+      "clean": true,
+      "right": 13,
+      "n": 14,
+      "share": 0.9285714285714286
+    },
+    {
+      "rel": "alsa:L13:return",
+      "ref": "13",
+      "clean": true,
+      "right": 10,
+      "n": 15,
+      "share": 0.6666666666666666
+    },
+    {
+      "rel": "alsa:L14:outgoing",
+      "ref": "14",
+      "clean": true,
+      "right": 13,
+      "n": 13,
+      "share": 1
+    },
+    {
+      "rel": "alsa:L14:return",
+      "ref": "14",
+      "clean": true,
+      "right": 13,
+      "n": 21,
+      "share": 0.6190476190476191
+    },
+    {
+      "rel": "alsa:L15:outgoing",
+      "ref": "15",
+      "clean": true,
+      "right": 24,
+      "n": 25,
+      "share": 0.96
+    },
+    {
+      "rel": "alsa:L15:return",
+      "ref": "15",
+      "clean": true,
+      "right": 19,
+      "n": 25,
+      "share": 0.76
+    },
+    {
+      "rel": "alsa:L16:outgoing",
+      "ref": "16",
+      "clean": true,
+      "right": 26,
+      "n": 27,
+      "share": 0.9629629629629629
+    },
+    {
+      "rel": "alsa:L16:return",
+      "ref": "16",
+      "clean": true,
+      "right": 29,
+      "n": 32,
+      "share": 0.90625
+    },
+    {
+      "rel": "alsa:L20:outgoing",
+      "ref": "20",
+      "clean": true,
+      "right": 18,
+      "n": 18,
+      "share": 1
+    },
+    {
+      "rel": "alsa:L20:return",
+      "ref": "20",
+      "clean": true,
+      "right": 18,
+      "n": 19,
+      "share": 0.9473684210526315
+    },
+    {
+      "rel": "alsa:L21:outgoing",
+      "ref": "21",
+      "clean": true,
+      "right": 25,
+      "n": 25,
+      "share": 1
+    },
+    {
+      "rel": "alsa:L21:return",
+      "ref": "21",
+      "clean": true,
+      "right": 23,
+      "n": 23,
+      "share": 1
+    },
+    {
+      "rel": "alsa:L22:outgoing",
+      "ref": "22",
+      "clean": true,
+      "right": 24,
+      "n": 32,
+      "share": 0.75
+    },
+    {
+      "rel": "alsa:L22:return",
+      "ref": "22",
+      "clean": true,
+      "right": 22,
+      "n": 32,
+      "share": 0.6875
+    },
+    {
+      "rel": "alsa:L23:outgoing",
+      "ref": "23",
+      "clean": true,
+      "right": 19,
+      "n": 21,
+      "share": 0.9047619047619048
+    },
+    {
+      "rel": "alsa:L23:return",
+      "ref": "23",
+      "clean": true,
+      "right": 17,
+      "n": 19,
+      "share": 0.8947368421052632
+    },
+    {
+      "rel": "alsa:L24:outgoing",
+      "ref": "24",
+      "clean": true,
+      "right": 1,
+      "n": 1,
+      "share": 1
+    },
+    {
+      "rel": "alsa:L24:return",
+      "ref": "24",
+      "clean": true,
+      "right": 1,
+      "n": 1,
+      "share": 1
+    },
+    {
+      "rel": "alsa:L26:outgoing",
+      "ref": "26",
+      "clean": true,
+      "right": 27,
+      "n": 33,
+      "share": 0.8181818181818182
+    },
+    {
+      "rel": "alsa:L26:return",
+      "ref": "26",
+      "clean": true,
+      "right": 31,
+      "n": 33,
+      "share": 0.9393939393939394
+    },
+    {
+      "rel": "alsa:L27:outgoing",
+      "ref": "27",
+      "clean": true,
+      "right": 10,
+      "n": 19,
+      "share": 0.5263157894736842
+    },
+    {
+      "rel": "alsa:L27:return",
+      "ref": "27",
+      "clean": true,
+      "right": 12,
+      "n": 17,
+      "share": 0.7058823529411765
+    },
+    {
+      "rel": "alsa:L31:outgoing",
+      "ref": "31",
+      "clean": true,
+      "right": 29,
+      "n": 32,
+      "share": 0.90625
+    },
+    {
+      "rel": "alsa:L31:return",
+      "ref": "31",
+      "clean": true,
+      "right": 30,
+      "n": 31,
+      "share": 0.967741935483871
+    },
+    {
+      "rel": "alsa:L32:outgoing",
+      "ref": "32",
+      "clean": true,
+      "right": 22,
+      "n": 23,
+      "share": 0.9565217391304348
+    },
+    {
+      "rel": "alsa:L32:return",
+      "ref": "32",
+      "clean": true,
+      "right": 22,
+      "n": 23,
+      "share": 0.9565217391304348
+    },
+    {
+      "rel": "alsa:L33:outgoing",
+      "ref": "33",
+      "clean": true,
+      "right": 41,
+      "n": 44,
+      "share": 0.9318181818181818
+    },
+    {
+      "rel": "alsa:L33:return",
+      "ref": "33",
+      "clean": true,
+      "right": 42,
+      "n": 44,
+      "share": 0.9545454545454546
+    },
+    {
+      "rel": "alsa:L34:outgoing",
+      "ref": "34",
+      "clean": true,
+      "right": 7,
+      "n": 10,
+      "share": 0.7
+    },
+    {
+      "rel": "alsa:L34:return",
+      "ref": "34",
+      "clean": true,
+      "right": 6,
+      "n": 9,
+      "share": 0.6666666666666666
+    },
+    {
+      "rel": "alsa:L35:outgoing",
+      "ref": "35",
+      "clean": true,
+      "right": 24,
+      "n": 26,
+      "share": 0.9230769230769231
+    },
+    {
+      "rel": "alsa:L35:return",
+      "ref": "35",
+      "clean": true,
+      "right": 23,
+      "n": 24,
+      "share": 0.9583333333333334
+    },
+    {
+      "rel": "alsa:L36:outgoing",
+      "ref": "36",
+      "clean": true,
+      "right": 50,
+      "n": 53,
+      "share": 0.9433962264150944
+    },
+    {
+      "rel": "alsa:L36:return",
+      "ref": "36",
+      "clean": true,
+      "right": 50,
+      "n": 52,
+      "share": 0.9615384615384616
+    },
+    {
+      "rel": "alsa:L37:outgoing",
+      "ref": "37",
+      "clean": true,
+      "right": 11,
+      "n": 11,
+      "share": 1
+    },
+    {
+      "rel": "alsa:L37:return",
+      "ref": "37",
+      "clean": true,
+      "right": 10,
+      "n": 12,
+      "share": 0.8333333333333334
+    },
+    {
+      "rel": "alsa:L38:outgoing",
+      "ref": "38",
+      "clean": true,
+      "right": 27,
+      "n": 27,
+      "share": 1
+    },
+    {
+      "rel": "alsa:L38:return",
+      "ref": "38",
+      "clean": true,
+      "right": 24,
+      "n": 28,
+      "share": 0.8571428571428571
+    },
+    {
+      "rel": "alsa:L39:outgoing",
+      "ref": "39",
+      "clean": true,
+      "right": 1,
+      "n": 2,
+      "share": 0.5
+    },
+    {
+      "rel": "alsa:L39:return",
+      "ref": "39",
+      "clean": true,
+      "right": 3,
+      "n": 3,
+      "share": 1
+    },
+    {
+      "rel": "alsa:L40:outgoing",
+      "ref": "40",
+      "clean": true,
+      "right": 47,
+      "n": 48,
+      "share": 0.9791666666666666
+    },
+    {
+      "rel": "alsa:L40:return",
+      "ref": "40",
+      "clean": true,
+      "right": 43,
+      "n": 45,
+      "share": 0.9555555555555556
+    },
+    {
+      "rel": "alsa:L41:outgoing",
+      "ref": "41",
+      "clean": true,
+      "right": 54,
+      "n": 59,
+      "share": 0.9152542372881356
+    },
+    {
+      "rel": "alsa:L41:return",
+      "ref": "41",
+      "clean": true,
+      "right": 55,
+      "n": 57,
+      "share": 0.9649122807017544
+    },
+    {
+      "rel": "alsa:L42:outgoing",
+      "ref": "42",
+      "clean": true,
+      "right": 82,
+      "n": 83,
+      "share": 0.9879518072289156
+    },
+    {
+      "rel": "alsa:L42:return",
+      "ref": "42",
+      "clean": true,
+      "right": 79,
+      "n": 81,
+      "share": 0.9753086419753086
+    },
+    {
+      "rel": "alsa:L43:outgoing",
+      "ref": "43",
+      "clean": true,
+      "right": 8,
+      "n": 8,
+      "share": 1
+    },
+    {
+      "rel": "alsa:L43:return",
+      "ref": "43",
+      "clean": true,
+      "right": 13,
+      "n": 14,
+      "share": 0.9285714285714286
+    },
+    {
+      "rel": "alsa:L72:outgoing",
+      "ref": "72",
+      "clean": true,
+      "right": 2,
+      "n": 4,
+      "share": 0.5
+    },
+    {
+      "rel": "alsa:L72:return",
+      "ref": "72",
+      "clean": true,
+      "right": 2,
+      "n": 4,
+      "share": 0.5
+    },
+    {
+      "rel": "alsa:L73:outgoing",
+      "ref": "73",
+      "clean": true,
+      "right": 5,
+      "n": 7,
+      "share": 0.7142857142857143
+    },
+    {
+      "rel": "alsa:L73:return",
+      "ref": "73",
+      "clean": true,
+      "right": 6,
+      "n": 8,
+      "share": 0.75
+    },
+    {
+      "rel": "alsa:L95:return",
+      "ref": "95",
+      "clean": true,
+      "right": 6,
+      "n": 6,
+      "share": 1
+    },
+    {
+      "rel": "alsa:L97:outgoing",
+      "ref": "97",
+      "clean": true,
+      "right": 17,
+      "n": 18,
+      "share": 0.9444444444444444
+    },
+    {
+      "rel": "alsa:L97:return",
+      "ref": "97",
+      "clean": true,
+      "right": 13,
+      "n": 16,
+      "share": 0.8125
+    },
+    {
+      "rel": "alsa:L98:outgoing",
+      "ref": "98",
+      "clean": true,
+      "right": 18,
+      "n": 20,
+      "share": 0.9
+    },
+    {
+      "rel": "alsa:L98:return",
+      "ref": "98",
+      "clean": true,
+      "right": 14,
+      "n": 16,
+      "share": 0.875
+    },
+    {
+      "rel": "alsa:L99:outgoing",
+      "ref": "99",
+      "clean": true,
+      "right": 15,
+      "n": 15,
+      "share": 1
+    },
+    {
+      "rel": "alsa:L99:return",
+      "ref": "99",
+      "clean": true,
+      "right": 10,
+      "n": 13,
+      "share": 0.7692307692307693
+    },
+    {
+      "rel": "brt:a",
+      "ref": "BHNS",
+      "clean": true,
+      "right": 1,
+      "n": 1,
+      "share": 1
+    },
+    {
+      "rel": "brt:b",
+      "ref": "BHNS",
+      "clean": true,
+      "right": 1,
+      "n": 2,
+      "share": 0.5
+    }
+  ],
+  "brtOrderDiffers": [
+    "Hassan I",
+    "Dakhla"
+  ],
+  "brt": {
+    "stations": 34,
+    "of": 34,
+    "busways": 11
+  },
+  "zoneless": [
+    "31:Imimiki Terminus",
+    "31:Imimiki Terminus",
+    "32:Taghazout Village",
+    "32:Taghazout Village",
+    "33:Tamri Centre",
+    "33:Tamri Centre",
+    "37:Terminus Lagfifat",
+    "37:Terminus Lagfifat",
+    "38:Terminus Tamait",
+    "38:Terminus Tamait",
+    "40:Terminus Biougra",
+    "40:Terminus Biougra",
+    "43:Terminus Ait Baha",
+    "43:Terminus Ait Baha"
+  ]
+}
