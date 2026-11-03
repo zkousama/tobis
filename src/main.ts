@@ -1,5 +1,5 @@
 import "./style.css";
-import { BusMap } from "./map.ts";
+import type { BusMap } from "./map.ts";
 import { Router, waitFor, type Journey, type RideLeg, type WalkFn } from "./router.ts";
 import { SearchIndex, type Hit } from "./search.ts";
 import { nameOf, type Names, type Network } from "./network.ts";
@@ -9,6 +9,8 @@ import { h, icon, lineBadge } from "./ui/dom.ts";
 import { busArt, noteArrow, waitingArt } from "./ui/art.ts";
 import { RideTracker } from "./ride.ts";
 import { loadWalkGraph } from "./walk.ts";
+// The map library is the heaviest part: start fetching it right away, in parallel.
+const mapModule = import("./map.ts");
 import { registerOffline } from "./offline.ts";
 import { fareFor, fmtDH } from "./fares.ts";
 import { expandShortUrl, parseInput, type Parsed } from "./geoinput.ts";
@@ -66,8 +68,10 @@ app.append(mapEl, topbar, locateBtn, sheet, toast);
 
 let net: Network;
 let router: Router;
-let search: SearchIndex;
-let bmap: BusMap;
+let searchIndex: SearchIndex | undefined;
+let bmap: BusMap | undefined;
+// Built when the phone is idle, or on first use, whichever comes first.
+const search = () => (searchIndex ??= new SearchIndex(net));
 let ride: RideTracker | undefined;
 
 const nm = (n: Names | string | undefined) => (typeof n === "string" ? n : n ? nameOf(n, getLang()) : "");
@@ -75,16 +79,16 @@ const meEndpoint = (ll: LngLat): Endpoint => ({ ll, label: { d: t("myLocation") 
 
 async function boot() {
   sheetBody.replaceChildren(h("div", { class: "loading" }, h("div", { class: "spinner" })));
+  performance.mark("boot");
   const res = await fetch(`${base}data/${CITY}.json`);
+  performance.mark("fetched");
   net = await res.json();
-  let walk: WalkFn | undefined;
-  try {
-    walk = await loadWalkGraph(`${base}data/${CITY}-walk.bin`);
-  } catch {
-    walk = undefined; // straight-line estimates
-  }
-  router = new Router(net, walk);
-  search = new SearchIndex(net);
+  performance.mark("parsed");
+  router = new Router(net); // straight-line walking until the street graph is in
+  performance.mark("router");
+  render(); // the planner is usable before the map has drawn
+  performance.mark("rendered");
+  const { BusMap } = await mapModule;
   bmap = new BusMap(mapEl, net, getLang(), {
     onStop: (s) => go({ name: "stop", stop: s }),
     onLine: (l) => go({ name: "line", line: l, variant: 0 }),
@@ -99,8 +103,17 @@ async function boot() {
     },
   });
   await bmap.ready;
+  if (state.me) bmap?.setMe(state.me.ll, state.me.acc);
   render();
   registerOffline(offlineChip, t);
+  // Street walking: swap it in once loaded, and redo an open plan with it.
+  loadWalkGraph(`${base}data/${CITY}-walk.bin`)
+    .then((walk: WalkFn) => {
+      router.setWalk(walk);
+      if (current().name === "results" && state.from && state.to) plan();
+    })
+    .catch(() => {});
+  (window.requestIdleCallback ?? ((f: () => void) => setTimeout(f, 300)))(() => search());
   if (!(await handleShare())) restoreFromHash();
 }
 
@@ -182,8 +195,8 @@ function locate(fly: boolean): Promise<LngLat | undefined> {
       (p) => {
         const ll: LngLat = [p.coords.longitude, p.coords.latitude];
         state.me = { ll, acc: p.coords.accuracy, at: Date.now() };
-        bmap.setMe(ll, p.coords.accuracy);
-        if (fly) bmap.flyTo(ll, 16);
+        bmap?.setMe(ll, p.coords.accuracy);
+        if (fly) bmap?.flyTo(ll, 16);
         toast.classList.remove("show");
         resolve(ll);
       },
@@ -249,14 +262,14 @@ function render() {
   sheet.className = `sheet view-${v.name}`;
   ride?.stop();
   ride = undefined;
-  if (v.name !== "trip" && v.name !== "results" && v.name !== "ride") bmap.clearTrip();
-  if (v.name !== "line") bmap.clearFocus();
-  bmap.showNetwork(["home", "lines", "stop", "point", "search"].includes(v.name));
+  if (v.name !== "trip" && v.name !== "results" && v.name !== "ride") bmap?.clearTrip();
+  if (v.name !== "line") bmap?.clearFocus();
+  bmap?.showNetwork(["home", "lines", "stop", "point", "search"].includes(v.name));
   switch (v.name) {
     case "home":
       setSheet(state.sheet === "full" ? "half" : state.sheet);
       sheetBody.append(homeHero(), planner(), homeBody());
-      bmap.setPins(state.from?.ll, state.to?.ll);
+      bmap?.setPins(state.from?.ll, state.to?.ll);
       break;
     case "search":
       setSheet("full");
@@ -266,7 +279,7 @@ function render() {
       setSheet("half");
       sheetBody.append(planner(), resultsBody());
       if (state.journeys[0]) previewTrip(0);
-      else bmap.setPins(state.from?.ll, state.to?.ll);
+      else bmap?.setPins(state.from?.ll, state.to?.ll);
       break;
     case "trip":
       setSheet("half");
@@ -285,17 +298,17 @@ function render() {
     case "line":
       setSheet("half");
       sheetBody.append(lineBody(v.line, v.variant));
-      bmap.showLine(v.line, v.variant);
+      bmap?.showLine(v.line, v.variant);
       break;
     case "stop":
       setSheet("half");
       sheetBody.append(stopBody(v.stop));
-      bmap.flyTo(net.stops[v.stop].ll, Math.max(bmap.map.getZoom(), 16));
+      bmap?.flyTo(net.stops[v.stop].ll, Math.max((bmap?.map.getZoom() ?? 16), 16));
       break;
     case "point":
       setSheet("half");
       sheetBody.append(pointBody(v.ll));
-      bmap.setPins(undefined, v.ll);
+      bmap?.setPins(undefined, v.ll);
       break;
     case "about":
       setSheet("full");
@@ -475,7 +488,7 @@ function updateSearch(field: "from" | "to", q: string) {
     ),
   );
   const near = state.me?.ll ?? net.center;
-  const hits = search.search(q, near, 12);
+  const hits = search().search(q, near, 12);
   searchList.replaceChildren(
     ...(q.trim() && !hits.length && pasteRow.hidden ? [h("li", { class: "empty" }, t("noMatch"))] : []),
     ...hits.map((hit) => h("li", null, hitRow(hit, field, near))),
@@ -611,7 +624,7 @@ function resultsBody() {
 function previewTrip(i: number) {
   const j = state.journeys[i];
   if (!j) return;
-  bmap.showTrip(j, state.from?.ll, state.to?.ll, { board: "", alight: t("getOff"), origin: nm(state.from?.label), dest: nm(state.to?.label) });
+  bmap?.showTrip(j, state.from?.ll, state.to?.ll, { board: "", alight: t("getOff"), origin: nm(state.from?.label), dest: nm(state.to?.label) });
 }
 
 const DIRS = {
@@ -716,8 +729,8 @@ function rideBody(index: number) {
   const body = h("div", { class: "ride-body" });
   box.append(body, h("div", { class: "actions" }, h("button", { class: "btn", onclick: back }, t("stopTrip"))));
   ride = new RideTracker(net, j, (u) => {
-    if (u.me) bmap.setMe(u.me, u.acc);
-    if (u.me && u.follow) bmap.map.easeTo({ center: u.me, duration: 500 });
+    if (u.me) bmap?.setMe(u.me, u.acc);
+    if (u.me && u.follow) bmap?.map.easeTo({ center: u.me, duration: 500 });
     const leg = j.legs[u.leg];
     let main: Node;
     if (u.status === "nogps") main = h("p", null, t("noGps"));
@@ -909,7 +922,7 @@ function aboutBody() {
             lang: l.id === "ar" ? "ar-MA" : l.id,
             onclick: () => {
               setLang(l.id as Lang);
-              bmap.setLang(l.id);
+              bmap?.setLang(l.id);
               render();
             },
           },

@@ -320,7 +320,7 @@ export class BusMap {
 
   /** Show the network faintly (home), or hide it while a trip or line is shown. */
   showNetwork(on: boolean) {
-    for (const id of ["bus-lines", "bus-stops", "bus-stop-labels"]) this.map.setLayoutProperty(id, "visibility", on ? "visible" : "none");
+    for (const id of ["bus-lines", "bus-stops", "bus-stop-labels"]) if (this.map.getLayer(id)) this.map.setLayoutProperty(id, "visibility", on ? "visible" : "none");
   }
 
   setPins(origin?: LngLat, dest?: LngLat, labels?: { origin: string; dest: string }) {

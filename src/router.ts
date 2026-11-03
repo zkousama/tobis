@@ -98,6 +98,11 @@ export class Router {
     );
   }
 
+  /** Swap in street walking once its graph has loaded. */
+  setWalk(walk: WalkFn) {
+    this.walk = walk;
+  }
+
   stopsNear(p: LngLat, radius = MAX_ACCESS) {
     return this.grid.near(p, radius / DETOUR).map((x) => ({ stop: x.v, crow: x.d }));
   }
