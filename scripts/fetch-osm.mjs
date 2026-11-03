@@ -26,15 +26,20 @@ const queries = {
       node["public_transport"="platform"](${bb});
     );
     out body;`,
-  places: `[out:json][timeout:180];
+  places: `[out:json][timeout:240];
     (
-      nwr["place"~"^(city|town|village|suburb|neighbourhood|quarter|hamlet)$"]["name"](${bb});
-      nwr["amenity"~"^(university|college|hospital|clinic|bus_station|townhall|marketplace|cinema|theatre)$"]["name"](${bb});
-      nwr["shop"~"^(mall|department_store|supermarket)$"]["name"](${bb});
-      nwr["tourism"~"^(attraction|museum|hotel|viewpoint|zoo)$"]["name"](${bb});
-      nwr["leisure"~"^(stadium|park|water_park|marina)$"]["name"](${bb});
+      nwr["place"~"^(city|town|village|suburb|neighbourhood|quarter|hamlet|isolated_dwelling)$"]["name"](${bb});
+      nwr["amenity"]["name"](${bb});
+      nwr["healthcare"]["name"](${bb});
+      nwr["shop"]["name"](${bb});
+      nwr["office"]["name"](${bb});
+      nwr["tourism"]["name"](${bb});
+      nwr["leisure"]["name"](${bb});
+      nwr["craft"]["name"](${bb});
       nwr["aeroway"="aerodrome"]["name"](${bb});
       nwr["historic"]["name"](${bb});
+      nwr["building"~"^(hospital|school|university|mosque|government|public|commercial|hotel)$"]["name"](${bb});
+      nwr["landuse"~"^(retail|commercial|industrial)$"]["name"](${bb});
     );
     out center tags;`,
 };

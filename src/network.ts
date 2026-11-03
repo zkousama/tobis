@@ -24,7 +24,7 @@ export interface Place {
 }
 
 export interface Variant {
-  rel: number; // OSM relation id
+  rel: number | string; // OSM relation id, or "alsa:<line>:<direction>"
   from: string;
   to: string;
   shape: LngLat[];
@@ -33,7 +33,12 @@ export interface Variant {
   length: number;
   breaks?: number[]; // k: the section from stops[k] to stops[k+1] isn't trusted
   inferred?: "opposite" | "chain"; // stop order rebuilt because OSM's was scrambled
+  zones?: number[]; // fare zone of each stop, for lines priced by zone
 }
+
+export type LineFare =
+  | { kind: "flat"; normal: number; card?: number; transfer?: number; firstCard?: number }
+  | { kind: "zones"; zones: { fr: string; ar?: string }[]; normal: Record<string, number>; card: Record<string, number> };
 
 export interface Line {
   ref: string;
@@ -41,9 +46,12 @@ export interface Line {
   name: string;
   colour: string;
   variants: Variant[];
+  fare?: LineFare;
+  headway?: number; // minutes between buses, when the operator publishes it
 }
 
 export interface Network {
+  alsaFetched?: string;
   city: string;
   name: Names & Record<string, string>;
   bbox: [number, number, number, number];

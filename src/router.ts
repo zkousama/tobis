@@ -10,7 +10,9 @@ export const WALK_SPEED = 1.25; // m/s, about 4.5 km/h
 export const DETOUR = 1.3; // street distance / straight-line distance, when no street path is known
 export const MAX_ACCESS = 1200; // metres walked to the first stop or from the last one
 export const MAX_TRANSFER = 400; // metres walked between two buses
-export const WAIT = { bus: 600, brt: 300 }; // expected wait per boarding, seconds
+export const WAIT = { bus: 600, brt: 300 }; // expected wait per boarding when no frequency is published, seconds
+/** Expected wait: half the gap between buses when it's published, else a default. */
+export const waitFor = (line: { brt: boolean; headway?: number }) => (line.headway ? (line.headway * 60) / 2 : line.brt ? WAIT.brt : WAIT.bus);
 export const TRANSFER_PENALTY = 180; // extra seconds per change, so direct trips win ties
 export const DWELL = 20; // seconds lost at each intermediate stop
 
@@ -73,7 +75,7 @@ export class Router {
   private walk: WalkFn;
   // For each stop: the stops within MAX_TRANSFER, with walking metres.
   private transfers: { to: number; metres: number }[][];
-  private flat: { line: number; variant: number; brt: boolean; clock: Float64Array }[] = [];
+  private flat: { line: number; variant: number; brt: boolean; wait: number; clock: Float64Array }[] = [];
   private clocks = new Map<string, Float64Array>();
 
   constructor(net: Network, walk: WalkFn = crowWalk) {
@@ -91,7 +93,7 @@ export class Router {
         if (v.stops.length < 2) return;
         const clock = rideClock(v.along);
         this.clocks.set(`${li}:${vi}`, clock);
-        this.flat.push({ line: li, variant: vi, brt: l.brt, clock });
+        this.flat.push({ line: li, variant: vi, brt: l.brt, wait: waitFor(l), clock });
       }),
     );
   }
@@ -130,7 +132,7 @@ export class Router {
       // Ride every direction of every line once.
       for (const f of this.flat) {
         const v = this.net.lines[f.line].variants[f.variant];
-        const wait = f.brt ? WAIT.brt : WAIT.bus;
+        const wait = f.wait;
         let boardAt = -1;
         let boardCost = Infinity;
         const breaks = v.breaks;
@@ -223,7 +225,7 @@ export class Router {
         alight: via.alight,
         metres,
         seconds: this.rideSeconds(via.line, via.variant, via.board, via.alight),
-        wait: this.net.lines[via.line].brt ? WAIT.brt : WAIT.bus,
+        wait: waitFor(this.net.lines[via.line]),
       });
       s = via.prevStop;
       k -= 1;

@@ -716,19 +716,7 @@
     "busways": 11
   },
   "zoneless": [
-    "31:Imimiki Terminus",
-    "31:Imimiki Terminus",
-    "32:Taghazout Village",
-    "32:Taghazout Village",
-    "33:Tamri Centre",
-    "33:Tamri Centre",
     "37:Terminus Lagfifat",
-    "37:Terminus Lagfifat",
-    "38:Terminus Tamait",
-    "38:Terminus Tamait",
-    "40:Terminus Biougra",
-    "40:Terminus Biougra",
-    "43:Terminus Ait Baha",
-    "43:Terminus Ait Baha"
+    "37:Terminus Lagfifat"
   ]
 }

@@ -236,15 +236,21 @@ function addStop(id) {
 
 // ---- places (search + "near" labels) ----
 const KIND = (t) =>
-  t.place ? (["city", "town", "village", "hamlet"].includes(t.place) ? "town" : "area")
+  t.place ? (["city", "town", "village", "hamlet", "isolated_dwelling"].includes(t.place) ? "town" : "area")
   : t.aeroway ? "airport"
   : t.amenity === "bus_station" ? "station"
-  : t.amenity === "university" || t.amenity === "college" ? "school"
-  : t.amenity === "hospital" || t.amenity === "clinic" ? "health"
-  : t.shop ? "shop"
-  : t.tourism === "hotel" ? "hotel"
-  : t.leisure ? "leisure"
+  : ["university", "college", "school", "kindergarten", "language_school", "driving_school"].includes(t.amenity) || ["school", "university"].includes(t.building) ? "school"
+  : ["hospital", "clinic", "doctors", "dentist", "pharmacy"].includes(t.amenity) || t.healthcare || t.building === "hospital" ? "health"
+  : t.amenity === "place_of_worship" || t.building === "mosque" ? "worship"
+  : ["townhall", "police", "post_office", "courthouse", "public_building", "fire_station"].includes(t.amenity) || t.office === "government" || t.building === "government" ? "gov"
+  : ["cafe", "restaurant", "fast_food", "ice_cream", "bar"].includes(t.amenity) ? "food"
+  : ["bank", "atm", "bureau_de_change"].includes(t.amenity) ? "bank"
+  : t.shop || t.landuse === "retail" || t.landuse === "commercial" ? "shop"
+  : t.tourism === "hotel" || t.tourism === "hostel" || t.tourism === "guest_house" || t.building === "hotel" ? "hotel"
+  : t.leisure || t.tourism ? "leisure"
   : "poi";
+// The specific kind of place, for the line under a search result ("Médecin", "Pharmacie").
+const TYPE = (t) => t.healthcare ?? t.amenity ?? (t.shop ? `shop:${t.shop}` : undefined) ?? t.tourism ?? t.leisure ?? t.office ?? t.place ?? t.building ?? t.historic;
 const places = [];
 const seenPlace = new Set();
 for (const el of placesRaw.elements) {
@@ -257,7 +263,35 @@ for (const el of placesRaw.elements) {
   const key = `${n.d.toLowerCase()}|${Math.round(lat * 200)}|${Math.round(lon * 200)}`;
   if (seenPlace.has(key)) continue;
   seenPlace.add(key);
-  places.push({ ll: [round5(lon), round5(lat)], n, k: KIND(t) });
+  const type = TYPE(t);
+  places.push({ ll: [round5(lon), round5(lat)], n, k: KIND(t), ...(type && type !== "yes" ? { t: type } : {}) });
+}
+
+// Street names, so "Avenue Hassan II" can be searched. One point per street per
+// area: the street's middle node, with same-named streets far apart kept apart.
+if (graph) {
+  const STREETS = /^(primary|secondary|tertiary|unclassified|residential|living_street|pedestrian|trunk)(_link)?$/;
+  const byName = new Map();
+  for (const w of (await load("roads")).elements) {
+    const t = w.tags ?? {};
+    if (!t.name || !STREETS.test(t.highway ?? "") || !w.geometry?.length) continue;
+    const mid = w.geometry[Math.floor(w.geometry.length / 2)];
+    const ll = [mid.lon, mid.lat];
+    const list = byName.get(t.name) ?? [];
+    const near = list.find((c) => dist(c.ll, ll) < 1500);
+    if (near) near.n++;
+    else list.push({ ll, n: 1, tags: t });
+    byName.set(t.name, list);
+  }
+  let added = 0;
+  for (const list of byName.values())
+    for (const c of list) {
+      const n = names(c.tags);
+      if (!n.d) continue;
+      places.push({ ll: [round5(c.ll[0]), round5(c.ll[1])], n, k: "street", t: c.tags.highway });
+      added++;
+    }
+  console.log(`${added} street names`);
 }
 
 // ---- lines ----
@@ -436,15 +470,30 @@ function parseFare(raw) {
 }
 // For zone fares: which zone each stop of a direction falls in (nearest zone town).
 const normKey = (v) => String(v ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
-function zonesFor(seqIdx, fare) {
-  const anchors = fare.zones.map((z) => {
+// Loose comparison for place names spelled many ways (Imiouadar / Imi Ouadar, Tamaait / Tamait).
+const skeleton = (v) => normKey(v).replace(/^(el|al|l|la|le)\s+/, "").replace(/\s+/g, "").replace(/[aeiouy]/g, "").replace(/(.)\1+/g, "$1").replace(/q/g, "k");
+function looseSim(a, b) {
+  const tri = (v) => { const x = `  ${skeleton(v)} `; const o = new Set(); for (let i = 0; i < x.length - 2; i++) o.add(x.slice(i, i + 3)); return o; };
+  const A = tri(a), B = tri(b);
+  let n = 0;
+  for (const t of A) if (B.has(t)) n++;
+  return n / (A.size + B.size - n || 1);
+}
+// For zone fares: which zone each stop of a direction falls in (nearest zone town).
+function zonesFor(seqIdx, fare, cityEnd) {
+  const nearLine = (ll) => Math.min(...seqIdx.map((si) => dist(stops[si].ll, ll)));
+  const anchors = fare.zones.map((z, zi) => {
     const key = normKey(z.fr);
-    const byStop = seqIdx.filter((si) => normKey(stops[si].n.d).includes(key));
-    if (byStop.length) return stops[byStop[0]].ll;
-    const pl = places.filter((p) => normKey(p.n.d) === key || normKey(p.n.fr) === key);
-    if (!pl.length) return null;
-    // The place of that name closest to this line.
-    return pl.reduce((b, p) => (Math.min(...seqIdx.map((si) => dist(stops[si].ll, p.ll))) < Math.min(...seqIdx.map((si) => dist(stops[si].ll, b.ll))) ? p : b)).ll;
+    const exact = seqIdx.find((si) => normKey(stops[si].n.d).includes(key));
+    if (exact !== undefined) return stops[exact].ll;
+    // Closest spelling among this line's stops, then among places near the line.
+    let best = null, bestS = 0.45;
+    for (const si of seqIdx) { const sc = looseSim(z.fr, stops[si].n.d.replace(/\b(centre|terminus|entree|entrée|college|ecole)\b/gi, "")); if (sc > bestS) (bestS = sc), (best = stops[si].ll); }
+    if (best) return best;
+    for (const p of places) { if (p.k !== "town" && p.k !== "area") continue; const sc = looseSim(z.fr, p.n.d); if (sc > bestS && nearLine(p.ll) < 3000) (bestS = sc), (best = p.ll); }
+    if (best) return best;
+    // The first zone is the city end ("Place Salam", "Place Inezgane").
+    return zi === 0 ? cityEnd : null;
   });
   if (anchors.some((a) => !a)) return undefined;
   return seqIdx.map((si) => anchors.reduce((best, a, i) => (dist(stops[si].ll, a) < dist(stops[si].ll, anchors[best]) ? i : best), 0));
@@ -607,7 +656,9 @@ for (const e of entries) {
     ...(e.inferred ? { inferred: e.inferred } : {}),
   };
   if (e.fare?.kind === "zones" && e.tr) {
-    const z = zonesFor(e.tr.seqIdx, e.fare);
+    // City end of the line: the outgoing direction's first stop.
+    const outgoing = entries.find((o) => o.ref === ref && o.alsa && String(o.rel.id).endsWith(":outgoing"));
+    const z = zonesFor(e.tr.seqIdx, e.fare, stops[(outgoing ?? e).seqIdx[0]].ll);
     if (z) variant.zones = z;
     else report.zoneless = [...(report.zoneless ?? []), `${ref}:${t.to}`];
   }
@@ -622,7 +673,7 @@ lines.forEach((l, i) => (l.colour ??= l.brt ? "#00a19a" : PALETTE[i % PALETTE.le
 places.forEach((p, i) => {
   let best = -1, bestD = 20_000;
   places.forEach((q, j) => {
-    if (j === i || q.k !== "town" || q.n.d === p.n.d) return;
+    if (j === i || (q.k !== "town" && !(p.k !== "area" && p.k !== "town" && q.k === "area")) || q.n.d === p.n.d) return;
     const d = dist(p.ll, q.ll);
     if (d < bestD) (bestD = d), (best = j);
   });
@@ -634,6 +685,7 @@ for (const s of stops) {
   let near = null, nearD = 350, area = null, areaD = 2500;
   for (const p of places) {
     const d = dist(s.ll, p.ll);
+    if (p.k === "street") continue;
     if (p.k === "area" || p.k === "town") {
       if (d < areaD) (areaD = d), (area = p);
     } else if (d < nearD) (nearD = d), (near = p);
