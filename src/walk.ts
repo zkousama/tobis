@@ -123,7 +123,10 @@ export class Walker {
           if (r && Math.abs(x - cx) < r && Math.abs(y - cy) < r) continue;
           for (const i of this.grid.get(x * 100000 + y) ?? []) {
             const d = dist(p, [this.g.lon[i], this.g.lat[i]]);
-            if (d < bestD) (bestD = d), (bestI = i);
+            if (d < bestD) {
+              bestD = d;
+              bestI = i;
+            }
           }
         }
       // Anything in a farther ring is at least r cells away.

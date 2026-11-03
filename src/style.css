@@ -1,28 +1,33 @@
 @import "@fontsource-variable/rubik/wght.css";
-@import "@fontsource/instrument-serif/latin-400.css";
-@import "@fontsource/instrument-serif/latin-ext-400.css";
-@import "@fontsource/instrument-serif/latin-400-italic.css";
+@import "@fontsource-variable/fraunces/opsz.css";
+@import "@fontsource-variable/fraunces/opsz-italic.css";
 @import "@fontsource/amiri/arabic-400.css";
 @import "@fontsource/amiri/arabic-700.css";
 @import "@fontsource-variable/caveat/wght.css";
 @import "@fontsource/aref-ruqaa/arabic-400.css";
 
+/*
+  Agadir on paper: sand-coloured paper, Atlantic-blue ink, and one terracotta
+  marker taken from the kasbah walls at sunset. Amazigh zigzags as ornament.
+*/
 :root {
   --sans: "Rubik Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --serif: "Instrument Serif", "Amiri", Georgia, "Times New Roman", serif;
+  --serif: "Fraunces Variable", "Amiri", Georgia, serif;
   --hand: "Caveat Variable", "Aref Ruqaa", "Comic Sans MS", cursive;
-  --paper: #f7f2e9;
-  --paper-2: #efe8db;
-  --card: #fffcf6;
-  --ink: #1c1a17;
-  --ink-2: #4a453d;
-  --muted: #7d766a;
-  --rule: #dcd3c3;
-  --marker: #ff7b1c;
-  --marker-soft: rgba(255, 123, 28, 0.32);
-  --on-marker: #1c1a17;
-  --walk: #1c1a17;
-  --shadow: 0 1px 0 rgba(28, 26, 23, 0.06), 0 12px 32px rgba(60, 45, 20, 0.14);
+  --paper: #f4ecdd;
+  --paper-2: #ebe0cc;
+  --card: #fbf6ec;
+  --ink: #15283b;
+  --ink-2: #3e5264;
+  --muted: #7b8691;
+  --rule: #ddd0b9;
+  --marker: #d9552c;
+  --marker-soft: rgba(217, 85, 44, 0.26);
+  --on-marker: #fff8ee;
+  --ocean: #2b6f8e;
+  --sign-bg: #15201f;
+  --sign-ink: #ffb23e;
+  --shadow: 0 1px 0 rgba(21, 40, 59, 0.06), 0 14px 34px rgba(80, 55, 20, 0.15);
   --sheet-peek: 172px;
   --sheet-half: 52dvh;
   --sheet-full: 92dvh;
@@ -30,17 +35,19 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --paper: #171512;
-    --paper-2: #221f1a;
-    --card: #1d1a16;
-    --ink: #f1eadc;
-    --ink-2: #cfc6b5;
-    --muted: #9a917f;
-    --rule: #3a342b;
-    --marker: #ff8a33;
-    --marker-soft: rgba(255, 138, 51, 0.3);
-    --walk: #f1eadc;
-    --shadow: 0 1px 0 rgba(0, 0, 0, 0.3), 0 12px 32px rgba(0, 0, 0, 0.5);
+    --paper: #0f1b26;
+    --paper-2: #172634;
+    --card: #142231;
+    --ink: #f1e7d4;
+    --ink-2: #cdbfa8;
+    --muted: #8f99a0;
+    --rule: #2a3b4a;
+    --marker: #f07548;
+    --marker-soft: rgba(240, 117, 72, 0.28);
+    --on-marker: #1a0e08;
+    --ocean: #6fb4d3;
+    --sign-bg: #070d12;
+    --shadow: 0 1px 0 rgba(0, 0, 0, 0.3), 0 14px 34px rgba(0, 0, 0, 0.5);
     color-scheme: dark;
   }
 }
@@ -115,10 +122,17 @@ p {
 }
 .display {
   font-family: var(--serif);
-  font-weight: 400;
+  font-weight: 380;
+  font-optical-sizing: auto;
   font-size: 38px;
   line-height: 1.02;
   letter-spacing: -0.02em;
+}
+.display em,
+.step-title em,
+.view-title em {
+  font-style: italic;
+  font-weight: 340;
 }
 [dir="rtl"] .display,
 [dir="rtl"] .serif,
@@ -179,12 +193,12 @@ small {
   content: "";
   position: absolute;
   inset: -9px -12px -8px -11px;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 60' preserveAspectRatio='none'%3E%3Cpath d='M58 4C30 2 6 12 5 30s24 27 48 26 44-9 43-27C95 12 72 3 40 6' fill='none' stroke='%23ff7b1c' stroke-width='3' stroke-linecap='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 60' preserveAspectRatio='none'%3E%3Cpath d='M58 4C30 2 6 12 5 30s24 27 48 26 44-9 43-27C95 12 72 3 40 6' fill='none' stroke='%23d9552c' stroke-width='3' stroke-linecap='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
   pointer-events: none;
 }
 /* Scribbled underline. */
 .underlined {
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 10' preserveAspectRatio='none'%3E%3Cpath d='M2 6c16-3 30 2 48-1s32-2 48 1' fill='none' stroke='%23ff7b1c' stroke-width='2.4' stroke-linecap='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E") 0 100% / 100% 0.32em no-repeat;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 10' preserveAspectRatio='none'%3E%3Cpath d='M2 6c16-3 30 2 48-1s32-2 48 1' fill='none' stroke='%23d9552c' stroke-width='2.4' stroke-linecap='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E") 0 100% / 100% 0.32em no-repeat;
   padding-bottom: 0.08em;
 }
 
@@ -1218,4 +1232,173 @@ small {
     transition: none !important;
     animation: none !important;
   }
+}
+
+
+/* ---------- Agadir ornaments ---------- */
+/* Amazigh zigzag, as on Souss rugs and kasbah doors. */
+.zigzag {
+  height: 10px;
+  margin: 18px 0 6px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='10' viewBox='0 0 24 10'%3E%3Cpath d='M0 8 6 2l6 6 6-6 6 6' fill='none' stroke='%23d9552c' stroke-width='1.6' stroke-linejoin='round'/%3E%3Ccircle cx='12' cy='2' r='1.2' fill='%23d9552c'/%3E%3C/svg%3E") repeat-x left center / 24px 10px;
+  opacity: 0.85;
+}
+.zigzag.small {
+  width: 72px;
+  margin: 10px 0;
+}
+
+/* ---------- ticket cards for trip options ---------- */
+.ticket {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  width: 100%;
+  margin: 10px 0;
+  border: 1.5px solid var(--ink);
+  border-radius: 12px;
+  background: var(--card);
+  text-align: start;
+  overflow: hidden;
+}
+.ticket:hover {
+  background: color-mix(in srgb, var(--paper-2) 50%, var(--card));
+}
+.ticket-main {
+  padding: 14px 14px 12px;
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+.ticket-stub {
+  position: relative;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 2px;
+  min-width: 78px;
+  padding: 10px 10px;
+  border-inline-start: 1.5px dashed var(--ink);
+  background: color-mix(in srgb, var(--marker-soft) 35%, var(--card));
+}
+.ticket-stub::before,
+.ticket-stub::after {
+  content: "";
+  position: absolute;
+  inset-inline-start: -9px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 1.5px solid var(--ink);
+}
+.ticket-stub::before {
+  top: -9px;
+}
+.ticket-stub::after {
+  bottom: -9px;
+}
+.ticket-time {
+  font-family: var(--serif);
+  font-size: 30px;
+  line-height: 0.95;
+  font-weight: 420;
+}
+.ticket-time small {
+  display: block;
+  font-family: var(--sans);
+  font-size: 11px;
+  color: var(--muted);
+  text-align: center;
+}
+.ticket-fare {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+.ticket.best {
+  box-shadow: 4px 4px 0 var(--marker);
+}
+.ticket .label.best-label {
+  color: var(--marker);
+}
+
+/* ---------- ride mode: a bus destination sign ---------- */
+.sign {
+  margin: 0 -18px 12px;
+  padding: 14px 18px 12px;
+  background: var(--sign-bg);
+  color: var(--sign-ink);
+  border-block: 1.5px solid var(--ink);
+}
+.sign-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.sign-num {
+  display: grid;
+  place-items: center;
+  min-width: 54px;
+  height: 44px;
+  padding: 0 8px;
+  border: 2px solid var(--sign-ink);
+  border-radius: 6px;
+  font: 700 26px/1 var(--sans);
+  letter-spacing: 0.04em;
+}
+.sign-text {
+  font: 600 19px/1.15 var(--sans);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-shadow: 0 0 8px color-mix(in srgb, var(--sign-ink) 55%, transparent);
+  /* dot-matrix grain */
+  -webkit-mask: radial-gradient(circle, #000 62%, transparent 64%) 0 0 / 3px 3px;
+  mask: radial-gradient(circle, #000 62%, transparent 64%) 0 0 / 3px 3px;
+}
+[dir="rtl"] .sign-text {
+  letter-spacing: 0;
+}
+.sign-sub {
+  margin-top: 8px;
+  font-size: 12.5px;
+  color: color-mix(in srgb, var(--sign-ink) 70%, #fff);
+  opacity: 0.85;
+}
+
+/* ---------- place view: nearest stops ---------- */
+.place-type {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+.stop-near .row-main small {
+  color: var(--muted);
+}
+.walk-min {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+.walk-min .icon {
+  width: 16px;
+  height: 16px;
+}
+.search-online {
+  color: var(--ocean);
+}
+.kind-icon {
+  color: var(--ink-2);
+}
+
+.toast.update {
+  pointer-events: auto;
+  cursor: pointer;
+  background: var(--marker);
+  color: var(--on-marker);
+  font-weight: 600;
 }

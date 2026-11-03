@@ -74,8 +74,9 @@ export class RoadGraph {
         const a = this.index.get(ids[i]), b = this.index.get(ids[i + 1]);
         if (a === undefined || b === undefined) continue;
         const len = dist(this.coord[a], this.coord[b]);
-        this.adj[a].push({ to: b, len, way: w.id, drive: drive && oneway !== -1, walk });
-        this.adj[b].push({ to: a, len, way: w.id, drive: drive && oneway !== 1, walk });
+        // anyDrive ignores one-way rules: for buses on their own two-way lane.
+        this.adj[a].push({ to: b, len, way: w.id, drive: drive && oneway !== -1, anyDrive: drive, walk });
+        this.adj[b].push({ to: a, len, way: w.id, drive: drive && oneway !== 1, anyDrive: drive, walk });
       }
     }
     // Grid for nearest-node lookups.
@@ -120,18 +121,27 @@ export class RoadGraph {
     const heap = new MinHeap();
     for (const s of starts) {
       const c = s.cost ?? 0;
-      if (!best.has(s.i) || c < best.get(s.i)) (best.set(s.i, c), prev.set(s.i, -1), heap.push(c, s.i));
+      if (best.has(s.i) && c >= best.get(s.i)) continue;
+      best.set(s.i, c);
+      prev.set(s.i, -1);
+      heap.push(c, s.i);
     }
     let found = -1, foundCost = Infinity;
     while (heap.size) {
       const [c, u] = heap.pop();
       if (c > best.get(u)) continue;
       if (c >= foundCost || c > maxCost) break;
-      if (goalCost.has(u) && c + goalCost.get(u) < foundCost) (found = u, foundCost = c + goalCost.get(u));
+      if (goalCost.has(u) && c + goalCost.get(u) < foundCost) {
+        found = u;
+        foundCost = c + goalCost.get(u);
+      }
       for (const e of this.adj[u]) {
         if (!e[mode]) continue;
         const nc = c + e.len * weight(e);
-        if (nc < (best.get(e.to) ?? Infinity)) (best.set(e.to, nc), prev.set(e.to, u), heap.push(nc, e.to));
+        if (nc >= (best.get(e.to) ?? Infinity)) continue;
+        best.set(e.to, nc);
+        prev.set(e.to, u);
+        heap.push(nc, e.to);
       }
     }
     if (found < 0) return null;

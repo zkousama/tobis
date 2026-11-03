@@ -10,6 +10,49 @@ import type { Network } from "./network.ts";
 import type { Journey } from "./router.ts";
 
 const base = new URL(import.meta.env.BASE_URL, location.href).href;
+
+// Paper-and-ink map colours, matching the app (see style.css).
+const INK = {
+  light: { paper: "#f4ecdd", ink: "#15283b", ink2: "#3e5264", marker: "#d9552c", markerSoft: "rgba(217,85,44,0.45)", stop: "#fbf6ec" },
+  dark: { paper: "#0f1b26", ink: "#f1e7d4", ink2: "#cdbfa8", marker: "#f07548", markerSoft: "rgba(240,117,72,0.5)", stop: "#142231" },
+};
+function paperFlavor(dark: boolean) {
+  const f = namedFlavor(dark ? "black" : "white");
+  const c = dark
+    ? { earth: "#0f1b26", water: "#0a2233", park: "#13262a", sand: "#1a2530", building: "#17242f", road: "#22313e", major: "#2a3a48", label: "#cdbfa8", halo: "#0f1b26", minorLabel: "#8f99a0" }
+    : { earth: "#f4ecdd", water: "#bcd6de", park: "#e3e6cf", sand: "#efe2c6", building: "#e7dcc7", road: "#fffaf0", major: "#fdf3dc", label: "#3e5264", halo: "#f4ecdd", minorLabel: "#6f7b85" };
+  return {
+    ...f,
+    background: c.earth,
+    earth: c.earth,
+    water: c.water,
+    park_a: c.park,
+    park_b: c.park,
+    wood_a: c.park,
+    wood_b: c.park,
+    scrub_a: c.park,
+    scrub_b: c.park,
+    sand: c.sand,
+    beach: c.sand,
+    buildings: c.building,
+    minor_a: c.road,
+    minor_b: c.road,
+    minor_service: c.road,
+    other: c.road,
+    link: c.major,
+    major: c.major,
+    highway: c.major,
+    city_label: c.label,
+    city_label_halo: c.halo,
+    subplace_label: c.minorLabel,
+    subplace_label_halo: c.halo,
+    roads_label_minor: c.minorLabel,
+    roads_label_minor_halo: c.halo,
+    roads_label_major: c.label,
+    roads_label_major_halo: c.halo,
+    ocean_label: dark ? "#6fb4d3" : "#2b6f8e",
+  };
+}
 const abs = (p: string) => new URL(p, base).href;
 
 let protocolAdded = false;
@@ -57,7 +100,17 @@ export class BusMap {
       pitchWithRotate: false,
     });
     this.map.touchZoomRotate.disableRotation();
-    this.ready = new Promise((res) => this.map.once("load", () => (this.addOverlays(handlers), res())));
+    this.map.on("error", (e) => console.error("map:", e.error ?? e));
+    this.ready = new Promise((res, rej) =>
+      this.map.once("load", () => {
+        try {
+          this.addOverlays(handlers);
+          res();
+        } catch (err) {
+          rej(err);
+        }
+      }),
+    );
     matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (ev) => {
       this.dark = ev.matches;
       this.restyle();
@@ -65,7 +118,7 @@ export class BusMap {
   }
 
   private style(): maplibregl.StyleSpecification {
-    const flavor = namedFlavor(this.dark ? "dark" : "light");
+    const flavor = paperFlavor(this.dark);
     return {
       version: 8,
       // Built by hand: URL() would escape the {fontstack}/{range} placeholders.
@@ -87,20 +140,24 @@ export class BusMap {
     this.restyle();
   }
 
+  private handlers?: MapHandlers;
+  private lastTrip?: FC;
+  private lastFocus?: FC;
   private restyle() {
-    // Rebuild the base style and put our overlay layers back on top.
-    const overlays = OVERLAY_IDS.map((id) => this.map.getLayer(id) && this.map.getStyle().layers.find((l) => l.id === id)).filter(Boolean) as maplibregl.LayerSpecification[];
-    const sources = Object.fromEntries(
-      OVERLAY_SOURCES.map((id) => [id, (this.map.getSource(id) as GeoJSONSource | undefined)?.serialize()]).filter(([, v]) => v),
-    );
-    const style = this.style();
-    Object.assign(style.sources, sources);
-    style.layers.push(...overlays);
-    this.map.setStyle(style, { diff: false });
+    // New base style for the language or theme; then draw our layers again in the new colours.
+    this.map.setStyle(this.style(), { diff: false });
+    this.map.once("style.load", () => {
+      if (!this.handlers) return;
+      this.addOverlays(this.handlers, false);
+      if (this.lastTrip) (this.map.getSource("trip") as GeoJSONSource).setData(this.lastTrip);
+      if (this.lastFocus) (this.map.getSource("focus") as GeoJSONSource).setData(this.lastFocus);
+    });
   }
 
-  private addOverlays(h: MapHandlers) {
+  private addOverlays(h: MapHandlers, bind = true) {
+    this.handlers = h;
     const m = this.map;
+    const P = INK[this.dark ? "dark" : "light"];
     const linesFC: FC = {
       type: "FeatureCollection",
       features: this.net.lines.flatMap((l, li) =>
@@ -132,9 +189,9 @@ export class BusMap {
       source: "bus-lines",
       layout: { "line-cap": "round", "line-join": "round" },
       paint: {
-        "line-color": ["get", "colour"],
-        "line-width": ["interpolate", ["linear"], ["zoom"], 10, ["case", ["get", "brt"], 2.5, 1.2], 15, ["case", ["get", "brt"], 6, 3]],
-        "line-opacity": ["case", ["get", "routable"], 0.55, 0.25],
+        "line-color": ["case", ["get", "brt"], P.marker, P.ink],
+        "line-width": ["interpolate", ["linear"], ["zoom"], 10, ["case", ["get", "brt"], 2.5, 0.9], 15, ["case", ["get", "brt"], 6, 2.2]],
+        "line-opacity": ["case", ["get", "brt"], 0.85, ["get", "routable"], 0.28, 0.12],
       },
     });
     m.addLayer({
@@ -144,8 +201,8 @@ export class BusMap {
       minzoom: 13,
       paint: {
         "circle-radius": ["interpolate", ["linear"], ["zoom"], 13, 2.5, 17, 6],
-        "circle-color": this.dark ? "#0b1015" : "#ffffff",
-        "circle-stroke-color": this.dark ? "#cfd8dc" : "#263238",
+        "circle-color": P.stop,
+        "circle-stroke-color": P.ink,
         "circle-stroke-width": ["interpolate", ["linear"], ["zoom"], 13, 1, 17, 2],
       },
     });
@@ -162,7 +219,7 @@ export class BusMap {
         "text-anchor": "top",
         "text-optional": true,
       },
-      paint: { "text-color": this.dark ? "#e0e6ea" : "#1f2a30", "text-halo-color": this.dark ? "#0b1015" : "#ffffff", "text-halo-width": 1.5 },
+      paint: { "text-color": P.ink, "text-halo-color": P.paper, "text-halo-width": 1.6 },
     });
     // Highlighted line (line view).
     m.addLayer({
@@ -171,7 +228,7 @@ export class BusMap {
       source: "focus",
       filter: ["==", ["geometry-type"], "LineString"],
       layout: { "line-cap": "round", "line-join": "round" },
-      paint: { "line-color": this.dark ? "#000" : "#fff", "line-width": ["interpolate", ["linear"], ["zoom"], 10, 5, 16, 12] },
+      paint: { "line-color": P.markerSoft, "line-width": ["interpolate", ["linear"], ["zoom"], 10, 8, 16, 18] },
     });
     m.addLayer({
       id: "focus-line",
@@ -179,7 +236,7 @@ export class BusMap {
       source: "focus",
       filter: ["==", ["geometry-type"], "LineString"],
       layout: { "line-cap": "round", "line-join": "round" },
-      paint: { "line-color": ["get", "colour"], "line-width": ["interpolate", ["linear"], ["zoom"], 10, 3, 16, 8] },
+      paint: { "line-color": P.ink, "line-width": ["interpolate", ["linear"], ["zoom"], 10, 1.6, 16, 3] },
     });
     m.addLayer({
       id: "focus-stops",
@@ -188,9 +245,9 @@ export class BusMap {
       filter: ["==", ["geometry-type"], "Point"],
       paint: {
         "circle-radius": ["interpolate", ["linear"], ["zoom"], 11, 3, 16, 7],
-        "circle-color": "#fff",
-        "circle-stroke-color": ["get", "colour"],
-        "circle-stroke-width": ["interpolate", ["linear"], ["zoom"], 11, 2, 16, 3.5],
+        "circle-color": P.stop,
+        "circle-stroke-color": P.ink,
+        "circle-stroke-width": ["interpolate", ["linear"], ["zoom"], 11, 1.5, 16, 2.5],
       },
     });
     // Planned trip: walking is dotted, riding is the line colour.
@@ -200,7 +257,7 @@ export class BusMap {
       source: "trip",
       filter: ["==", ["get", "kind"], "walk"],
       layout: { "line-cap": "round", "line-join": "round" },
-      paint: { "line-color": this.dark ? "#cfd8dc" : "#37474f", "line-width": 4, "line-dasharray": [0, 1.8] },
+      paint: { "line-color": P.ink, "line-width": 3.5, "line-dasharray": [0, 1.7] },
     });
     m.addLayer({
       id: "trip-ride-casing",
@@ -208,7 +265,7 @@ export class BusMap {
       source: "trip",
       filter: ["==", ["get", "kind"], "ride"],
       layout: { "line-cap": "round", "line-join": "round" },
-      paint: { "line-color": this.dark ? "#000" : "#fff", "line-width": ["interpolate", ["linear"], ["zoom"], 10, 6, 16, 13] },
+      paint: { "line-color": P.markerSoft, "line-width": ["interpolate", ["linear"], ["zoom"], 10, 10, 16, 20] },
     });
     m.addLayer({
       id: "trip-ride",
@@ -216,7 +273,7 @@ export class BusMap {
       source: "trip",
       filter: ["==", ["get", "kind"], "ride"],
       layout: { "line-cap": "round", "line-join": "round" },
-      paint: { "line-color": ["get", "colour"], "line-width": ["interpolate", ["linear"], ["zoom"], 10, 4, 16, 9] },
+      paint: { "line-color": P.ink, "line-width": ["interpolate", ["linear"], ["zoom"], 10, 1.8, 16, 3.2] },
     });
     m.addLayer({
       id: "trip-stops",
@@ -225,12 +282,13 @@ export class BusMap {
       filter: ["==", ["get", "kind"], "stop"],
       paint: {
         "circle-radius": ["interpolate", ["linear"], ["zoom"], 11, 2.5, 16, 5],
-        "circle-color": "#fff",
-        "circle-stroke-color": ["get", "colour"],
-        "circle-stroke-width": 2,
+        "circle-color": P.stop,
+        "circle-stroke-color": P.ink,
+        "circle-stroke-width": 1.8,
       },
     });
 
+    if (!bind) return;
     const pick = (e: MapMouseEvent) => {
       const box: [maplibregl.PointLike, maplibregl.PointLike] = [
         [e.point.x - 10, e.point.y - 10],
@@ -274,7 +332,10 @@ export class BusMap {
   showTrip(j: Journey | null, origin?: LngLat, dest?: LngLat, labels?: { board: string; alight: string; origin: string; dest: string }) {
     const src = this.map.getSource("trip") as GeoJSONSource;
     this.setPins(origin, dest, labels);
-    if (!j) return src.setData(empty());
+    if (!j) {
+      this.lastTrip = undefined;
+      return src.setData(empty());
+    }
     const features: GeoJSON.Feature[] = [];
     const bounds = new maplibregl.LngLatBounds();
     for (const leg of j.legs) {
@@ -291,10 +352,12 @@ export class BusMap {
       features.push({ type: "Feature", properties: { kind: "ride", colour: line.colour }, geometry: { type: "LineString", coordinates: seg } });
       for (let i = leg.board; i <= leg.alight; i++)
         features.push({ type: "Feature", properties: { kind: "stop", colour: line.colour, stop: v.stops[i] }, geometry: { type: "Point", coordinates: this.net.stops[v.stops[i]].ll } });
-      this.marker(this.net.stops[v.stops[leg.board]].ll, badge(line.ref, line.colour, "board"), "bottom");
-      this.marker(this.net.stops[v.stops[leg.alight]].ll, badge(labels?.alight ?? "", line.colour, "alight"), "bottom");
+      this.marker(this.net.stops[v.stops[leg.board]].ll, badge(line.brt ? "Trambus" : line.ref, line.colour, "board"), "bottom");
+      const off = this.net.stops[v.stops[leg.alight]];
+      this.marker(off.ll, badge(`${labels?.alight ?? ""} ${off.n.d ?? ""}`.trim(), line.colour, "alight"), "bottom");
     }
-    src.setData({ type: "FeatureCollection", features });
+    this.lastTrip = { type: "FeatureCollection", features };
+    src.setData(this.lastTrip);
     if (!bounds.isEmpty()) this.fit(bounds);
   }
 
@@ -306,16 +369,19 @@ export class BusMap {
       { type: "Feature", properties: { colour: line.colour }, geometry: { type: "LineString", coordinates: v.shape } },
       ...v.stops.map((s) => ({ type: "Feature" as const, properties: { colour: line.colour, stop: s }, geometry: { type: "Point" as const, coordinates: this.net.stops[s].ll } })),
     ];
-    src.setData({ type: "FeatureCollection", features });
+    this.lastFocus = { type: "FeatureCollection", features };
+    src.setData(this.lastFocus);
     const b = new maplibregl.LngLatBounds();
     v.shape.forEach((c) => b.extend(c));
     if (!b.isEmpty()) this.fit(b);
   }
 
   clearFocus() {
+    this.lastFocus = undefined;
     (this.map.getSource("focus") as GeoJSONSource | undefined)?.setData(empty());
   }
   clearTrip() {
+    this.lastTrip = undefined;
     (this.map.getSource("trip") as GeoJSONSource | undefined)?.setData(empty());
     this.clearMarkers();
   }
@@ -335,10 +401,10 @@ export class BusMap {
     const top = document.querySelector<HTMLElement>(".topbar");
     const sheetH = sheet && !wide ? Math.min(sheet.getBoundingClientRect().height, innerHeight * 0.6) : 0;
     return {
-      top: (top && !wide ? top.getBoundingClientRect().bottom : 0) + 40,
+      top: (top && !wide ? top.getBoundingClientRect().bottom : 0) + 60,
       bottom: sheetH + 40,
-      left: wide ? 460 : 40,
-      right: 40,
+      left: wide ? 470 : 50,
+      right: wide ? 150 : 70,
     };
   }
 
@@ -354,8 +420,6 @@ export class BusMap {
   }
 }
 
-const OVERLAY_SOURCES = ["bus-lines", "bus-stops", "trip", "focus"];
-const OVERLAY_IDS = ["bus-lines", "bus-stops", "bus-stop-labels", "focus-casing", "focus-line", "focus-stops", "trip-walk", "trip-ride-casing", "trip-ride", "trip-stops"];
 
 function pin(kind: "origin" | "dest", label?: string) {
   const el = document.createElement("div");

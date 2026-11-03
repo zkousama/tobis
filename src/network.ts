@@ -19,7 +19,9 @@ export interface Stop {
 export interface Place {
   ll: LngLat;
   n: Names;
-  k: "town" | "area" | "airport" | "station" | "school" | "health" | "shop" | "hotel" | "leisure" | "poi";
+  k: "town" | "area" | "airport" | "station" | "school" | "health" | "shop" | "hotel" | "leisure" | "poi" | "street" | "food" | "bank" | "gov" | "worship";
+  t?: string; // specific type: OSM amenity/shop value or Overture category
+  src?: "ov"; // from Overture rather than OSM
   in?: number; // index into places: nearest other town
 }
 

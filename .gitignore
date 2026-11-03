@@ -4,3 +4,5 @@ data/raw/*/roads.json
 data/raw/*/roads-tiles/
 public/basemap/*.pmtiles
 public/data/
+data/osm-drafts/
+data/raw/*/overture/

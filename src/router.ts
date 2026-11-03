@@ -110,7 +110,7 @@ export class Router {
     const reach: (Label | undefined)[][] = [];
 
     // Round 0: walk from the origin.
-    const r0: (Label | undefined)[] = new Array(n);
+    const r0: (Label | undefined)[] = Array.from({ length: n });
     for (const { stop } of this.stopsNear(origin)) {
       const metres = this.walk(origin, this.net.stops[stop].ll).metres;
       if (metres > MAX_ACCESS) continue;
@@ -128,7 +128,7 @@ export class Router {
 
     for (let k = 1; k <= maxRides; k++) {
       const prev = reach[k - 1];
-      const cur: (Label | undefined)[] = new Array(n);
+      const cur: (Label | undefined)[] = Array.from({ length: n });
       // Ride every direction of every line once.
       for (const f of this.flat) {
         const v = this.net.lines[f.line].variants[f.variant];

@@ -9,10 +9,13 @@
     "preview": "vite preview",
     "data": "node scripts/build-data.mjs",
     "basemap": "node scripts/extract-basemap.mjs",
-    "test": "node --test \"tests/**/*.test.ts\""
+    "test": "node --test \"tests/**/*.test.ts\"",
+    "lint": "oxlint src scripts tests",
+    "check": "tsc --noEmit && oxlint src scripts tests && node --test \"tests/**/*.test.ts\""
   },
   "dependencies": {
     "@fontsource-variable/caveat": "5.3.0",
+    "@fontsource-variable/fraunces": "5.3.0",
     "@fontsource-variable/rubik": "5.3.0",
     "@fontsource/amiri": "5.3.0",
     "@fontsource/aref-ruqaa": "5.3.0",
@@ -25,7 +28,9 @@
   "devDependencies": {
     "@types/geojson": "7946.0.16",
     "@types/node": "24.19.0",
+    "oxlint": "1.88.0",
     "typescript": "5.9.3",
     "vite": "8.3.4"
-  }
+  },
+  "packageManager": "bun@1.4.3"
 }

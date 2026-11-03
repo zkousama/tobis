@@ -88,7 +88,10 @@ function varints(nums) {
 function serializeDir(es) {
   const nums = [es.length];
   let prev = 0;
-  for (const e of es) (nums.push(e.tileId - prev), (prev = e.tileId));
+  for (const e of es) {
+    nums.push(e.tileId - prev);
+    prev = e.tileId;
+  }
   for (const e of es) nums.push(e.runLength);
   for (const e of es) nums.push(e.length);
   es.forEach((e, i) => {

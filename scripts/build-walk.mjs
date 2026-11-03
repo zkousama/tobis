@@ -46,7 +46,11 @@ for (let i = 0; i < n0; i++) {
 
 const keep = [];
 const newIndex = new Int32Array(n0).fill(-1);
-for (let i = 0; i < n0; i++) if (walkAdj[i].size) (newIndex[i] = keep.length), keep.push(i);
+for (let i = 0; i < n0; i++) {
+  if (!walkAdj[i].size) continue;
+  newIndex[i] = keep.length;
+  keep.push(i);
+}
 const n = keep.length;
 let e = 0;
 for (const i of keep) e += walkAdj[i].size;

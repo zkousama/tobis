@@ -22,4 +22,5 @@ export function fareFor(line: Line, v: Variant, board: number, alight: number): 
   return f.normal[key] !== undefined ? { normal: f.normal[key], card: f.card[key] } : undefined;
 }
 
-export const fmtDH = (n: number) => `${n % 1 ? n.toFixed(2).replace(/0$/, "") : n} DH`;
+// Wrapped in a left-to-right isolate so "≈ 5 DH" keeps its order inside Arabic text.
+export const fmtDH = (n: number) => `\u2066${n % 1 ? n.toFixed(2).replace(/0$/, "") : n} DH\u2069`;

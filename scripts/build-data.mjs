@@ -34,26 +34,33 @@ function simplify(pts, tol) {
       let t = len2 ? ((px - ax) * dx + (py - ay) * dy) / len2 : 0;
       t = Math.max(0, Math.min(1, t));
       const d = Math.hypot(px - ax - t * dx, py - ay - t * dy);
-      if (d > bestD) (bestD = d), (best = i);
+      if (d > bestD) {
+        bestD = d;
+        best = i;
+      }
     }
-    if (best > 0) (keep[best] = 1), stack.push([a, best], [best, b]);
+    if (best > 0) {
+      keep[best] = 1;
+      stack.push([a, best], [best, b]);
+    }
   }
   return pts.filter((_, i) => keep[i]);
 }
 
 // Follow the streets from stop to stop, preferring the ways the relation lists.
-function traceStops(rel, stopLLs) {
+function traceStops(rel, stopLLs, mode = "drive") {
   const relWays = new Set(rel.members.filter((m) => m.type === "way").map((m) => m.ref));
   const weight = (e) => (relWays.has(e.way) ? 1 : 2.5);
   const coords = [stopLLs[0]];
   const along = [0];
   const legStats = [];
+  const wayIds = []; // OSM ways the traced path runs on, in order (for OSM drafts)
   let straight = 0;
   for (let i = 0; i < stopLLs.length - 1; i++) {
     const a = stopLLs[i], b = stopLLs[i + 1];
     const crow = dist(a, b);
-    const seeds = (p) => graph.near(p, 90, "drive").slice(0, 8).map((x) => ({ i: x.i, cost: x.d * 2 }));
-    const res = graph.path(seeds(a), seeds(b), "drive", weight, crow * 5 + 2000);
+    const seeds = (p) => graph.near(p, 90, mode).slice(0, 8).map((x) => ({ i: x.i, cost: x.d * 2 }));
+    const res = graph.path(seeds(a), seeds(b), mode, weight, crow * 5 + 2000);
     let leg;
     let onRel = 0;
     if (res && res.metres < crow * 4 + 1500) {
@@ -62,9 +69,13 @@ function traceStops(rel, stopLLs) {
       for (let k = 1; k < res.nodes.length; k++) {
         const e = graph.adj[res.nodes[k - 1]].find((x) => x.to === res.nodes[k]);
         if (e && relWays.has(e.way)) onRel += e.len;
+        if (e && wayIds.at(-1) !== e.way) wayIds.push(e.way);
       }
       onRel /= Math.max(1, res.metres);
-    } else (leg = [b], straight++);
+    } else {
+      leg = [b];
+      straight++;
+    }
     legStats.push({ crow, metres: res?.metres ?? crow, onRel, path: res ? res.nodes.map((n) => graph.coord[n]) : [a, b] });
     leg = simplify([coords.at(-1), ...leg], 3).slice(1);
     let m = 0;
@@ -76,7 +87,7 @@ function traceStops(rel, stopLLs) {
     }
     along.push(along.at(-1) + m);
   }
-  return { coords, along, straight, legStats };
+  return { coords, along, straight, legStats, wayIds };
 }
 
 const R = 6371008.8;
@@ -203,7 +214,10 @@ function splitScripts(v) {
   const flush = () => { if (buf.trim() && cur) parts[cur].push(buf.trim()); buf = ""; };
   for (const word of v.split(/\s+/)) {
     const sc = SCRIPT.arab.test(word) ? "arab" : SCRIPT.tfng.test(word) ? "tfng" : "latn";
-    if (sc !== cur) (flush(), (cur = sc));
+    if (sc !== cur) {
+      flush();
+      cur = sc;
+    }
     buf += " " + word;
   }
   flush();
@@ -251,6 +265,7 @@ const KIND = (t) =>
   : "poi";
 // The specific kind of place, for the line under a search result ("Médecin", "Pharmacie").
 const TYPE = (t) => t.healthcare ?? t.amenity ?? (t.shop ? `shop:${t.shop}` : undefined) ?? t.tourism ?? t.leisure ?? t.office ?? t.place ?? t.building ?? t.historic;
+const normKeyEarly = (v) => String(v ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
 const places = [];
 const seenPlace = new Set();
 for (const el of placesRaw.elements) {
@@ -265,6 +280,49 @@ for (const el of placesRaw.elements) {
   seenPlace.add(key);
   const type = TYPE(t);
   places.push({ ll: [round5(lon), round5(lat)], n, k: KIND(t), ...(type && type !== "yes" ? { t: type } : {}) });
+}
+
+// Overture places (Meta, Microsoft and others, CDLA-Permissive-2.0): far more
+// shops, clinics and offices than OSM has here. Only name, kind and position
+// are kept; phone numbers and emails in the source are dropped.
+const OV_KIND = (c) =>
+  /dental|doctor|clinic|hospital|pharmacy|health|medical|medicine|diagnostic|physical|perinatal|vision|eye_care|outpatient|mental/.test(c) ? "health"
+  : /school|learning|education|college|university|tutoring|preschool|library/.test(c) ? "school"
+  : /restaurant|cafe|coffee|eatery|fast_food|bar$|juice|food_service|lounge|bakery/.test(c) ? "food"
+  : /hotel|lodging|resort|bed_and_breakfast|campground/.test(c) ? "hotel"
+  : /financial|bank|credit_union/.test(c) ? "bank"
+  : /government|community_and_government|civic/.test(c) ? "gov"
+  : /worship|mosque/.test(c) ? "worship"
+  : /store|shopping|mall|market/.test(c) ? "shop"
+  : /sport|gym|fitness|park|beach|stadium|museum|historic|pool|arts|gallery|cultural|venue|club|recreation/.test(c) ? "leisure"
+  : /airport/.test(c) ? "airport"
+  : "poi";
+{
+  const file = `data/raw/${city}/overture/places.geojsonseq`;
+  const text = await readFile(file, "utf8").catch(() => "");
+  const osmKeys = places.map((p) => ({ k: normKeyEarly(p.n.d), ll: p.ll }));
+  let added = 0, skipped = 0;
+  for (const line of text.split("\n")) {
+    if (!line.trim()) continue;
+    const f = JSON.parse(line);
+    const pr = f.properties ?? {};
+    const cat = pr.basic_category ?? pr.taxonomy?.primary ?? "";
+    const kind = OV_KIND(cat);
+    if ((pr.confidence ?? 0) < (kind === "health" ? 0.35 : 0.5)) continue;
+    const name = pr.names?.primary;
+    if (!name || f.geometry?.type !== "Point") continue;
+    const ll = [round5(f.geometry.coordinates[0]), round5(f.geometry.coordinates[1])];
+    const k = normKeyEarly(name);
+    if (osmKeys.some((o) => o.k === k && dist(o.ll, ll) < 200)) {
+      skipped++;
+      continue;
+    }
+    const n = names({ name });
+    if (!n.d) continue;
+    places.push({ ll, n, k: kind, ...(cat ? { t: cat } : {}), src: "ov" });
+    added++;
+  }
+  if (text) console.log(`${added} Overture places (${skipped} already in OSM)`);
 }
 
 // Street names, so "Avenue Hassan II" can be searched. One point per street per
@@ -309,14 +367,17 @@ function findBreaks(seqIdx, legStats) {
         if (j >= k - 1 && j <= k + 2) return;
         if (dist(c, stops[si].ll) < 45) passed.add(si);
       });
-    if (passed.size >= 2) (breaks.push(k), passes.push([...passed]));
+    if (passed.size >= 2) {
+      breaks.push(k);
+      passes.push([...passed]);
+    }
   });
   return { breaks, passes };
 }
 
-function trace(rel, seqIdx) {
+function trace(rel, seqIdx, mode) {
   if (!graph || seqIdx.length < 2) return null;
-  const tr = traceStops(rel, seqIdx.map((i) => stops[i].ll));
+  const tr = traceStops(rel, seqIdx.map((i) => stops[i].ll), mode);
   const { breaks, passes } = findBreaks(seqIdx, tr.legStats);
   return { ...tr, seqIdx, breaks, passes, share: breaks.length / Math.max(1, seqIdx.length - 1) };
 }
@@ -340,7 +401,10 @@ function insertCheapest(order, si) {
   for (let k = 0; k <= order.length; k++) {
     const a = order[k - 1], b = order[k];
     const cost = (a !== undefined ? dist(stops[a].ll, stops[si].ll) : 0) + (b !== undefined ? dist(stops[si].ll, stops[b].ll) : 0) - (a !== undefined && b !== undefined ? dist(stops[a].ll, stops[b].ll) : 0);
-    if (cost < bestCost) (bestCost = cost), (best = k);
+    if (cost < bestCost) {
+      bestCost = cost;
+      best = k;
+    }
   }
   order.splice(best, 0, si);
 }
@@ -354,7 +418,10 @@ function orderChain(seqIdx, first, last) {
     let nb = null, nd = Infinity;
     for (const s of left) {
       const d = dist(stops[cur].ll, stops[s].ll);
-      if (d < nd) (nd = d), (nb = s);
+      if (d < nd) {
+        nd = d;
+        nb = s;
+      }
     }
     order.push(nb);
     left.delete(nb);
@@ -380,7 +447,7 @@ function terminals(seqIdx, opposite, tags) {
   const nearest = (p) => seqIdx.reduce((b, s) => (dist(stops[s].ll, p) < dist(stops[b].ll, p) ? s : b), seqIdx[0]);
   if (opposite) return [nearest(opposite.coords.at(-1)), nearest(opposite.coords[0])];
   let A = seqIdx[0], B = seqIdx[1], far = 0;
-  for (const a of seqIdx) for (const b of seqIdx) { const d = dist(stops[a].ll, stops[b].ll); if (d > far) (far = d), (A = a), (B = b); }
+  for (const a of seqIdx) for (const b of seqIdx) { const d = dist(stops[a].ll, stops[b].ll); if (d > far) { far = d; A = a; B = b; } }
   const sim = (s, name) => { const n = (stops[s].n.d ?? "").toLowerCase(); return name && n && name.toLowerCase().split(/[^a-zà-ÿ]+/).filter((w) => w.length > 3 && n.includes(w)).length; };
   return sim(B, tags.from) > sim(A, tags.from) || sim(A, tags.to) > sim(B, tags.to) ? [B, A] : [A, B];
 }
@@ -488,9 +555,9 @@ function zonesFor(seqIdx, fare, cityEnd) {
     if (exact !== undefined) return stops[exact].ll;
     // Closest spelling among this line's stops, then among places near the line.
     let best = null, bestS = 0.45;
-    for (const si of seqIdx) { const sc = looseSim(z.fr, stops[si].n.d.replace(/\b(centre|terminus|entree|entrée|college|ecole)\b/gi, "")); if (sc > bestS) (bestS = sc), (best = stops[si].ll); }
+    for (const si of seqIdx) { const sc = looseSim(z.fr, stops[si].n.d.replace(/\b(centre|terminus|entree|entrée|college|ecole)\b/gi, "")); if (sc > bestS) { bestS = sc; best = stops[si].ll; } }
     if (best) return best;
-    for (const p of places) { if (p.k !== "town" && p.k !== "area") continue; const sc = looseSim(z.fr, p.n.d); if (sc > bestS && nearLine(p.ll) < 3000) (bestS = sc), (best = p.ll); }
+    for (const p of places) { if (p.k !== "town" && p.k !== "area") continue; const sc = looseSim(z.fr, p.n.d); if (sc > bestS && nearLine(p.ll) < 3000) { bestS = sc; best = p.ll; } }
     if (best) return best;
     // The first zone is the city end ("Place Salam", "Place Inezgane").
     return zi === 0 ? cityEnd : null;
@@ -543,7 +610,10 @@ if (cfg.brt) {
       let bestS = 0.34;
       for (const [k, nodesOf] of groups) {
         const sc = sim(osmName, k);
-        if (sc > bestS) (bestS = sc), (best = nodesOf);
+        if (sc > bestS) {
+          bestS = sc;
+          best = nodesOf;
+        }
       }
     }
     if (best) stations.push({ name, nodes: best });
@@ -560,7 +630,7 @@ if (cfg.brt) {
     while (left.size) {
       const cur = order.at(-1);
       let nb = null, nd = Infinity;
-      for (const st of left) { const d = dist(ll(cur), ll(st)); if (d < nd) (nd = d), (nb = st); }
+      for (const st of left) { const d = dist(ll(cur), ll(st)); if (d < nd) { nd = d; nb = st; } }
       order.push(nb);
       left.delete(nb);
     }
@@ -589,9 +659,12 @@ if (cfg.brt) {
       return addStop(n.id);
     }).filter((i) => i >= 0);
     const rel = { id: `brt:${forward ? "a" : "b"}`, members: busways };
-    const tr = trace(rel, seqIdx);
+    // The Trambus has its own two-way lane down the middle of the avenues.
+    const tr = trace(rel, seqIdx, "anyDrive");
     const ends = forward ? [stations[0].name, stations.at(-1).name] : [stations.at(-1).name, stations[0].name];
     entries.push({ rel, t: { from: ends[0], to: ends[1], name: cfg.brt.name }, ref: "BHNS", isBrt: true, seqIdx, tr, alsa: true, fare: cfg.brt.fare, headway: cfg.brt.headwayMin });
+    // For the OSM draft: platforms in order and the ways between them.
+    report.brtDraft = [...(report.brtDraft ?? []), { from: ends[0], to: ends[1], platforms: seqIdx.map((si) => stops[si].id), ways: tr?.wayIds ?? [] }];
     if (tr) report.sides.push({ rel: rel.id, ref: "BHNS", clean: tr.share <= SCRAMBLED, ...rightSide(tr) });
   }
   report.brt = { stations: stations.length, of: cfg.brt.stations.length, busways: busways.length };
@@ -610,10 +683,18 @@ for (const e of entries) {
   if (side.n >= 4 && side.share < 0.35) {
     const back = trace(e.rel, [...order].reverse());
     const backSide = rightSide(back);
-    if (backSide.share > side.share) ((fixed = back), (side = backSide), (flipped = true), order.reverse());
+    if (backSide.share > side.share) {
+      fixed = back;
+      side = backSide;
+      flipped = true;
+      order.reverse();
+    }
   }
   report.reordered.push({ rel: e.rel.id, ref: e.ref, name: e.t.name, method: opposite ? "opposite" : "chain", flipped, right: Math.round(side.share * 100) / 100, before: Math.round(e.tr.share * 100) / 100, after: Math.round(fixed.share * 100) / 100, order: order.map((si) => stops[si].id) });
-  if (fixed.share < e.tr.share) (e.tr = fixed), (e.inferred = opposite ? "opposite" : "chain");
+  if (fixed.share < e.tr.share) {
+    e.tr = fixed;
+    e.inferred = opposite ? "opposite" : "chain";
+  }
 }
 
 const byRef = new Map();
@@ -675,7 +756,10 @@ places.forEach((p, i) => {
   places.forEach((q, j) => {
     if (j === i || (q.k !== "town" && !(p.k !== "area" && p.k !== "town" && q.k === "area")) || q.n.d === p.n.d) return;
     const d = dist(p.ll, q.ll);
-    if (d < bestD) (bestD = d), (best = j);
+    if (d < bestD) {
+      bestD = d;
+      best = j;
+    }
   });
   if (best >= 0) p.in = best;
 });
@@ -685,10 +769,17 @@ for (const s of stops) {
   let near = null, nearD = 350, area = null, areaD = 2500;
   for (const p of places) {
     const d = dist(s.ll, p.ll);
-    if (p.k === "street") continue;
+    // Landmarks people recognise: OSM places of a kind you'd give directions by.
+    if (p.k === "street" || p.src === "ov" || p.k === "food" || p.k === "bank" || p.k === "poi") continue;
     if (p.k === "area" || p.k === "town") {
-      if (d < areaD) (areaD = d), (area = p);
-    } else if (d < nearD) (nearD = d), (near = p);
+      if (d < areaD) {
+        areaD = d;
+        area = p;
+      }
+    } else if (d < nearD) {
+      nearD = d;
+      near = p;
+    }
   }
   if (near) s.near = places.indexOf(near);
   if (area) s.area = places.indexOf(area);

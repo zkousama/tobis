@@ -22,6 +22,13 @@ export function registerOffline(chip: HTMLButtonElement, t: (k: Key) => string) 
   ch.onmessage = (e) => {
     if (e.data?.type === "progress") show(e.data.done, e.data.total);
   };
+  // A new version took over: offer a reload rather than switching data mid-trip.
+  const hadController = !!navigator.serviceWorker.controller;
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (!hadController) return;
+    const bar = h("button", { class: "toast show update", onclick: () => location.reload() }, t("updated"));
+    document.getElementById("app")?.append(bar);
+  });
   navigator.serviceWorker
     .register(`${import.meta.env.BASE_URL}sw.js`)
     .then(async (reg) => {
