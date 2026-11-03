@@ -45,3 +45,7 @@ bun run build
 Deploy `dist/` with the `functions/` folder to Cloudflare Pages: `wrangler pages deploy dist`.
 
 Other cities: add a `cities/<id>.json` with its bounding box and networks, and run the same scripts with that id.
+
+## Licence
+
+The code is MIT (see `LICENSE`). The data keeps the licences listed above.
