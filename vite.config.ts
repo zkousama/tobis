@@ -28,11 +28,16 @@ function precache(): Plugin {
       const list = files.filter((f) => !skip.test(f)).sort();
       const hash = createHash("sha256");
       for (const f of list) hash.update(f).update(readFileSync(join(outDir, f)));
+      hash.update(readFileSync(join(outDir, "sw.js"))); // a fix to the worker alone is a new version too
       const version = hash.digest("hex").slice(0, 12);
       const sizes = list.map((f) => statSync(join(outDir, f)).size);
-      writeFileSync(join(outDir, "precache.json"), JSON.stringify({ version, files: list.map((f) => (f === "index.html" ? "./" : f)).concat("index.html"), sizes: sizes.concat(sizes[list.indexOf("index.html")] ?? 0) }));
+      // The page is cached as "./" only: hosts like Cloudflare Pages redirect
+      // /index.html to /, and a redirected response can't answer a page load.
+      writeFileSync(join(outDir, "precache.json"), JSON.stringify({ version, files: list.map((f) => (f === "index.html" ? "./" : f)), sizes }));
       const sw = join(outDir, "sw.js");
-      writeFileSync(sw, readFileSync(sw, "utf8").replace("__VERSION__", version));
+      const src = readFileSync(sw, "utf8");
+      if (!src.includes('const VERSION = "__VERSION__";')) throw new Error("sw.js: VERSION placeholder not found");
+      writeFileSync(sw, src.replace('const VERSION = "__VERSION__";', `const VERSION = "${version}";`));
       const total = sizes.reduce((a, b) => a + b, 0);
       console.log(`precache: ${list.length} files, ${(total / 1048576).toFixed(1)} MiB, version ${version}`);
     },

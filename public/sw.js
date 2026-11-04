@@ -1,10 +1,17 @@
-// Offline cache. The build replaces __VERSION__ and writes precache.json.
+// Offline cache. The build stamps VERSION below and writes precache.json.
 const VERSION = "__VERSION__";
 const CACHE = `agadir-bus-${VERSION}`;
 const channel = new BroadcastChannel("offline");
 let progress = { done: 0, total: 1 };
 
 const scopeUrl = (p) => new URL(p, self.registration.scope).href;
+
+// Browsers refuse a redirected response for a page load ("a response served by
+// the service worker has redirections"). Store and serve a clean copy instead.
+async function clean(res) {
+  if (!res.redirected) return res;
+  return new Response(await res.blob(), { status: res.status, statusText: res.statusText, headers: res.headers });
+}
 
 async function precache() {
   const list = await (await fetch(scopeUrl(`precache.json?v=${VERSION}`), { cache: "no-store" })).json();
@@ -23,7 +30,7 @@ async function precache() {
           try {
             const res = await fetch(u, { cache: "no-cache" });
             if (!res.ok) throw new Error(`${res.status}`);
-            await cache.put(u, res);
+            await cache.put(u, await clean(res));
             break;
           } catch (err) {
             if (attempt >= 3) throw err;
@@ -90,12 +97,12 @@ self.addEventListener("fetch", (e) => {
       const key = url.origin + url.pathname;
       if (req.mode === "navigate") {
         // App shell first: opens instantly with no signal. Updates arrive with a new worker.
-        const shell = (await cache.match(scopeUrl("index.html"))) || (await cache.match(scopeUrl("./")));
-        if (shell) return shell;
+        const shell = await cache.match(scopeUrl("./"));
+        if (shell) return clean(shell);
         return fetch(req);
       }
       const hit = await cache.match(key, { ignoreSearch: true });
-      if (hit) return req.headers.has("range") ? rangeResponse(req, hit) : hit;
+      if (hit) return req.headers.has("range") ? rangeResponse(req, hit) : clean(hit);
       const res = await fetch(req);
       return res;
     })(),
