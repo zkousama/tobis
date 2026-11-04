@@ -4,6 +4,7 @@
 import { dist, projectOnLine, sliceLine, type LngLat } from "./geo.ts";
 import type { Network } from "./network.ts";
 import type { Journey, RideLeg } from "./router.ts";
+import { PaceLearner } from "./pace.ts";
 
 export interface RideUpdate {
   status: "ok" | "nogps" | "waiting";
@@ -24,6 +25,7 @@ export class RideTracker {
   private wake?: WakeLockSentinel;
   private leg = 0;
   private lastAlert = Infinity;
+  private pace = new PaceLearner();
   private net: Network;
   private j: Journey;
   private cb: (u: RideUpdate) => void;
@@ -46,7 +48,10 @@ export class RideTracker {
   }
 
   stop() {
-    if (this.watch !== undefined) navigator.geolocation.clearWatch(this.watch);
+    if (this.watch !== undefined) {
+      navigator.geolocation.clearWatch(this.watch);
+      this.pace.save();
+    }
     this.wake?.release().catch(() => {});
     this.watch = undefined;
   }
@@ -89,7 +94,10 @@ export class RideTracker {
 
     const leg = legs[this.leg];
     if (!leg) return this.cb({ status: "ok", leg: this.leg, me, acc, follow: true });
-    if (leg.kind === "walk") return this.cb({ status: "ok", leg: this.leg, me, acc, follow: true, remaining: dist(me, leg.to) });
+    if (leg.kind === "walk") {
+      this.pace.add(me, acc, Date.now());
+      return this.cb({ status: "ok", leg: this.leg, me, acc, follow: true, remaining: dist(me, leg.to) });
+    }
 
     const { along, v } = this.along(leg, me);
     let nextIdx = leg.alight;

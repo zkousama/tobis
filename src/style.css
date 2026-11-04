@@ -1274,3 +1274,174 @@ small {
     animation: none !important;
   }
 }
+
+/* ---------- comparing ways to get there ---------- */
+.compare-title {
+  margin: 6px 0 6px;
+}
+.bar-legend {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 2px 0 6px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.bar-legend .key {
+  width: 14px;
+  height: 8px;
+  border-radius: 2px;
+  margin-inline-start: 6px;
+}
+.bar-legend .key:first-child {
+  margin-inline-start: 0;
+}
+.key-ride {
+  background: var(--ink-2);
+}
+.key-walk,
+.seg-walk {
+  background: repeating-linear-gradient(135deg, var(--seg-walk) 0 2px, transparent 2px 4px), var(--seg-walk-bg);
+}
+.key-wait,
+.seg-wait {
+  background: var(--seg-wait);
+}
+:root {
+  --seg-walk: #6b737b;
+  --seg-walk-bg: #d7dbdf;
+  --seg-wait: #c9ced3;
+}
+:root[data-theme="dark"] {
+  --seg-walk: #9aa3aa;
+  --seg-walk-bg: #3a4147;
+  --seg-wait: #2f353b;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --seg-walk: #9aa3aa;
+    --seg-walk-bg: #3a4147;
+    --seg-wait: #2f353b;
+  }
+}
+.options {
+  display: grid;
+  gap: 8px;
+}
+.option {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+  padding: 12px;
+  border-radius: var(--radius);
+  border: 1px solid var(--rule);
+  background: var(--surface);
+  text-align: start;
+}
+button.option:hover {
+  background: var(--surface-2);
+}
+.option.best {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+.opt-top {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: start;
+}
+.opt-main {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+.opt-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.opt-tag {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 999px;
+  padding: 1px 8px;
+}
+.mode-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+}
+.mode-name .icon {
+  width: 18px;
+  height: 18px;
+  color: var(--ink-2);
+}
+.ticket-range {
+  font-size: 12px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+/* time split into walking, waiting and riding, on one scale for every option */
+.tbar-track {
+  display: flex;
+  align-items: center;
+  height: 10px;
+}
+.tbar {
+  display: flex;
+  gap: 2px;
+  height: 10px;
+  min-width: 0;
+}
+.seg {
+  min-width: 4px;
+  height: 100%;
+}
+.seg:first-child {
+  border-start-start-radius: 4px;
+  border-end-start-radius: 4px;
+}
+.seg:last-child {
+  border-start-end-radius: 4px;
+  border-end-end-radius: 4px;
+}
+.seg-ride {
+  background: var(--c, var(--accent));
+}
+.tbar-tail {
+  height: 2px;
+  margin-inline-start: 2px;
+  border-radius: 1px;
+  background: repeating-linear-gradient(90deg, var(--muted) 0 3px, transparent 3px 6px);
+  opacity: 0.6;
+}
+.opt-breakdown {
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.show-all {
+  margin-top: 4px;
+}
+.tip-night {
+  align-items: flex-start;
+  margin: 6px 0;
+}
+.tip-night .icon {
+  color: var(--ink-2);
+  margin-top: 1px;
+}
+
+.compare .segmented {
+  scrollbar-width: none;
+}
+.compare .segmented::-webkit-scrollbar {
+  display: none;
+}
+.compare .segmented button {
+  padding-inline: 6px;
+}

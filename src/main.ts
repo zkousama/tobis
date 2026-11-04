@@ -3,8 +3,8 @@ import type { BusMap } from "./map.ts";
 import { Router, waitFor, type Journey, type RideLeg, type WalkFn } from "./router.ts";
 import { SearchIndex, type Hit } from "./search.ts";
 import { nameOf, type Names, type Network } from "./network.ts";
-import { bearing, dist, inPolygon, type LngLat } from "./geo.ts";
-import { detectLang, fmtDistance, fmtMinutes, fmtStops, getLang, LANGS, setLang, t, typeLabel, type Lang } from "./i18n.ts";
+import { bearing, dist, type LngLat } from "./geo.ts";
+import { detectLang, fmtDistance, fmtMinutes, fmtStops, getLang, LANGS, setLang, t, typeLabel, type Key, type Lang } from "./i18n.ts";
 import { h, icon, lineBadge } from "./ui/dom.ts";
 import { visible } from "./ui/colour.ts";
 import { RideTracker } from "./ride.ts";
@@ -15,6 +15,8 @@ import { registerOffline } from "./offline.ts";
 import { getTheme, setTheme, type Theme } from "./theme.ts";
 import { fareFor, fmtDH } from "./fares.ts";
 import { expandShortUrl, parseInput, type Parsed } from "./geoinput.ts";
+import { buildOptions, paretoFront, rank, winners, type Option, type Part, type Priority } from "./compare.ts";
+import { walkPace } from "./pace.ts";
 
 interface Endpoint {
   ll: LngLat;
@@ -112,6 +114,7 @@ async function boot() {
   net = await res.json();
   performance.mark("parsed");
   router = new Router(net); // straight-line walking until the street graph is in
+  router.setWalkSpeed(walkPace());
   performance.mark("router");
   render(); // the planner is usable before the map has drawn
   performance.mark("rendered");
@@ -441,7 +444,9 @@ function planner(mode: "home" | "search" | "results", active?: "from" | "to") {
       oninput: (e: Event) => {
         const v = (e.target as HTMLInputElement).value;
         clear.hidden = !v;
-        updateSearch(which, v);
+        // Wait for a short pause in typing, so slower phones stay smooth.
+        clearTimeout(searchTimer);
+        searchTimer = window.setTimeout(() => updateSearch(which, v), v.length < 3 ? 0 : 60);
       },
       onkeydown: (e: KeyboardEvent) => {
         // Enter picks the first suggestion, like a maps app.
@@ -598,6 +603,7 @@ async function pasteFromClipboard(field: "from" | "to") {
   if (ep) setEndpoint(field, ep);
 }
 
+let searchTimer = 0;
 let searchList: HTMLElement | undefined;
 let pasteRow: HTMLElement | undefined;
 let cantFind: HTMLElement | undefined;
@@ -770,93 +776,154 @@ function resultsBody() {
     : null;
   if (!state.journeys.length)
     return h("div", null, h("div", { class: "empty-state" }, h("span", { class: "row-icon" }, icon.bus()), h("p", null, t("noTrip"))), nearBlock, dataNote());
+  return h("div", { class: "results" }, to?.sub ? h("p", { class: "muted", style: "margin:2px 0 4px" }, nm(to.sub)) : null, compareBlock(), nearBlock, dataNote());
+}
+
+// ---------- comparing every way to get there ----------
+function getPriority(): Priority {
+  try {
+    const p = localStorage.getItem("priority");
+    if (p === "cheap" || p === "walk") return p;
+  } catch {}
+  return "fast";
+}
+let showAllOptions = false;
+function compareBlock() {
+  if (!state.from || !state.to) return null;
+  const { options, note, night } = buildOptions(net, state.journeys, state.from.ll, state.to.ll, new Date(), walkPace());
+  const by = getPriority();
+  // Drop options that are worse than another on time, price and walking at once.
+  const front = paretoFront(options);
+  const hidden = options.length - front.length;
+  const ranked = rank(showAllOptions ? options : front, by);
+  const win = winners(options);
+  const longest = Math.max(...ranked.map((o) => o.range[1]), 1);
+  if (ranked[0]?.journey !== undefined) previewTrip(ranked[0].journey);
+  const control = segmented<Priority>(
+    [
+      { id: "fast", label: t("segFast") },
+      { id: "cheap", label: t("segCheap") },
+      { id: "walk", label: t("segWalk") },
+    ],
+    by,
+    (id) => {
+      try {
+        localStorage.setItem("priority", id);
+      } catch {}
+      render();
+    },
+  );
   return h(
     "div",
-    { class: "results" },
-    to?.sub ? h("p", { class: "muted", style: "margin:2px 0 4px" }, nm(to.sub)) : null,
-    state.journeys.map((j, i) => {
-      const rides = j.legs.filter((l): l is RideLeg => l.kind === "ride");
-      const first = rides[0];
-      const walkFirst = j.legs[0]?.kind === "walk" ? j.legs[0].seconds : 0;
-      const summary = first
-        ? `${nm(net.stops[variantOf(first).stops[first.board]].n)} · ${fmtMinutes(walkFirst)} ${t("walkMin")}`
-        : `${t("walkAll")} · ${fmtDistance(j.walkMetres)}`;
-      const fare = journeyFare(j);
-      return h(
-        "button",
-        {
-          class: `ticket${i === 0 ? " best" : ""}`,
-          onmouseenter: () => previewTrip(i),
-          onfocus: () => previewTrip(i),
-          onclick: () => go({ name: "trip", index: i }),
-        },
-        h(
-          "div",
-          { class: "ticket-main" },
-          i === 0 ? h("span", { class: "label best-label" }, t("best")) : null,
-          legChips(j),
-          h("div", { class: "journey-sub" }, summary, rides.length > 1 ? ` · ${rides.length - 1} ${rides.length > 2 ? t("changes") : t("change")}` : rides.length === 1 ? ` · ${t("direct")}` : ""),
-        ),
-        h("div", { class: "ticket-stub" }, h("span", { class: "ticket-time" }, String(Math.max(1, Math.round(j.seconds / 60))), h("small", null, t("min"))), fare ? h("span", { class: "ticket-fare" }, `≈ ${fmtDH(fare)}`) : null),
-      );
-    }),
-    petitTaxiBlock(),
-    nearBlock,
-    dataNote(),
-  );
-}
-
-/** The commune a point is in, for taxi rules (falls back to the nearest town centre). */
-function townOf(ll: LngLat) {
-  const c = net.communes?.find((x) => inPolygon(ll, x.rings));
-  if (c) return nm(c.n);
-  let best: { name: string; d: number } | undefined;
-  for (const p of net.places) {
-    if (p.k !== "town" || (p.t !== "city" && p.t !== "town")) continue;
-    const d = dist(ll, p.ll);
-    if (d < 8000 && (!best || d < best.d)) best = { name: p.n.d ?? "", d };
-  }
-  return best?.name;
-}
-
-/** Taxis as alternatives: ONDA's fixed fares from the airport, else a petit taxi estimate. */
-function petitTaxiBlock() {
-  if (!state.from || !state.to) return null;
-  const crow = dist(state.from.ll, state.to.ll);
-  if (crow < 1500) return null; // short enough to walk
-  const card = (title: string, sub: string, minutes: number | null, price: string) =>
+    { class: "compare" },
+    h("p", { class: "label compare-title" }, t("priorityTitle")),
+    control,
+    night ? h("p", { class: "tip tip-night" }, icon.clock(), h("small", null, t("nightNote"))) : null,
+    h(
+      "p",
+      { class: "bar-legend", "aria-hidden": "true" },
+      h("span", { class: "key key-ride" }),
+      t("legendRide"),
+      h("span", { class: "key key-walk" }),
+      t("legendWalk"),
+      h("span", { class: "key key-wait" }),
+      t("legendWait"),
+    ),
     h(
       "div",
-      { class: "ticket ticket-taxi" },
-      h("div", { class: "ticket-main" }, h("strong", null, title), h("span", { class: "journey-sub" }, sub)),
-      h("div", { class: "ticket-stub" }, minutes !== null ? h("span", { class: "ticket-time" }, String(Math.round(minutes)), h("small", null, t("min"))) : null, h("span", { class: "ticket-fare" }, price)),
-    );
-  const km = (crow * 1.35) / 1000; // streets are longer than a straight line
-  // ~25 km/h in town, ~60 km/h on the open road past that, plus a few minutes to find one.
-  const minutes = (Math.min(km, 8) / 25 + Math.max(0, km - 8) / 60) * 60 + 4;
-  const at = net.airportTaxi;
-  if (at && dist(state.from.ll, at.at) < at.radius) {
-    const town = townOf(state.to.ll) ?? "";
-    const fare = at.fares.find((f) => f.to.some((n) => normalizeName(n) === normalizeName(town)));
-    if (fare) return h("div", { class: "section" }, h("h3", { class: "section-title label" }, t("otherWays")), card(t("airportTaxi"), t("airportTaxiSub"), minutes, `${fmtDH(fare.dh)} ${t("perCar")}`));
-  }
-  const pt = net.petitTaxi;
-  if (!pt) return null;
-  const fromTown = townOf(state.from.ll), toTown = townOf(state.to.ll);
-  if (fromTown && toTown && fromTown !== toTown)
-    return h("div", { class: "section" }, h("h3", { class: "section-title label" }, t("otherWays")), h("p", { class: "tip" }, h("span", { class: "row-main" }, h("strong", null, t("petitTaxi")), h("small", null, t("petitTaxiOtherTown", toTown)))));
-  const hour = new Date().getHours();
-  const night = hour >= pt.nightFrom || hour < pt.nightTo ? 1 + pt.night : 1;
-  const meter = (f: number) => Math.max(pt.minFare, pt.start + pt.perKm * km * f) * night;
-  const price = `≈ \u2066${Math.round(meter(0.85))}–${Math.round(meter(1.2))} DH\u2069`;
-  return h(
-    "div",
-    { class: "section" },
-    h("h3", { class: "section-title label" }, t("otherWays")),
-    card(t("petitTaxi"), night > 1 ? `${t("petitTaxiSub")} · ${t("petitTaxiNight")}` : t("petitTaxiSub"), minutes, price),
+      { class: "options" },
+      ranked.map((o, i) => optionRow(o, i === 0, [win.fast === o && t("prioFast"), win.cheap === o && t("prioCheap"), win.walk === o && t("prioWalk")].filter(Boolean) as string[], longest)),
+    ),
+    hidden > 0
+      ? h(
+          "button",
+          {
+            class: "link show-all",
+            onclick: () => {
+              showAllOptions = !showAllOptions;
+              render();
+            },
+          },
+          showAllOptions ? t("hideWorse") : t("showWorse", hidden),
+        )
+      : null,
+    note ? h("p", { class: "tip" }, h("span", { class: "row-main" }, h("strong", null, t("petitTaxi")), h("small", null, t("petitTaxiOtherTown", note.town)))) : null,
   );
 }
-const normalizeName = (v: string) => v.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z]/g, "");
+
+function timeBar(o: Option, longest: number) {
+  const total = o.parts.reduce((n, p) => n + p.s, 0) || 1;
+  const label: Record<Part["k"], Key> = { walk: "legendWalk", wait: "legendWait", ride: "legendRide" };
+  // The bar is the likely time; the faint tail reaches the slow end of the range.
+  const tail = Math.max(0, o.range[1] - o.seconds);
+  return h(
+    "div",
+    { class: "tbar-track" },
+    h(
+      "div",
+      { class: "tbar", style: `width:${Math.max(14, (o.seconds / longest) * 100)}%` },
+      o.parts
+        .filter((p) => p.s > 20)
+        .map((p) => h("span", { class: `seg seg-${p.k}`, style: `flex-grow:${p.s / total};${p.colour ? `--c:${p.colour}` : ""}`, title: `${t(label[p.k])} · ${fmtMinutes(p.s)}` })),
+    ),
+    tail > 60 ? h("span", { class: "tbar-tail", style: `width:${(tail / longest) * 100}%`, title: t("rangeTitle") }) : null,
+  );
+}
+
+function breakdown(o: Option) {
+  const sum = (k: Part["k"]) => o.parts.filter((p) => p.k === k).reduce((n, p) => n + p.s, 0);
+  return [
+    sum("walk") > 30 ? t("bdWalk", fmtMinutes(sum("walk"))) : null,
+    sum("wait") > 30 ? t("bdWait", fmtMinutes(sum("wait"))) : null,
+    sum("ride") > 30 ? t("bdRide", fmtMinutes(sum("ride"))) : null,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+}
+
+function optionRow(o: Option, first: boolean, tags: string[], longest: number) {
+  const j = o.journey !== undefined ? state.journeys[o.journey] : undefined;
+  let head: Node;
+  let sub: string;
+  if (o.kind === "transit" && j) {
+    const rides = j.legs.filter((l): l is RideLeg => l.kind === "ride");
+    head = legChips(j);
+    sub = `${nm(net.stops[variantOf(rides[0]).stops[rides[0].board]].n)} · ${rides.length > 1 ? `${rides.length - 1} ${rides.length > 2 ? t("changes") : t("change")}` : t("direct")}`;
+  } else if (o.kind === "walk") {
+    head = h("span", { class: "mode-name" }, icon.walk(), t("walkAll"));
+    sub = fmtDistance(o.walkMetres);
+  } else {
+    head = h("span", { class: "mode-name" }, icon.car(), o.kind === "airportTaxi" ? t("airportTaxi") : t("petitTaxi"));
+    sub = o.kind === "airportTaxi" ? t("airportTaxiSub") : `${t("petitTaxiSub")}${o.nightRate ? ` · ${t("petitTaxiNight")}` : ""}`;
+  }
+  const price = !o.cost
+    ? t("fareUnknown")
+    : o.cost.high === 0
+      ? t("free")
+      : o.cost.low === o.cost.high
+        ? `≈ ${fmtDH(o.cost.low)}${o.perCar ? ` ${t("perCar")}` : ""}`
+        : `≈ ⁦${o.cost.low}–${o.cost.high} DH⁩`;
+  const [lo, hi] = o.range.map((x) => Math.max(1, Math.round(x / 60)));
+  const body = [
+    h(
+      "div",
+      { class: "opt-top" },
+      h("div", { class: "opt-main" }, tags.length ? h("div", { class: "opt-tags" }, tags.map((x) => h("span", { class: "opt-tag" }, x))) : null, head, h("span", { class: "journey-sub" }, sub)),
+      h(
+        "div",
+        { class: "ticket-stub" },
+        h("span", { class: "ticket-time" }, String(Math.max(1, Math.round(o.seconds / 60))), h("small", null, t("min"))),
+        hi > lo ? h("span", { class: "ticket-range" }, `⁦${lo}–${hi}⁩ ${t("min")}`) : null,
+        h("span", { class: "ticket-fare" }, price),
+      ),
+    ),
+    timeBar(o, longest),
+    h("p", { class: "opt-breakdown" }, breakdown(o)),
+  ];
+  if (o.journey === undefined) return h("div", { class: `option${first ? " best" : ""}` }, body);
+  const ji = o.journey;
+  return h("button", { class: `option${first ? " best" : ""}`, onmouseenter: () => previewTrip(ji), onfocus: () => previewTrip(ji), onclick: () => go({ name: "trip", index: ji }) }, body);
+}
 
 function previewTrip(i: number) {
   const j = state.journeys[i];

@@ -39,3 +39,14 @@ test("a number finds the line", () => {
   const [h] = new SearchIndex(net).search("32");
   assert.equal(h.kind, "line");
 });
+
+test("typos still find the place", async () => {
+  const { typoDistance } = await import("../src/search.ts");
+  assert.equal(typoDistance("pharmasie", "pharmacie", 2), 1);
+  assert.equal(typoDistance("inzgane", "inezgane", 2), 1);
+  assert.equal(typoDistance("talbrojt", "talborjt", 2), 1); // swapped letters
+  const idx = new SearchIndex(net);
+  assert.equal(idx.search("inezgan")[0]?.label.d, "Inezgane");
+  assert.equal(idx.search("talbrojt")[0]?.label.d, "Talborjt");
+  assert.ok(idx.search("hopitl")[0]?.label.d?.startsWith("Hôpital"));
+});

@@ -100,6 +100,12 @@ export class Router {
     );
   }
 
+  private walkSpeed = WALK_SPEED;
+  /** The rider's own walking pace, learned in ride mode (m/s). */
+  setWalkSpeed(v: number) {
+    this.walkSpeed = v;
+  }
+
   /** Swap in street walking once its graph has loaded. */
   setWalk(walk: WalkFn) {
     this.walk = walk;
@@ -121,7 +127,7 @@ export class Router {
     for (const { stop } of this.stopsNear(origin)) {
       const metres = this.walk(origin, this.net.stops[stop].ll).metres;
       if (metres > MAX_ACCESS) continue;
-      r0[stop] = { cost: metres / WALK_SPEED, via: { kind: "origin", metres } };
+      r0[stop] = { cost: metres / this.walkSpeed, via: { kind: "origin", metres } };
     }
     rides.push(r0);
     reach.push(r0);
@@ -175,7 +181,7 @@ export class Router {
       cur.forEach((lab, s) => {
         if (!lab) return;
         for (const t of this.transfers[s]) {
-          const cost = lab.cost + t.metres / WALK_SPEED;
+          const cost = lab.cost + t.metres / this.walkSpeed;
           if (!walked[t.to] || cost < walked[t.to]!.cost)
             walked[t.to] = { cost, via: { kind: "transfer", fromStop: s, metres: t.metres } };
         }
@@ -184,7 +190,7 @@ export class Router {
       reach.push(walked);
       for (const e of egress) {
         const lab = cur[e.stop]; // only a bus arrival can end the trip here
-        if (lab) candidates.push({ round: k, stop: e.stop, cost: lab.cost + e.metres / WALK_SPEED, egressMetres: e.metres });
+        if (lab) candidates.push({ round: k, stop: e.stop, cost: lab.cost + e.metres / this.walkSpeed, egressMetres: e.metres });
       }
     }
 
@@ -194,8 +200,8 @@ export class Router {
     const direct = this.walk(origin, dest);
     if (direct.metres <= 2500)
       journeys.push({
-        legs: [{ kind: "walk", from: origin, to: dest, metres: direct.metres, seconds: direct.metres / WALK_SPEED, path: direct.path }],
-        seconds: direct.metres / WALK_SPEED,
+        legs: [{ kind: "walk", from: origin, to: dest, metres: direct.metres, seconds: direct.metres / this.walkSpeed, path: direct.path }],
+        seconds: direct.metres / this.walkSpeed,
         walkMetres: direct.metres,
         rides: 0,
       });
@@ -258,7 +264,7 @@ export class Router {
   private walkLeg(from: LngLat, to: LngLat, metres: number): WalkLeg {
     const w = this.walk(from, to);
     const m = w.path ? w.metres : metres;
-    return { kind: "walk", from, to, metres: m, seconds: m / WALK_SPEED, path: w.path };
+    return { kind: "walk", from, to, metres: m, seconds: m / this.walkSpeed, path: w.path };
   }
 }
 
