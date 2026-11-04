@@ -6,6 +6,7 @@ import { Router, type RideLeg } from "../src/router.ts";
 import { parseWalkGraph, Walker } from "../src/walk.ts";
 import { dist, type LngLat } from "../src/geo.ts";
 import type { Network } from "../src/network.ts";
+import { SearchIndex } from "../src/search.ts";
 
 const DATA = "public/data/agadir.json";
 const WALK = "public/data/agadir-walk.bin";
@@ -90,4 +91,9 @@ test("leaving the Trambus out still finds buses, with no Trambus ride", { skip: 
   const without = router.plan(from, to, { skipBrt: true });
   assert.ok(without.length > 0);
   for (const j of without) assert.ok(!refs(j).includes("BHNS"));
+});
+
+test("search: 'farmacie' finds pharmacies (ph sounds like f)", { skip: !have }, () => {
+  const hits = new SearchIndex(net).search("farmacie", PLACES.talborjt, 12);
+  assert.ok(hits.some((h) => /pharmacie/i.test(h.label.d ?? "")), "no pharmacy for 'farmacie'");
 });

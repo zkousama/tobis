@@ -81,6 +81,7 @@ export class BusMap {
       this.map.once("load", () => {
         try {
           this.addOverlays(handlers);
+          this.foldCredit();
           res();
         } catch (err) {
           rej(err);
@@ -363,6 +364,21 @@ export class BusMap {
     this.lastTrip = undefined;
     (this.map.getSource("trip") as GeoJSONSource | undefined)?.setData(empty());
     this.clearMarkers();
+  }
+
+  /** The credit shows in full at launch, then folds to its (i) button after 5 s or on the first touch (OSMF attribution guidelines allow this). */
+  private foldCredit() {
+    const el = this.map.getContainer().querySelector(".maplibregl-ctrl-attrib.maplibregl-compact");
+    if (!el) return;
+    let done = false;
+    const fold = () => {
+      if (done) return;
+      done = true;
+      el.classList.remove("maplibregl-compact-show");
+      el.removeAttribute("open");
+    };
+    setTimeout(fold, 5000);
+    this.map.once("movestart", fold);
   }
 
   flyTo(ll: LngLat, zoom = 16) {

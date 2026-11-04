@@ -34,6 +34,7 @@ function loosen(s: string): string {
   return s
     .replace(/ou/g, "u")
     .replace(/kh/g, "x")
+    .replace(/ph/g, "f") // pharmacie, farmacie
     .replace(/qu|q|ck|c(?![ehiy])/g, "k") // clinique, clinik, klinik sound the same
     .replace(/(.)\1/g, "$1")
     .replace(/^(el|al|l) /, "");

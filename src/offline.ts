@@ -14,13 +14,19 @@ export function registerOffline(onProgress: (done: number, total: number) => voi
   ch.onmessage = (e) => {
     if (e.data?.type === "progress") onProgress(e.data.done, e.data.total);
   };
+  // Reload only onto a version this page asked for. The first install also
+  // changes the controller (the worker claims the page), and that must not reload.
+  let asked = false;
   let reloading = false;
   sw.addEventListener("controllerchange", () => {
-    if (reloading) return;
+    if (!asked || reloading) return;
     reloading = true;
     location.reload();
   });
-  const apply = (w: ServiceWorker) => w.postMessage({ type: "skipWaiting" });
+  const apply = (w: ServiceWorker) => {
+    asked = true;
+    w.postMessage({ type: "skipWaiting" });
+  };
   const offer = (w: ServiceWorker) => {
     if (!sw.controller) return; // first install: nothing to replace
     if (quietMoment()) return apply(w);
