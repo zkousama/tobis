@@ -1,6 +1,6 @@
-# Bus d'Agadir
+# Tobis
 
-Trip planner for the buses and the Amalway Trambus in Greater Agadir. It tells you which bus to take, where to wait for it, how many stops to ride, where to get off and how far to walk. Once it has loaded it works with no internet: the map, the search, the route finder and the live ride mode all run on the phone.
+Trip planner for the buses and the Amalway Trambus in Greater Agadir (tobis is Darija for bus). Live at [tobis.pages.dev](https://tobis.pages.dev). It tells you which bus to take, where to wait for it, how many stops to ride, where to get off and how far to walk. Once it has loaded it works with no internet: the map, the search, the route finder and the live ride mode all run on the phone.
 
 French, Darija and English.
 

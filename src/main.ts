@@ -12,6 +12,7 @@ import { loadWalkGraph } from "./walk.ts";
 // The map library is the heaviest part: start fetching it right away, in parallel.
 const mapModule = import("./map.ts");
 import { registerOffline } from "./offline.ts";
+import { getTheme, setTheme, type Theme } from "./theme.ts";
 import { fareFor, fmtDH } from "./fares.ts";
 import { expandShortUrl, parseInput, type Parsed } from "./geoinput.ts";
 
@@ -31,7 +32,8 @@ type View =
   | { name: "line"; line: number; variant: number }
   | { name: "stop"; stop: number }
   | { name: "point"; ll: LngLat }
-  | { name: "about" };
+  | { name: "about" }
+  | { name: "help"; section?: string };
 
 const CITY = "agadir";
 const base = import.meta.env.BASE_URL;
@@ -44,7 +46,34 @@ const state = {
   me: undefined as { ll: LngLat; acc: number; at: number } | undefined,
   pickOnMap: undefined as "from" | "to" | undefined,
   sheet: "half" as "peek" | "half" | "full",
+  locPerm: "prompt" as PermissionState | "unsupported",
 };
+
+// ---------- installing the app (it's a PWA) ----------
+interface InstallPrompt extends Event {
+  prompt(): Promise<void>;
+  userChoice: Promise<{ outcome: string }>;
+}
+let installEvent: InstallPrompt | undefined;
+const isIos = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+const standalone = () => matchMedia("(display-mode: standalone)").matches || (navigator as unknown as { standalone?: boolean }).standalone === true;
+addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  installEvent = e as InstallPrompt;
+  if (["home", "about", "help"].includes(current().name)) render();
+});
+addEventListener("appinstalled", () => {
+  installEvent = undefined;
+  render();
+});
+async function install() {
+  if (!installEvent) return go({ name: "help", section: "install" });
+  await installEvent.prompt();
+  await installEvent.userChoice.catch(() => undefined);
+  installEvent = undefined;
+  render();
+}
+const canInstall = () => !standalone() && (!!installEvent || isIos);
 
 setLang(detectLang());
 const app = document.getElementById("app")!;
@@ -60,7 +89,7 @@ const topbar = h(
   "header",
   { class: "topbar" },
   h("button", { class: "brand", onclick: () => go({ name: "home" }, true) }, h("span", { class: "brand-mark" }, icon.bus()), brandName),
-  h("div", { class: "topbar-actions" }, offlineChip, h("button", { class: "icon-btn", "aria-label": t("about"), onclick: () => go({ name: "about" }) }, icon.menu())),
+  h("div", { class: "topbar-actions" }, offlineChip, h("button", { class: "icon-btn", "aria-label": t("settings"), onclick: () => go({ name: "about" }) }, icon.menu())),
 );
 const locateBtn = h("button", { class: "fab fab-locate", "aria-label": t("myLocation"), onclick: () => locate(true) }, icon.locate());
 const toast = h("div", { class: "toast", role: "status" });
@@ -88,6 +117,7 @@ async function boot() {
   performance.mark("router");
   render(); // the planner is usable before the map has drawn
   performance.mark("rendered");
+  watchLocationPermission();
   const { BusMap } = await mapModule;
   bmap = new BusMap(mapEl, net, getLang(), {
     onStop: (s) => go({ name: "stop", stop: s }),
@@ -121,14 +151,34 @@ async function boot() {
 function current(): View {
   return state.stack[state.stack.length - 1];
 }
+// Views ride on the browser history, so the phone's back button steps back
+// through the app instead of closing it.
+let historyDepth = 1;
 function go(v: View, reset = false) {
   if (reset) state.stack = [{ name: "home" }];
-  if (v.name !== "home") state.stack.push(v);
+  if (v.name !== "home") {
+    state.stack.push(v);
+    history.pushState({ app: true }, "");
+    historyDepth++;
+  }
   render();
 }
 function back() {
+  if (state.stack.length > 1) history.back();
+}
+addEventListener("popstate", () => {
+  historyDepth = Math.max(1, historyDepth - 1);
   if (state.stack.length > 1) state.stack.pop();
+  ride?.stop();
   render();
+});
+/** Replace the view stack (after planning, or picking on the map). */
+function setStack(views: View[]) {
+  state.stack = [{ name: "home" }, ...views];
+  if (views.length && historyDepth < state.stack.length) {
+    history.pushState({ app: true }, "");
+    historyDepth++;
+  }
 }
 function setSheet(size: "peek" | "half" | "full") {
   state.sheet = size;
@@ -146,7 +196,7 @@ async function setEndpoint(field: "from" | "to", ep: Endpoint) {
     if (ll) state.from = meEndpoint(ll);
   }
   if (state.from && state.to) return plan();
-  state.stack = [{ name: "home" }];
+  setStack([]);
   if (!state.from) {
     flash(t("setStart"));
     return go({ name: "search", field: "from" });
@@ -157,7 +207,7 @@ async function setEndpoint(field: "from" | "to", ep: Endpoint) {
 function plan() {
   if (!state.from || !state.to) return;
   state.journeys = router.plan(state.from.ll, state.to.ll);
-  state.stack = [{ name: "home" }, { name: "results" }];
+  setStack([{ name: "results" }]);
   writeHash();
   render();
 }
@@ -184,30 +234,55 @@ function recents(): Endpoint[] {
 }
 
 // ---------- location ----------
-function locate(fly: boolean): Promise<LngLat | undefined> {
+const LOC_ERRORS = { 1: "locDenied", 2: "locOff", 3: "locTimeout" } as const;
+function locate(fly: boolean, quiet = false): Promise<LngLat | undefined> {
   return new Promise((resolve) => {
     if (!navigator.geolocation) {
-      flash(t("noGps"));
+      if (!quiet) flash(t("locOff"));
       return resolve(undefined);
     }
-    if (fly) flash(t("locating"));
+    if (fly) flash(t("locating"), 12000);
     navigator.geolocation.getCurrentPosition(
       (p) => {
         const ll: LngLat = [p.coords.longitude, p.coords.latitude];
         state.me = { ll, acc: p.coords.accuracy, at: Date.now() };
+        state.locPerm = "granted";
         bmap?.setMe(ll, p.coords.accuracy);
         if (fly) bmap?.flyTo(ll, 16);
         toast.classList.remove("show");
+        if (current().name === "home" || current().name === "search") refreshPlanner();
         resolve(ll);
       },
-      () => {
-        flash(t("noGps"));
+      (err) => {
+        if (err.code === 1) state.locPerm = "denied";
+        if (!quiet) flash(t(LOC_ERRORS[err.code as 1 | 2 | 3] ?? "noGps"), 6000);
         resolve(undefined);
       },
-      { enableHighAccuracy: true, timeout: 12000, maximumAge: 60000 },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 },
     );
   });
 }
+/** If location is already allowed, find the user quietly so "from" is ready. */
+function watchLocationPermission() {
+  if (!navigator.permissions?.query) {
+    state.locPerm = "unsupported";
+    return;
+  }
+  navigator.permissions
+    .query({ name: "geolocation" })
+    .then((p) => {
+      state.locPerm = p.state;
+      if (p.state === "granted") locate(false, true);
+      p.onchange = () => {
+        state.locPerm = p.state;
+        if (p.state === "granted") locate(false, true);
+        if (current().name === "home") render();
+      };
+      if (current().name === "home") render();
+    })
+    .catch(() => (state.locPerm = "unsupported"));
+}
+let refreshPlanner = () => {};
 
 let toastTimer = 0;
 function flash(msg: string, ms = 3200) {
@@ -314,6 +389,10 @@ function render() {
       setSheet("full");
       sheetBody.append(aboutBody());
       break;
+    case "help":
+      setSheet("full");
+      sheetBody.append(helpBody(v.section));
+      break;
   }
 }
 
@@ -340,20 +419,32 @@ function planner(active?: "from" | "to") {
   const field = (which: "from" | "to") => {
     const ep = state[which];
     const isActive = active === which;
+    // "From" quietly means "where I am" once the phone has a position.
     const placeholder = which === "to" ? t("whereTo") : state.me ? t("myLocation") : t("from");
     const input = h("input", {
       class: "field-input",
-      type: "search",
+      type: "text",
+      inputmode: "search",
       placeholder,
       value: isActive ? "" : nm(ep?.label),
       "aria-label": which === "to" ? t("to") : t("from"),
       autocomplete: "off",
+      autocapitalize: "off",
+      spellcheck: false,
       enterkeyhint: "search",
       onfocus: () => {
         const cur = current();
         if (cur.name !== "search" || cur.field !== which) go({ name: "search", field: which });
       },
-      oninput: (e: Event) => updateSearch(which, (e.target as HTMLInputElement).value),
+      oninput: (e: Event) => {
+        const v = (e.target as HTMLInputElement).value;
+        clear.hidden = !v;
+        updateSearch(which, v);
+      },
+      onkeydown: (e: KeyboardEvent) => {
+        // Enter picks the first suggestion, like a maps app.
+        if (e.key === "Enter") (searchList?.querySelector(".row") as HTMLButtonElement | null)?.click();
+      },
       onpaste: (e: ClipboardEvent) => {
         const text = e.clipboardData?.getData("text") ?? "";
         const p = parseInput(text, state.me?.ll ?? net.center);
@@ -363,23 +454,85 @@ function planner(active?: "from" | "to") {
         }
       },
     });
-    if (isActive) queueMicrotask(() => input.focus());
-    return h("label", { class: `field field-${which}${isActive ? " active" : ""}` }, h("span", { class: `dot dot-${which}` }), input);
+    const clear = h(
+      "button",
+      {
+        class: "field-clear",
+        type: "button",
+        "aria-label": t("clear"),
+        hidden: !isActive,
+        onclick: (e: Event) => {
+          e.preventDefault();
+          input.value = "";
+          clear.hidden = true;
+          updateSearch(which, "");
+          input.focus();
+        },
+      },
+      icon.close(),
+    );
+    if (isActive) queueMicrotask(() => input.focus({ preventScroll: true }));
+    const meDot = which === "from" && !ep && state.me ? h("span", { class: "me-live", title: t("youAreHere") }) : null;
+    return h("label", { class: `field field-${which}${isActive ? " active" : ""}` }, h("span", { class: `dot dot-${which}` }), input, meDot, clear);
   };
-  return h(
+  const el = h(
     "div",
-    { class: "planner" },
+    { class: `planner${active ? " planner-search" : ""}` },
+    active ? h("button", { class: "icon-btn planner-back", "aria-label": t("cancel"), onclick: back }, icon.back()) : null,
     h("div", { class: "fields" }, field("from"), field("to")),
-    h("button", { class: "icon-btn swap", "aria-label": t("swap"), onclick: swap }, icon.swap()),
+    active ? null : h("button", { class: "icon-btn swap", "aria-label": t("swap"), onclick: swap }, icon.swap()),
   );
+  refreshPlanner = () => {
+    if (current().name === "home") el.replaceWith(planner());
+  };
+  return el;
 }
 
 function homeBody() {
   const rec = recents();
   const brt = net.lines.findIndex((l) => l.brt);
+  let dismissed = false;
+  try {
+    dismissed = localStorage.getItem("installDismissed") === "1";
+  } catch {}
+  const cards: Node[] = [];
+  // Location: ask once, with a reason, rather than a surprise browser prompt.
+  if (!state.me && state.locPerm !== "granted")
+    cards.push(
+      h(
+        "button",
+        { class: "tip", onclick: () => locate(true) },
+        h("span", { class: "row-icon accent" }, icon.locate()),
+        h("span", { class: "row-main" }, h("strong", null, t("useMyLocation")), h("small", { class: "muted" }, state.locPerm === "denied" ? t("locDenied") : t("useMyLocationSub"))),
+      ),
+    );
+  if (canInstall() && !dismissed)
+    cards.push(
+      h(
+        "div",
+        { class: "tip tip-install" },
+        h("span", { class: "row-icon" }, icon.offline()),
+        h("span", { class: "row-main" }, h("strong", null, t("installCard"))),
+        h("button", { class: "btn btn-small btn-primary", onclick: install }, t("installNow")),
+        h(
+          "button",
+          {
+            class: "link",
+            onclick: () => {
+              try {
+                localStorage.setItem("installDismissed", "1");
+              } catch {}
+              render();
+            },
+          },
+          t("later"),
+        ),
+      ),
+    );
   return h(
     "div",
     { class: "home" },
+    cards.length ? h("div", { class: "tips" }, cards) : null,
     h(
       "div",
       { class: "quick" },
@@ -418,6 +571,7 @@ function homeBody() {
           ),
         )
       : null,
+    h("button", { class: "cta", onclick: () => go({ name: "help" }) }, h("span", { class: "plus" }, "?"), t("helpLink")),
     h("div", { class: "zigzag" }),
     dataNote(),
   );
@@ -429,15 +583,38 @@ function dataNote() {
   return h("p", { class: "fine" }, `${t("dataFrom")} ${d ? d.toLocaleDateString(lang) : "?"}. ${t("estimates")}`);
 }
 
+async function pasteFromClipboard(field: "from" | "to") {
+  let text = "";
+  try {
+    text = await navigator.clipboard.readText();
+  } catch {
+    return flash(t("pasteBlocked"), 5000);
+  }
+  const p = parseInput(text, state.me?.ll ?? net.center);
+  if (!p.ll && !p.shortUrl) return flash(t("pasteNothing"), 5000);
+  const ep = await resolveParsed(p);
+  if (ep) setEndpoint(field, ep);
+}
+
 let searchList: HTMLElement | undefined;
 let pasteRow: HTMLElement | undefined;
+let cantFind: HTMLElement | undefined;
 function searchBody(field: "from" | "to") {
   searchList = h("ul", { class: "list results-list" });
   pasteRow = h("div", { hidden: true });
+  cantFind = h(
+    "div",
+    { class: "tip tip-help", hidden: true },
+    h("span", { class: "row-main" }, h("strong", null, t("cantFindTitle")), h("small", null, t("cantFindText"))),
+    h("div", { class: "tip-actions" }, h("button", { class: "btn btn-small btn-primary", onclick: () => pasteFromClipboard(field) }, t("pasteLink")), h("button", { class: "link", onclick: () => go({ name: "help", section: "find" }) }, t("howTo"))),
+  );
+  const locSub = state.me ? fmtDistance(state.me.acc) + " ±" : state.locPerm === "denied" ? t("locDenied") : null;
   return h(
     "div",
     { class: "search" },
     pasteRow,
+    searchList,
+    cantFind,
     h(
       "div",
       { class: "search-actions" },
@@ -451,7 +628,7 @@ function searchBody(field: "from" | "to") {
           },
         },
         h("span", { class: "row-icon accent" }, icon.locate()),
-        h("span", { class: "row-main" }, h("span", null, t("myLocation"))),
+        h("span", { class: "row-main" }, h("span", null, t("myLocation")), locSub ? h("small", { class: "muted" }, locSub) : null),
       ),
       h(
         "button",
@@ -459,23 +636,28 @@ function searchBody(field: "from" | "to") {
           class: "row",
           onclick: () => {
             state.pickOnMap = field;
-            state.stack = [{ name: "home" }];
+            setStack([]);
             render();
             setSheet("peek");
-            flash(t("tapMap"), 5000);
+            flash(t("tapMap"), 6000);
           },
         },
         h("span", { class: "row-icon" }, icon.pin()),
         h("span", { class: "row-main" }, h("span", null, t("pointOnMap"))),
       ),
+      h(
+        "button",
+        { class: "row", onclick: () => pasteFromClipboard(field) },
+        h("span", { class: "row-icon" }, icon.link()),
+        h("span", { class: "row-main" }, h("span", null, t("pasteLink")), h("small", { class: "muted" }, t("pasteHint"))),
+      ),
     ),
-    searchList,
-    h("p", { class: "fine" }, `${t("searchHint")}. ${t("pasteHint")}.`),
+    h("p", { class: "fine" }, t("searchHint")),
   );
 }
 
 function updateSearch(field: "from" | "to", q: string) {
-  if (!searchList || !pasteRow) return;
+  if (!searchList || !pasteRow || !cantFind) return;
   // A typed or pasted link, plus code or coordinates.
   const parsed = parseInput(q, state.me?.ll ?? net.center);
   pasteRow.hidden = !(parsed.ll || parsed.shortUrl);
@@ -488,11 +670,11 @@ function updateSearch(field: "from" | "to", q: string) {
     ),
   );
   const near = state.me?.ll ?? net.center;
-  const hits = search().search(q, near, 12);
-  searchList.replaceChildren(
-    ...(q.trim() && !hits.length && pasteRow.hidden ? [h("li", { class: "empty" }, t("noMatch"))] : []),
-    ...hits.map((hit) => h("li", null, hitRow(hit, field, near))),
-  );
+  const hits = q.trim() ? search().search(q, near, 12) : [];
+  searchList.replaceChildren(...hits.map((hit) => h("li", null, hitRow(hit, field, near))));
+  // Typed a couple of letters: if the place isn't here, show the way round it.
+  cantFind.hidden = q.trim().length < 3 || !pasteRow.hidden;
+  cantFind.classList.toggle("tip-strong", !hits.length);
 }
 
 const KIND_ICON: Record<string, () => HTMLElement> = { street: icon.arrow };
@@ -902,34 +1084,57 @@ function pointBody(ll: LngLat) {
   );
 }
 
+function segmented<T extends string>(options: { id: T; label: string; lang?: string }[], currentId: T, pick: (id: T) => void) {
+  return h(
+    "div",
+    { class: "segmented" },
+    options.map((o) => h("button", { class: o.id === currentId ? "on" : "", lang: o.lang, "aria-pressed": o.id === currentId ? "true" : "false", onclick: () => pick(o.id) }, o.label)),
+  );
+}
+
+function installBlock() {
+  if (standalone()) return h("p", { class: "notice" }, icon.check(), " ", t("installed"));
+  return h(
+    "div",
+    { class: "install-steps" },
+    installEvent ? h("button", { class: "btn btn-primary", onclick: install }, icon.offline(), t("installNow")) : null,
+    h("ol", { class: "help-steps" }, isIos ? h("li", null, t("helpInstallIos")) : [h("li", null, t("helpInstallAndroid")), h("li", null, t("helpInstallIos"))]),
+  );
+}
+
 function aboutBody() {
   return h(
     "div",
     { class: "about" },
-    header(t("about")),
-    h("h2", { class: "display" }, t("appName")),
-    h("p", null, t("aboutText")),
-    h("div", { class: "zigzag small" }),
+    header(t("settings")),
     h("h3", { class: "section-title label" }, t("language")),
-    h(
-      "div",
-      { class: "segmented" },
-      LANGS.map((l) =>
-        h(
-          "button",
-          {
-            class: l.id === getLang() ? "on" : "",
-            lang: l.id === "ar" ? "ar-MA" : l.id,
-            onclick: () => {
-              setLang(l.id as Lang);
-              bmap?.setLang(l.id);
-              render();
-            },
-          },
-          l.label,
-        ),
-      ),
+    segmented(
+      LANGS.map((l) => ({ id: l.id, label: l.label, lang: l.id === "ar" ? "ar-MA" : l.id })),
+      getLang(),
+      (id) => {
+        setLang(id as Lang);
+        bmap?.setLang(id);
+        render();
+      },
     ),
+    h("h3", { class: "section-title label" }, t("appearance")),
+    segmented<Theme>(
+      [
+        { id: "auto", label: t("themeAuto") },
+        { id: "light", label: t("themeLight") },
+        { id: "dark", label: t("themeDark") },
+      ],
+      getTheme(),
+      (id) => {
+        setTheme(id);
+        render();
+      },
+    ),
+    h("h3", { class: "section-title label" }, t("helpInstallTitle")),
+    installBlock(),
+    h("button", { class: "cta", onclick: () => go({ name: "help" }) }, h("span", { class: "plus" }, "?"), t("helpLink")),
+    h("div", { class: "zigzag small" }),
+    h("p", null, t("aboutText")),
     dataNote(),
     h("p", { class: "fine" }, [t("dataAlsa"), t("dataAmalway"), t("dataOverture")].join(" · ")),
     h(
@@ -940,8 +1145,35 @@ function aboutBody() {
       h("a", { href: "https://docs.overturemaps.org/attribution/", target: "_blank", rel: "noopener" }, "Overture Maps Foundation"),
       " · ",
       h("a", { href: "https://protomaps.com", target: "_blank", rel: "noopener" }, "Protomaps"),
+      " · ",
+      h("a", { href: "https://github.com/zkousama/agadir-bus", target: "_blank", rel: "noopener" }, "GitHub"),
     ),
   );
+}
+
+/** What the app does, what it doesn't, and how to get round the gaps. */
+function helpBody(section?: string) {
+  const sec = (id: string, title: string, ...body: Node[]) => h("section", { class: "help-section", id: `help-${id}` }, h("h3", { class: "step-title" }, title), ...body);
+  const list = (keys: Parameters<typeof t>[0][], cls = "help-list") => h("ul", { class: cls }, keys.map((k) => h("li", null, t(k))));
+  const el = h(
+    "div",
+    { class: "help" },
+    header(t("help")),
+    sec("what", t("helpWhatTitle"), list(["helpWhat1", "helpWhat2", "helpWhat3", "helpWhat4"])),
+    sec("cant", t("helpCantTitle"), list(["helpCant1", "helpCant2", "helpCant3", "helpCant4"], "help-list help-cant")),
+    sec(
+      "find",
+      t("helpFindTitle"),
+      h("ol", { class: "help-steps" }, (["helpFind1", "helpFind2", "helpFind3", "helpFind4"] as const).map((k) => h("li", null, t(k)))),
+      h("div", { class: "step-note hand" }, noteArrow(), h("span", null, t("helpFindNote"))),
+      h("button", { class: "btn btn-small", onclick: () => pasteFromClipboard("to") }, icon.link(), t("pasteLink")),
+    ),
+    sec("install", t("helpInstallTitle"), installBlock()),
+    sec("offline", t("helpOfflineTitle"), h("p", null, t("helpOffline"))),
+    sec("location", t("helpLocTitle"), h("p", null, t("helpLoc"))),
+  );
+  if (section) queueMicrotask(() => el.querySelector(`#help-${section}`)?.scrollIntoView({ block: "start" }));
+  return el;
 }
 
 // ---------- shareable links: #from=lon,lat&to=lon,lat ----------

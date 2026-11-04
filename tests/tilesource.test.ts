@@ -21,16 +21,16 @@ const bytes = async (src: RangeOrWholeSource, o: number, l: number) => [...new U
 test("a host that honours ranges is asked for each piece", async () => {
   const calls = mockFetch(true);
   const src = new RangeOrWholeSource("https://x/map.pmtiles");
-  assert.deepEqual(await bytes(src, 10, 4), [...FILE.slice(10, 14)]);
-  assert.deepEqual(await bytes(src, 500, 3), [...FILE.slice(500, 503)]);
+  assert.deepEqual(await bytes(src, 10, 4), Array.from(FILE.slice(10, 14)));
+  assert.deepEqual(await bytes(src, 500, 3), Array.from(FILE.slice(500, 503)));
   assert.equal(calls(), 2);
 });
 
 test("a host that sends the whole file is downloaded once, then sliced", async () => {
   const calls = mockFetch(false);
   const src = new RangeOrWholeSource("https://x/map.pmtiles");
-  assert.deepEqual(await bytes(src, 0, 5), [...FILE.slice(0, 5)]);
-  assert.deepEqual(await bytes(src, 990, 10), [...FILE.slice(990, 1000)]);
-  assert.deepEqual(await bytes(src, 123, 7), [...FILE.slice(123, 130)]);
+  assert.deepEqual(await bytes(src, 0, 5), Array.from(FILE.slice(0, 5)));
+  assert.deepEqual(await bytes(src, 990, 10), Array.from(FILE.slice(990, 1000)));
+  assert.deepEqual(await bytes(src, 123, 7), Array.from(FILE.slice(123, 130)));
   assert.equal(calls(), 1);
 });

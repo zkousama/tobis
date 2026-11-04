@@ -2,6 +2,7 @@ import maplibregl, { type GeoJSONSource, type Map as MLMap, type MapMouseEvent }
 import "maplibre-gl/dist/maplibre-gl.css";
 import { PMTiles, Protocol } from "pmtiles";
 import { RangeOrWholeSource } from "./tilesource.ts";
+import { isDark, onThemeChange } from "./theme.ts";
 import { layers, namedFlavor } from "@protomaps/basemaps";
 // The package only exports its source entry, so point at the built file directly.
 import rtlPluginUrl from "../node_modules/@mapbox/mapbox-gl-rtl-text/dist/mapbox-gl-rtl-text.js?url";
@@ -78,7 +79,7 @@ export class BusMap {
   constructor(el: HTMLElement, net: Network, lang: string, handlers: MapHandlers) {
     this.net = net;
     this.lang = lang;
-    this.dark = matchMedia("(prefers-color-scheme: dark)").matches;
+    this.dark = isDark();
     if (!protocol) {
       protocol = new Protocol();
       maplibregl.addProtocol("pmtiles", protocol.tile);
@@ -113,8 +114,9 @@ export class BusMap {
         }
       }),
     );
-    matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (ev) => {
-      this.dark = ev.matches;
+    onThemeChange((dark) => {
+      if (dark === this.dark) return;
+      this.dark = dark;
       this.restyle();
     });
   }

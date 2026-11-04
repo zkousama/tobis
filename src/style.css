@@ -52,6 +52,23 @@
   }
 }
 
+:root[data-theme="dark"] {
+    --paper: #0f1b26;
+    --paper-2: #172634;
+    --card: #142231;
+    --ink: #f1e7d4;
+    --ink-2: #cdbfa8;
+    --muted: #8f99a0;
+    --rule: #2a3b4a;
+    --marker: #f07548;
+    --marker-soft: rgba(240, 117, 72, 0.28);
+    --on-marker: #1a0e08;
+    --ocean: #6fb4d3;
+    --sign-bg: #070d12;
+    --shadow: 0 1px 0 rgba(0, 0, 0, 0.3), 0 14px 34px rgba(0, 0, 0, 0.5);
+    color-scheme: dark;
+  }
+
 * {
   box-sizing: border-box;
 }
@@ -1401,4 +1418,176 @@ small {
   background: var(--marker);
   color: var(--on-marker);
   font-weight: 600;
+}
+
+/* ---------- phone UX: tips, search, help ---------- */
+.tips {
+  display: grid;
+  gap: 8px;
+  margin: 6px 0 4px;
+}
+.tip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1.5px dashed var(--ink-2);
+  background: var(--card);
+  text-align: start;
+}
+.tip strong {
+  font-weight: 600;
+}
+.tip small {
+  line-height: 1.35;
+}
+.tip-install {
+  flex-wrap: wrap;
+  border-style: solid;
+  background: color-mix(in srgb, var(--marker-soft) 30%, var(--card));
+}
+.tip-install .row-main {
+  flex: 1 1 60%;
+}
+.tip-help {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  margin: 10px 0;
+}
+.tip-help.tip-strong {
+  border-style: solid;
+  border-color: var(--marker);
+  background: color-mix(in srgb, var(--marker-soft) 25%, var(--card));
+}
+.tip-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.btn-small {
+  height: 40px;
+  padding: 0 14px;
+  font-size: 14px;
+}
+.planner-search {
+  align-items: center;
+}
+.planner-back {
+  margin-inline-start: -8px;
+}
+.field {
+  min-height: 52px;
+}
+.field-clear {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  margin-inline-end: -6px;
+  border-radius: 50%;
+  color: var(--muted);
+  flex: none;
+}
+.field-clear .icon {
+  width: 16px;
+  height: 16px;
+}
+.me-live {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #2f6fde;
+  box-shadow: 0 0 0 4px rgba(47, 111, 222, 0.18);
+  flex: none;
+}
+.search-actions {
+  border-bottom: 0;
+  border-top: 1.5px solid var(--ink);
+  margin-top: 8px;
+}
+.results-list:empty + .tip-help[hidden] + .search-actions {
+  border-top: 0;
+}
+.help-section {
+  padding: 16px 0 18px;
+  border-bottom: 1px dashed var(--rule);
+  scroll-margin-top: 64px;
+}
+.help-section .step-title {
+  margin: 0 0 10px;
+  font-size: 23px;
+}
+.help-list,
+.help-steps {
+  margin: 0;
+  padding-inline-start: 22px;
+  display: grid;
+  gap: 8px;
+  color: var(--ink-2);
+}
+.help-steps li::marker {
+  color: var(--marker);
+  font-weight: 700;
+}
+.help-cant li::marker {
+  content: "– ";
+  color: var(--muted);
+}
+.help-section > p {
+  color: var(--ink-2);
+}
+.help-section .btn {
+  margin-top: 12px;
+}
+.install-steps {
+  display: grid;
+  gap: 12px;
+}
+.notice .icon {
+  vertical-align: -4px;
+  color: var(--marker);
+}
+.sheet-handle {
+  height: 28px;
+}
+.sheet-handle::after {
+  top: 10px;
+}
+/* Comfortable tap targets on phones. */
+@media (pointer: coarse) {
+  .row {
+    min-height: 56px;
+  }
+  .icon-btn {
+    width: 44px;
+    height: 44px;
+  }
+}
+/* Phones: the "Where to?" field matters more than the welcome text. */
+@media (max-width: 520px) {
+  .hero {
+    grid-template-columns: 1fr 96px;
+    padding-bottom: 8px;
+  }
+  .hero .display {
+    font-size: 32px;
+  }
+  [dir="rtl"] .hero .display {
+    font-size: 30px;
+  }
+  .hero .art-bus {
+    width: 100px;
+  }
+  .hero-sub {
+    display: none;
+  }
+}
+.toast.update {
+  top: auto;
+  bottom: calc(env(safe-area-inset-bottom) + 16px);
+  z-index: 20;
 }

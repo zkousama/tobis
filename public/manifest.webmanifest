@@ -1,7 +1,7 @@
 {
-  "name": "Bus d'Agadir",
-  "short_name": "Bus Agadir",
-  "description": "Itinéraires en bus et Trambus dans le Grand Agadir, même sans internet.",
+  "name": "Tobis",
+  "short_name": "Tobis",
+  "description": "Bus et Trambus du Grand Agadir : quel bus prendre, où monter, où descendre. Même sans réseau.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
