@@ -30,7 +30,8 @@ ws.onmessage = (e) => {
   if (m.id && pending.has(m.id)) {
     const p = pending.get(m.id);
     pending.delete(m.id);
-    m.error ? p.reject(new Error(`${p.method}: ${m.error.message}`)) : p.resolve(m.result);
+    if (m.error) p.reject(new Error(`${p.method}: ${m.error.message}`));
+    else p.resolve(m.result);
   } else if (m.method) for (const l of listeners) l(m);
 };
 await new Promise((r, j) => ((ws.onopen = r), (ws.onerror = j)));
