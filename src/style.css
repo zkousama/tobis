@@ -26,6 +26,11 @@
   --sheet-half: 52dvh;
   --sheet-full: 92dvh;
   color-scheme: light;
+  --seg-walk: #6b737b;
+  --seg-walk-bg: #d7dbdf;
+  --seg-wait: #c9ced3;
+  /* Side safe areas (notch in landscape), on the side the buttons sit. */
+  --safe-end: env(safe-area-inset-right, 0px);
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -42,6 +47,9 @@
     --accent-soft: #1b2738;
     --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 6px 20px rgba(0, 0, 0, 0.45);
     color-scheme: dark;
+    --seg-walk: #9aa3aa;
+    --seg-walk-bg: #3a4147;
+    --seg-wait: #2f353b;
   }
 }
 :root[data-theme="dark"] {
@@ -58,8 +66,13 @@
   --accent-soft: #1b2738;
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 6px 20px rgba(0, 0, 0, 0.45);
   color-scheme: dark;
+  --seg-walk: #9aa3aa;
+  --seg-walk-bg: #3a4147;
+  --seg-wait: #2f353b;
 }
-
+[dir="rtl"] {
+  --safe-end: env(safe-area-inset-left, 0px);
+}
 * {
   box-sizing: border-box;
 }
@@ -74,9 +87,20 @@ body {
   -webkit-tap-highlight-color: transparent;
   overscroll-behavior: none;
 }
+/* Text follows the phone's text-size setting: rem everywhere, and on iPhone
+   the base comes from Dynamic Type (-apple-system-body). */
+@supports (font: -apple-system-body) {
+  html {
+    font: -apple-system-body;
+  }
+}
 body {
-  font-size: 0.9375rem;
   line-height: 1.45;
+  font-size: 0.9375rem;
+}
+/* Arabic script reads better a little larger. */
+[dir="rtl"] body {
+  font-size: 1rem;
 }
 button,
 input {
@@ -107,7 +131,6 @@ p {
   outline-offset: 2px;
   border-radius: 6px;
 }
-
 #app {
   position: fixed;
   inset: 0;
@@ -118,7 +141,6 @@ p {
   inset: 0;
   background: var(--surface-2);
 }
-
 .display {
   font-size: 1.75rem;
   font-weight: 650;
@@ -144,7 +166,6 @@ small {
   font-weight: 600;
   color: var(--muted);
 }
-
 .icon {
   display: inline-flex;
   width: 20px;
@@ -178,15 +199,25 @@ small {
   background: var(--surface-2);
 }
 .map-btn {
-  width: 44px;
-  height: 44px;
   background: var(--surface);
   box-shadow: var(--shadow);
+  /* The menu says what it is: icon plus a word. */
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: auto;
+  height: 44px;
+  padding: 0 14px 0 12px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.875rem;
 }
 .map-btn:hover {
   background: var(--surface);
 }
-
+[dir="rtl"] .map-btn {
+  padding: 0 12px 0 14px;
+}
 /* Offline copy downloading: a thin bar along the top edge of the sheet. */
 .sheet-progress {
   position: absolute;
@@ -206,7 +237,22 @@ small {
   background: var(--accent);
   transition: width 0.3s ease;
 }
-
+/* No signal: a steady line at the top of the sheet while it lasts. */
+.offline-banner {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 16px 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: var(--surface-2);
+  font-size: 0.8125rem;
+  color: var(--ink-2);
+}
+.offline-banner[hidden] {
+  display: none;
+}
 .fab {
   position: absolute;
   inset-inline-end: 10px;
@@ -310,21 +356,7 @@ small {
 }
 
 /* ---------- home ---------- */
-.hero {
-  padding: 2px 0 12px;
-}
-.hero-sub {
-  margin-top: 6px;
-  color: var(--ink-2);
-  font-size: 0.875rem;
-}
-.sheet[data-size="peek"] .hero {
-  display: none;
-}
 @media (max-width: 520px) {
-  .hero-sub {
-    display: none;
-  }
   .display {
     font-size: 1.5rem;
   }
@@ -346,11 +378,11 @@ small {
   display: flex;
   align-items: center;
   gap: 10px;
-  min-height: 50px;
   padding: 0 12px;
   border-radius: 10px;
   background: var(--surface-2);
   border: 2px solid transparent;
+  min-height: 3.125rem;
 }
 .field.active,
 .field:focus-within {
@@ -385,6 +417,18 @@ small {
 .field-clear .icon {
   width: 16px;
   height: 16px;
+}
+/* Labels that stay once a field is filled. */
+.field-stack {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+.field-label {
+  font-size: 0.75rem;
+  color: var(--muted);
 }
 .dot {
   width: 10px;
@@ -469,6 +513,15 @@ small {
 }
 .row > .icon {
   color: var(--muted);
+}
+/* Pressed state on everything tappable. */
+button:active,
+.row:active,
+.option:active {
+  opacity: 0.72;
+}
+.clear-history {
+  margin: 4px 2px 8px;
 }
 .empty {
   padding: 18px 2px;
@@ -635,11 +688,6 @@ small {
   border-color: var(--accent);
   box-shadow: 0 0 0 1px var(--accent);
 }
-.ticket-main {
-  display: grid;
-  gap: 6px;
-  min-width: 0;
-}
 .ticket-stub {
   display: grid;
   justify-items: end;
@@ -661,10 +709,10 @@ small {
   font-size: 0.7812rem;
   color: var(--ink-2);
 }
-.best-label {
+/* The Trambus card: what it costs once, and "I have it". */
+.ticket-card {
   font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--accent);
+  color: var(--muted);
 }
 .journey-sub {
   font-size: 0.8438rem;
@@ -890,6 +938,12 @@ small {
   height: 16px;
   color: var(--muted);
 }
+.card-note {
+  display: grid;
+  justify-items: start;
+  gap: 6px;
+  margin-top: 6px;
+}
 .mini-stops {
   margin: 6px 0 0;
   padding-inline-start: 18px;
@@ -979,6 +1033,14 @@ small {
   background: var(--surface);
   color: var(--ink);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  /* On-states not shown by colour alone. */
+  font-weight: 650;
+}
+.setting-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 6px;
 }
 .line-stops {
   list-style: none;
@@ -1197,7 +1259,6 @@ small {
 /* ---------- toast, loading ---------- */
 .toast {
   position: absolute;
-  top: calc(env(safe-area-inset-top) + 62px);
   left: 50%;
   transform: translate(-50%, -10px);
   z-index: 10;
@@ -1210,6 +1271,9 @@ small {
   pointer-events: none;
   transition: opacity 0.2s, transform 0.2s;
   max-width: calc(100vw - 32px);
+  /* Snackbar-style: just above the sheet (its offset is set when shown). */
+  top: auto;
+  bottom: calc(var(--sheet-half) + 12px);
 }
 .toast.show {
   opacity: 1;
@@ -1229,6 +1293,8 @@ small {
   display: grid;
   place-items: center;
   height: 120px;
+  gap: 10px;
+  align-content: center;
 }
 .spinner {
   width: 24px;
@@ -1243,7 +1309,6 @@ small {
     transform: rotate(360deg);
   }
 }
-
 .maplibregl-ctrl-attrib {
   font-family: var(--font);
 }
@@ -1255,7 +1320,8 @@ small {
   bottom: calc(var(--sheet-peek) + 10px);
 }
 #app:has(.sheet[data-size="full"]) .maplibregl-ctrl-bottom-right {
-  display: none; /* the map is covered; the credit would sit under the menu button */
+  display: none;
+  /* the map is covered; the credit would sit under the menu button */
 }
 /* Clear of the locate button, which sits on the same side in French and English. */
 [dir="ltr"] #app .maplibregl-ctrl-bottom-right {
@@ -1270,12 +1336,42 @@ small {
   }
 }
 @media (pointer: coarse) {
+  /* Touch targets: at least 44px where fingers are the pointer. */
   .row {
     min-height: 56px;
   }
   .icon-btn {
     width: 44px;
     height: 44px;
+  }
+  .link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 2px;
+  }
+  .segmented button {
+    min-height: 44px;
+  }
+  .chip-toggle {
+    height: 44px;
+  }
+  .field-clear {
+    width: 44px;
+    height: 44px;
+    margin-inline-end: -10px;
+  }
+  .cta {
+    min-height: 44px;
+  }
+  .btn-small {
+    height: 44px;
+  }
+  .sheet-handle {
+    height: 36px;
+  }
+  .sheet-handle::after {
+    top: 12px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -1286,9 +1382,6 @@ small {
 }
 
 /* ---------- comparing ways to get there ---------- */
-.compare-title {
-  margin: 6px 0 6px;
-}
 .bar-legend {
   display: flex;
   align-items: center;
@@ -1317,23 +1410,6 @@ small {
 .key-wait,
 .seg-wait {
   background: var(--seg-wait);
-}
-:root {
-  --seg-walk: #6b737b;
-  --seg-walk-bg: #d7dbdf;
-  --seg-wait: #c9ced3;
-}
-:root[data-theme="dark"] {
-  --seg-walk: #9aa3aa;
-  --seg-walk-bg: #3a4147;
-  --seg-wait: #2f353b;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --seg-walk: #9aa3aa;
-    --seg-walk-bg: #3a4147;
-    --seg-wait: #2f353b;
-  }
 }
 .options {
   display: grid;
@@ -1430,10 +1506,6 @@ button.option:hover {
   background: repeating-linear-gradient(90deg, var(--muted) 0 3px, transparent 3px 6px);
   opacity: 0.6;
 }
-.opt-breakdown {
-  font-size: 0.7812rem;
-  color: var(--muted);
-}
 .show-all {
   margin-top: 4px;
 }
@@ -1445,7 +1517,6 @@ button.option:hover {
   color: var(--ink-2);
   margin-top: 1px;
 }
-
 .compare .segmented {
   scrollbar-width: none;
 }
@@ -1454,6 +1525,9 @@ button.option:hover {
 }
 .compare .segmented button {
   padding-inline: 6px;
+}
+.brt-off {
+  margin: 2px 0 6px;
 }
 
 /* ---------- what the rider prefers ---------- */
@@ -1466,22 +1540,53 @@ button.option:hover {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-wrap: wrap;
 }
 .pref-end {
   font-size: 0.7812rem;
   font-weight: 500;
   color: var(--ink-2);
-  white-space: nowrap;
+  white-space: normal;
 }
 .pref-slider {
-  flex: 1;
   min-width: 0;
   accent-color: var(--accent);
   height: 28px;
+  flex: 1 1 8rem;
 }
 .pref-row-2 {
   justify-content: space-between;
+  gap: 8px;
   flex-wrap: wrap;
+}
+/* Folded preferences: one line, the slider one tap away. */
+.pref-open {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: 10px;
+  background: var(--surface-2);
+}
+.pref-row-2 .pref-open {
+  flex: 1 1 12em;
+}
+.pref-open[aria-expanded="true"] .icon {
+  transform: rotate(90deg);
+}
+.pref-summary {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pref-panel {
+  display: grid;
+  gap: 4px;
+  padding: 6px 2px 2px;
 }
 .chip-toggle {
   display: inline-flex;
@@ -1504,61 +1609,20 @@ button.option:hover {
   border-color: var(--accent);
   color: var(--accent);
 }
+.chip-toggle .tick {
+  display: none;
+}
+.chip-toggle.on .tick {
+  display: inline-flex;
+}
 .opt-trade {
   font-size: 0.7812rem;
   font-weight: 600;
   color: var(--ink-2);
 }
 
-/* ---------- mobile guidelines pass (Apple HIG, Material, NN/g, WCAG 2.2) ---------- */
-/* The menu says what it is: icon plus a word. */
-.map-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  width: auto;
-  height: 44px;
-  padding: 0 14px 0 12px;
-  border-radius: 999px;
-  font-weight: 600;
-  font-size: 0.875rem;
-}
-[dir="rtl"] .map-btn {
-  padding: 0 12px 0 14px;
-}
-/* Snackbar-style: just above the sheet (its offset is set when shown). */
-.toast {
-  top: auto;
-  bottom: calc(var(--sheet-half) + 12px);
-}
-.loading {
-  gap: 10px;
-  align-content: center;
-}
-/* Labels that stay once a field is filled. */
-.field-stack {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  line-height: 1.15;
-}
-.field-label {
-  font-size: 0.75rem;
-  color: var(--muted);
-}
-/* Folded preferences: one line, the slider one tap away. */
-.pref-open {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 44px;
-  padding: 0 12px;
-  border-radius: 10px;
-  background: var(--surface-2);
-}
+/* ---------- adjustments that must come last ---------- */
+/* Each of these overrides a rule above with the same specificity, so it has to stay below it. */
 .pref-open .icon {
   width: 16px;
   height: 16px;
@@ -1566,80 +1630,12 @@ button.option:hover {
   margin-inline-start: auto;
   transition: transform 0.2s;
 }
-.pref-open[aria-expanded="true"] .icon {
-  transform: rotate(90deg);
-}
-.pref-summary {
-  font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.pref-panel {
-  display: grid;
-  gap: 4px;
-  padding: 6px 2px 2px;
-}
-.pref-row-2 {
-  flex-wrap: nowrap;
-  gap: 8px;
-}
-/* Arabic script reads better a little larger. */
-[dir="rtl"] body {
-  font-size: 1rem;
-}
-/* Touch targets: at least 44px where fingers are the pointer. */
-@media (pointer: coarse) {
-  .link {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    padding: 0 2px;
-  }
-  .segmented button {
-    min-height: 44px;
-  }
-  .chip-toggle {
-    height: 44px;
-  }
-  .field-clear {
-    width: 44px;
-    height: 44px;
-    margin-inline-end: -10px;
-  }
-  .cta {
-    min-height: 44px;
-  }
-  .btn-small {
-    height: 44px;
-  }
-  .sheet-handle {
-    height: 36px;
-  }
-  .sheet-handle::after {
-    top: 12px;
-  }
-}
-
-
-/* ---------- Apple HIG pass ---------- */
-/* Text follows the phone's text-size setting: rem everywhere, and on iPhone
-   the base comes from Dynamic Type (-apple-system-body). */
-@supports (font: -apple-system-body) {
-  html {
-    font: -apple-system-body;
-  }
-}
-body {
-  font-size: 0.9375rem;
-}
 /* Controls grow with their text instead of clipping it. */
 .badge,
 .badge-sm,
 .badge-lg,
 .btn,
 .btn-small,
-.chip,
 .chip-toggle,
 .map-btn,
 .sign-num {
@@ -1650,61 +1646,16 @@ body {
   min-height: 3rem;
   padding-block: 0.4rem;
 }
-.field {
-  min-height: 3.125rem;
-}
-/* Pressed state on everything tappable. */
-button:active,
-.row:active,
-.option:active {
-  opacity: 0.72;
-}
-/* On-states not shown by colour alone. */
-.segmented .on {
-  font-weight: 650;
-}
-.chip-toggle .tick {
-  display: none;
-}
-.chip-toggle.on .tick {
-  display: inline-flex;
-}
-/* Side safe areas (notch in landscape), on the side the buttons sit. */
-:root {
-  --safe-end: env(safe-area-inset-right, 0px);
-}
-[dir="rtl"] {
-  --safe-end: env(safe-area-inset-left, 0px);
-}
 @media (max-width: 899px) {
   .topbar,
   .fab {
     inset-inline-end: max(10px, var(--safe-end));
   }
 }
-/* No signal: a steady line at the top of the sheet while it lasts. */
-.offline-banner {
-  flex: none;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 0 16px 8px;
-  padding: 8px 12px;
-  border-radius: 10px;
-  background: var(--surface-2);
-  font-size: 0.8125rem;
-  color: var(--ink-2);
-}
-.offline-banner[hidden] {
-  display: none;
-}
 .offline-banner .icon {
   flex: none;
   width: 16px;
   height: 16px;
-}
-.clear-history {
-  margin: 4px 2px 8px;
 }
 /* Large text: rows wrap instead of pushing the sheet sideways. */
 .fields,
@@ -1712,47 +1663,12 @@ button:active,
 .prefs > * {
   min-width: 0;
 }
-.pref-row {
-  flex-wrap: wrap;
-}
-.pref-row-2 {
-  flex-wrap: wrap;
-}
-.pref-row-2 .pref-open {
-  flex: 1 1 12em;
-}
-.pref-slider {
-  flex: 1 1 8rem;
-}
-.pref-end {
-  white-space: normal;
-}
 .field-input {
   min-width: 0;
   width: 100%;
-}
-/* The Trambus card: what it costs once, and "I have it". */
-.ticket-card {
-  font-size: 0.75rem;
-  color: var(--muted);
-}
-.card-note {
-  display: grid;
-  justify-items: start;
-  gap: 6px;
-  margin-top: 6px;
 }
 .card-note p {
   margin: 0;
   font-size: 0.8125rem;
   color: var(--ink-2);
-}
-.setting-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 6px;
-}
-.brt-off {
-  margin: 2px 0 6px;
 }
