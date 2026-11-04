@@ -13,7 +13,7 @@ import { loadWalkGraph } from "./walk.ts";
 const mapModule = import("./map.ts");
 import { registerOffline } from "./offline.ts";
 import { getTheme, setTheme, type Theme } from "./theme.ts";
-import { fareFor, fmtDH } from "./fares.ts";
+import { fareFor, fmtDH, hasCard, setHasCard } from "./fares.ts";
 import { expandShortUrl, parseInput, type Parsed } from "./geoinput.ts";
 import { buildOptions, DEFAULT_VOT, learnVot, nearTie, paretoFront, recommend, tradeoff, VOT_RANGE, winners, type Option, type Part, type Prefs } from "./compare.ts";
 import { walkPace } from "./pace.ts";
@@ -237,7 +237,7 @@ async function setEndpoint(field: "from" | "to", ep: Endpoint) {
 
 function plan() {
   if (!state.from || !state.to) return;
-  state.journeys = router.plan(state.from.ll, state.to.ll);
+  state.journeys = router.plan(state.from.ll, state.to.ll, { skipBrt: skipBrt() });
   setStack([{ name: "results" }]);
   writeHash();
   render();
@@ -877,7 +877,8 @@ function resultsBody() {
       nearBlock,
       dataNote(),
     );
-  return h("div", { class: "results" }, to?.sub ? h("p", { class: "muted", style: "margin:2px 0 4px" }, nm(to.sub)) : null, compareBlock(), nearBlock, dataNote());
+  const brtOff = skipBrt() ? h("p", { class: "fine brt-off" }, t("brtLeftOut"), " ", h("button", { class: "link", onclick: () => go({ name: "about" }) }, t("settings"))) : null;
+  return h("div", { class: "results" }, to?.sub ? h("p", { class: "muted", style: "margin:2px 0 4px" }, nm(to.sub)) : null, brtOff, compareBlock(), nearBlock, dataNote());
 }
 
 // ---------- comparing every way to get there ----------
@@ -1060,6 +1061,64 @@ function breakdown(o: Option) {
     .join(" · ");
 }
 
+// The card a journey needs and the rider hasn't said they own (the Trambus card).
+// The rider can leave the Trambus out of every plan (Settings).
+function skipBrt() {
+  try {
+    return localStorage.getItem("skipBrt") === "1";
+  } catch {
+    return false;
+  }
+}
+function settingToggle(label: string, on: () => boolean, flip: () => void) {
+  const b = h(
+    "button",
+    {
+      class: `chip-toggle${on() ? " on" : ""}`,
+      "aria-pressed": on() ? "true" : "false",
+      onclick: () => {
+        flip();
+        b.classList.toggle("on", on());
+        b.setAttribute("aria-pressed", on() ? "true" : "false");
+      },
+    },
+    h("span", { class: "tick" }, icon.check()),
+    label,
+  );
+  return b;
+}
+
+function cardDue(j: Journey | undefined): number | undefined {
+  if (!j) return;
+  for (const l of j.legs) {
+    if (l.kind !== "ride") continue;
+    const line = net.lines[l.line];
+    if (line.fare?.kind === "flat" && line.fare.firstCard && !hasCard(line.ref)) return line.fare.firstCard;
+  }
+}
+// What the card is, and a way to say you have it.
+function cardNote(ref: string, first: number, ride: number, onChange: () => void) {
+  const on = hasCard(ref);
+  return h(
+    "div",
+    { class: "card-note" },
+    h("p", null, t("cardFirst", fmtDH(first), fmtDH(ride))),
+    h(
+      "button",
+      {
+        class: `chip-toggle${on ? " on" : ""}`,
+        "aria-pressed": on ? "true" : "false",
+        onclick: () => {
+          setHasCard(ref, !hasCard(ref));
+          onChange();
+        },
+      },
+      h("span", { class: "tick" }, icon.check()),
+      t("haveCard"),
+    ),
+  );
+}
+
 function optionRow(o: Option, first: boolean, tags: string[], longest: number, trade: string | null, onChoose: () => void) {
   const j = o.journey !== undefined ? state.journeys[o.journey] : undefined;
   let head: Node;
@@ -1094,6 +1153,7 @@ function optionRow(o: Option, first: boolean, tags: string[], longest: number, t
         h("span", { class: "ticket-time" }, String(Math.max(1, Math.round(o.seconds / 60))), h("small", null, t("min"))),
         hi > lo ? h("span", { class: "ticket-range" }, `⁦${lo}–${hi}⁩ ${t("min")}`) : null,
         h("span", { class: "ticket-fare" }, price),
+        cardDue(j) ? h("span", { class: "ticket-card" }, t("cardPlus", fmtDH(cardDue(j)!))) : null,
       ),
     ),
     timeBar(o, longest, breakdown(o)),
@@ -1210,6 +1270,7 @@ function tripBody(index: number) {
           { class: "tl-main" },
           h("span", null, `${fmtStops(leg.alight - leg.board)} · ${fmtMinutes(leg.seconds)}`),
           fare ? h("small", { class: "muted" }, `${t("fare")} ≈ ${fmtDH(fare.normal)}${line.taxi ? ` ${t("perSeat")}` : ""}${fare.card && fare.card !== fare.normal ? `, ${fmtDH(fare.card)} ${t("withCard")}` : ""}`) : null,
+          fare?.firstCard && !hasCard(line.ref) ? cardNote(line.ref, fare.firstCard, fare.normal, render) : null,
           toggle,
           list,
         ),
@@ -1354,7 +1415,7 @@ function lineBody(li: number, vi: number) {
           ),
         )
       : null;
-  const facts = [fmtStops(v.stops.length), fmtDistance(v.length), l.headway ? t("noteWait", l.headway) : null, l.fare?.kind === "flat" ? fmtDH(l.fare.normal) : null].filter(Boolean).join(" · ");
+  const facts = [fmtStops(v.stops.length), fmtDistance(v.length), l.headway ? t("noteWait", l.headway) : null, l.fare?.kind === "flat" ? fmtDH(l.fare.normal) : null, l.fare?.kind === "flat" && l.fare.firstCard ? t("cardLine", fmtDH(l.fare.firstCard)) : null].filter(Boolean).join(" · ");
   return h(
     "div",
     { class: "line" },
@@ -1444,6 +1505,31 @@ function installBlock() {
   );
 }
 
+function trambusSettings(): Node[] {
+  const brt = net.lines.find((l) => l.brt);
+  if (!brt) return [];
+  const f = brt.fare?.kind === "flat" ? brt.fare : undefined;
+  return [
+    h("h3", { class: "section-title label" }, t("brt")),
+    h(
+      "div",
+      { class: "setting-chips" },
+      f?.firstCard ? settingToggle(t("haveCardSetting"), () => hasCard(brt.ref), () => setHasCard(brt.ref, !hasCard(brt.ref))) : null,
+      settingToggle(
+        t("skipBrt"),
+        skipBrt,
+        () => {
+          try {
+            localStorage.setItem("skipBrt", skipBrt() ? "0" : "1");
+          } catch {}
+          if (state.from && state.to) state.journeys = router.plan(state.from.ll, state.to.ll, { skipBrt: skipBrt() });
+        },
+      ),
+    ),
+    f?.firstCard ? h("p", { class: "fine" }, t("cardFirst", fmtDH(f.firstCard), fmtDH(f.normal))) : null,
+  ].filter(Boolean) as Node[];
+}
+
 function aboutBody() {
   return h(
     "div",
@@ -1472,6 +1558,7 @@ function aboutBody() {
         render();
       },
     ),
+    ...trambusSettings(),
     h("h3", { class: "section-title label" }, t("helpOfflineTitle")),
     h("p", { class: "notice" }, offline.total && offline.done >= offline.total ? [icon.check(), " ", t("offlineReady")] : offline.total ? `${t("downloading")} · ${Math.floor((offline.done / offline.total) * 100)} %` : t("helpOffline")),
     h("h3", { class: "section-title label" }, t("helpInstallTitle")),
@@ -1511,6 +1598,15 @@ function helpBody(section?: string) {
       h("p", { class: "tl-note" }, icon.info(), h("span", null, t("helpFindNote"))),
       h("button", { class: "btn btn-small", onclick: () => pasteFromClipboard("to") }, icon.link(), t("pasteLink")),
     ),
+    ...net.lines
+      .filter((l) => l.fare?.kind === "flat" && l.fare.firstCard)
+      .map((l) => {
+        const f = l.fare as { normal: number; firstCard: number };
+        const box = h("div", null);
+        const fill = () => box.replaceChildren(cardNote(l.ref, f.firstCard, f.normal, fill));
+        fill();
+        return sec("card", t("helpCardTitle"), box);
+      }),
     sec("install", t("helpInstallTitle"), installBlock()),
     sec("offline", t("helpOfflineTitle"), h("p", null, t("helpOffline"))),
     sec("location", t("helpLocTitle"), h("p", null, t("helpLoc"))),

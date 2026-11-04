@@ -19,13 +19,26 @@ async function precache() {
   await cache.put(scopeUrl("precache.json"), new Response(JSON.stringify(list), { headers: { "content-type": "application/json" } }));
   const urls = list.files.map((f) => scopeUrl(f));
   progress = { done: 0, total: urls.length };
+  // Files unchanged since the version already on the phone are copied over, not downloaded again.
+  const kept = new Map();
+  for (const name of await caches.keys()) {
+    if (!name.startsWith("agadir-bus-") || name === CACHE) continue;
+    const old = await caches.open(name);
+    const prev = await (await old.match(scopeUrl("precache.json")))?.json().catch(() => null);
+    if (!prev?.hashes) continue;
+    prev.files.forEach((f, i) => kept.set(`${scopeUrl(f)} ${prev.hashes[i]}`, old));
+  }
+  const hashOf = new Map(urls.map((u, i) => [u, list.hashes?.[i]]));
   // Small files first so the app is usable while the map downloads.
   const sized = urls.map((u, i) => ({ u, size: list.sizes[i] })).sort((a, b) => a.size - b.size);
   let next = 0;
   const worker = async () => {
     while (next < sized.length) {
       const { u } = sized[next++];
-      if (!(await cache.match(u))) {
+      const old = kept.get(`${u} ${hashOf.get(u)}`);
+      const copy = !(await cache.match(u)) && old ? await old.match(u) : undefined;
+      if (copy) await cache.put(u, copy);
+      else if (!(await cache.match(u))) {
         for (let attempt = 0; ; attempt++) {
           try {
             const res = await fetch(u, { cache: "no-cache" });

@@ -66,9 +66,10 @@ export class BusMap {
       zoom: net.zoom,
       minZoom: 9,
       maxZoom: 18.5,
+      // The offline map covers this box only: panning stops at its edge.
       maxBounds: [
-        [w - 0.25, s - 0.2],
-        [e + 0.25, n + 0.2],
+        [w, s],
+        [e, n],
       ],
       attributionControl: { compact: true },
       dragRotate: false,

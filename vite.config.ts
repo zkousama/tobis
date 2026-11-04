@@ -31,9 +31,11 @@ function precache(): Plugin {
       hash.update(readFileSync(join(outDir, "sw.js"))); // a fix to the worker alone is a new version too
       const version = hash.digest("hex").slice(0, 12);
       const sizes = list.map((f) => statSync(join(outDir, f)).size);
+      // Per-file fingerprints let an update keep the files that didn't change.
+      const hashes = list.map((f) => createHash("sha256").update(readFileSync(join(outDir, f))).digest("hex").slice(0, 16));
       // The page is cached as "./" only: hosts like Cloudflare Pages redirect
       // /index.html to /, and a redirected response can't answer a page load.
-      writeFileSync(join(outDir, "precache.json"), JSON.stringify({ version, files: list.map((f) => (f === "index.html" ? "./" : f)), sizes }));
+      writeFileSync(join(outDir, "precache.json"), JSON.stringify({ version, files: list.map((f) => (f === "index.html" ? "./" : f)), sizes, hashes }));
       const sw = join(outDir, "sw.js");
       const src = readFileSync(sw, "utf8");
       if (!src.includes('const VERSION = "__VERSION__";')) throw new Error("sw.js: VERSION placeholder not found");

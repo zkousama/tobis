@@ -1255,7 +1255,7 @@ small {
   bottom: calc(var(--sheet-peek) + 10px);
 }
 #app:has(.sheet[data-size="full"]) .maplibregl-ctrl-bottom-right {
-  bottom: calc(var(--sheet-full) + 10px);
+  display: none; /* the map is covered; the credit would sit under the menu button */
 }
 /* Clear of the locate button, which sits on the same side in French and English. */
 [dir="ltr"] #app .maplibregl-ctrl-bottom-right {
@@ -1264,6 +1264,7 @@ small {
 @media (min-width: 900px) {
   #app .maplibregl-ctrl-bottom-right,
   #app:has(.sheet[data-size]) .maplibregl-ctrl-bottom-right {
+    display: block;
     bottom: 0;
     right: 0;
   }
@@ -1729,4 +1730,29 @@ button:active,
 .field-input {
   min-width: 0;
   width: 100%;
+}
+/* The Trambus card: what it costs once, and "I have it". */
+.ticket-card {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+.card-note {
+  display: grid;
+  justify-items: start;
+  gap: 6px;
+  margin-top: 6px;
+}
+.card-note p {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--ink-2);
+}
+.setting-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.brt-off {
+  margin: 2px 0 6px;
 }

@@ -74,3 +74,20 @@ test("planning is fast enough for a phone", { skip: !have }, () => {
   const ms = (performance.now() - t0) / 10;
   assert.ok(ms < 250, `${ms.toFixed(0)} ms per plan`);
 });
+
+test("the Trambus carries its card price (bought once) next to the ride fare", { skip: !have }, () => {
+  const brt = net.lines.find((l) => l.brt);
+  assert.ok(brt?.fare?.kind === "flat");
+  assert.equal(brt.fare.normal, 5);
+  assert.equal(brt.fare.firstCard, 10);
+});
+
+test("leaving the Trambus out still finds buses, with no Trambus ride", { skip: !have }, () => {
+  const from = PLACES.talborjt;
+  const to: LngLat = [-9.53, 30.395];
+  const withBrt = router.plan(from, to);
+  assert.ok(withBrt.some((j) => refs(j).includes("BHNS")), "the Trambus is an option on this trip");
+  const without = router.plan(from, to, { skipBrt: true });
+  assert.ok(without.length > 0);
+  for (const j of without) assert.ok(!refs(j).includes("BHNS"));
+});

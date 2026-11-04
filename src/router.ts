@@ -115,7 +115,7 @@ export class Router {
     return this.grid.near(p, radius / DETOUR).map((x) => ({ stop: x.v, crow: x.d }));
   }
 
-  plan(origin: LngLat, dest: LngLat, opts: { maxRides?: number; limit?: number } = {}): Journey[] {
+  plan(origin: LngLat, dest: LngLat, opts: { maxRides?: number; limit?: number; skipBrt?: boolean } = {}): Journey[] {
     const maxRides = opts.maxRides ?? 3;
     const n = this.net.stops.length;
     // rides[k][s]: reached s by getting off the k-th bus. reach[k][s]: rides[k], or a short walk on from one.
@@ -144,6 +144,7 @@ export class Router {
       const cur: (Label | undefined)[] = Array.from({ length: n });
       // Ride every direction of every line once.
       for (const f of this.flat) {
+        if (opts.skipBrt && f.brt) continue; // the rider asked to leave the Trambus out
         const v = this.net.lines[f.line].variants[f.variant];
         const wait = f.wait;
         let boardAt = -1;
