@@ -15,7 +15,7 @@ import { registerOffline } from "./offline.ts";
 import { getTheme, setTheme, type Theme } from "./theme.ts";
 import { fareFor, fmtDH } from "./fares.ts";
 import { expandShortUrl, parseInput, type Parsed } from "./geoinput.ts";
-import { buildOptions, paretoFront, rank, winners, type Option, type Part, type Priority } from "./compare.ts";
+import { buildOptions, DEFAULT_VOT, learnVot, nearTie, paretoFront, recommend, tradeoff, VOT_RANGE, winners, type Option, type Part, type Prefs } from "./compare.ts";
 import { walkPace } from "./pace.ts";
 
 interface Endpoint {
@@ -780,44 +780,100 @@ function resultsBody() {
 }
 
 // ---------- comparing every way to get there ----------
-function getPriority(): Priority {
+// Options are ranked by generalised cost: price plus time, priced at the
+// rider's own value of time (the slider), walking and waiting weighted heavier.
+function getPrefs(): Prefs {
+  let vot = DEFAULT_VOT;
+  let avoidWalk = false;
   try {
-    const p = localStorage.getItem("priority");
-    if (p === "cheap" || p === "walk") return p;
+    const v = Number(localStorage.getItem("vot"));
+    if (v >= VOT_RANGE[0] && v <= VOT_RANGE[1]) vot = v;
+    avoidWalk = localStorage.getItem("avoidWalk") === "1";
   } catch {}
-  return "fast";
+  return { vot, walkWeight: avoidWalk ? 3 : 1.5 };
 }
+function savePrefs(p: Prefs) {
+  try {
+    localStorage.setItem("vot", p.vot.toFixed(4));
+    localStorage.setItem("avoidWalk", p.walkWeight > 2 ? "1" : "0");
+  } catch {}
+}
+const toSlider = (vot: number) => Math.round((100 * Math.log(vot / VOT_RANGE[0])) / Math.log(VOT_RANGE[1] / VOT_RANGE[0]));
+const fromSlider = (v: number) => VOT_RANGE[0] * (VOT_RANGE[1] / VOT_RANGE[0]) ** (v / 100);
 let showAllOptions = false;
 function compareBlock() {
   if (!state.from || !state.to) return null;
   const { options, note, night } = buildOptions(net, state.journeys, state.from.ll, state.to.ll, new Date(), walkPace());
-  const by = getPriority();
+  const prefs = getPrefs();
   // Drop options that are worse than another on time, price and walking at once.
   const front = paretoFront(options);
   const hidden = options.length - front.length;
-  const ranked = rank(showAllOptions ? options : front, by);
   const win = winners(options);
-  const longest = Math.max(...ranked.map((o) => o.range[1]), 1);
-  if (ranked[0]?.journey !== undefined) previewTrip(ranked[0].journey);
-  const control = segmented<Priority>(
-    [
-      { id: "fast", label: t("segFast") },
-      { id: "cheap", label: t("segCheap") },
-      { id: "walk", label: t("segWalk") },
-    ],
-    by,
-    (id) => {
-      try {
-        localStorage.setItem("priority", id);
-      } catch {}
-      render();
+  const list = h("div", { class: "options" });
+  const worth = h("small", { class: "muted pref-worth" });
+  const draw = () => {
+    const ranked = recommend(showAllOptions ? options : front, prefs);
+    const longest = Math.max(...ranked.map((o) => o.range[1]), 1);
+    worth.textContent = t("votLabel", Math.round(prefs.vot * 60));
+    list.replaceChildren(
+      ...ranked.map((o, i) =>
+        optionRow(
+          o,
+          i === 0,
+          [i === 0 && t("recommended"), i === 1 && nearTie(ranked[0], o, prefs) && t("nearTie"), win.fast === o && t("prioFast"), win.cheap === o && t("prioCheap"), win.walk === o && t("prioWalk")].filter(Boolean) as string[],
+          longest,
+          i === 0 ? null : tradeText(ranked[0], o),
+          () => {
+            // Picking something other than the top option teaches the app a little.
+            const next = { ...prefs, vot: learnVot(o, options, prefs) };
+            savePrefs(next);
+          },
+        ),
+      ),
+    );
+    const top = ranked[0];
+    if (top?.journey !== undefined) previewTrip(top.journey);
+  };
+  const slider = h("input", {
+    type: "range",
+    min: 0,
+    max: 100,
+    value: toSlider(prefs.vot),
+    class: "pref-slider",
+    "aria-label": t("prefTitle"),
+    oninput: (e: Event) => {
+      prefs.vot = fromSlider(Number((e.target as HTMLInputElement).value));
+      savePrefs(prefs);
+      draw();
     },
+  });
+  const walkToggle = h(
+    "button",
+    {
+      class: `chip-toggle${prefs.walkWeight > 2 ? " on" : ""}`,
+      "aria-pressed": prefs.walkWeight > 2 ? "true" : "false",
+      onclick: () => {
+        prefs.walkWeight = prefs.walkWeight > 2 ? 1.5 : 3;
+        savePrefs(prefs);
+        walkToggle.classList.toggle("on", prefs.walkWeight > 2);
+        walkToggle.setAttribute("aria-pressed", prefs.walkWeight > 2 ? "true" : "false");
+        draw();
+      },
+    },
+    icon.walk(),
+    t("avoidWalk"),
   );
+  draw();
   return h(
     "div",
     { class: "compare" },
-    h("p", { class: "label compare-title" }, t("priorityTitle")),
-    control,
+    h(
+      "div",
+      { class: "prefs" },
+      h("p", { class: "label" }, t("prefTitle")),
+      h("div", { class: "pref-row" }, h("span", { class: "pref-end" }, t("prefSave")), slider, h("span", { class: "pref-end" }, t("prefTime"))),
+      h("div", { class: "pref-row pref-row-2" }, worth, walkToggle),
+    ),
     night ? h("p", { class: "tip tip-night" }, icon.clock(), h("small", null, t("nightNote"))) : null,
     h(
       "p",
@@ -829,11 +885,7 @@ function compareBlock() {
       h("span", { class: "key key-wait" }),
       t("legendWait"),
     ),
-    h(
-      "div",
-      { class: "options" },
-      ranked.map((o, i) => optionRow(o, i === 0, [win.fast === o && t("prioFast"), win.cheap === o && t("prioCheap"), win.walk === o && t("prioWalk")].filter(Boolean) as string[], longest)),
-    ),
+    list,
     hidden > 0
       ? h(
           "button",
@@ -850,6 +902,16 @@ function compareBlock() {
     note ? h("p", { class: "tip" }, h("span", { class: "row-main" }, h("strong", null, t("petitTaxi")), h("small", null, t("petitTaxiOtherTown", note.town)))) : null,
   );
 }
+
+/** "2.5 DH less · 10 min more" compared with the recommended option. */
+function tradeText(best: Option, o: Option) {
+  const { dMin, dDH } = tradeoff(best, o);
+  const bits: string[] = [];
+  if (dDH !== undefined && dDH !== 0) bits.push(dDH < 0 ? t("tradeCheaper", fmtNum(-dDH)) : t("tradeDearer", fmtNum(dDH)));
+  if (Math.abs(dMin) >= 1) bits.push(dMin > 0 ? t("tradeSlower", dMin) : t("tradeFaster", -dMin));
+  return bits.length ? bits.join(" · ") : null;
+}
+const fmtNum = (n: number) => (n % 1 ? n.toFixed(1).replace(".", getLang() === "en" ? "." : ",") : String(n));
 
 function timeBar(o: Option, longest: number) {
   const total = o.parts.reduce((n, p) => n + p.s, 0) || 1;
@@ -881,7 +943,7 @@ function breakdown(o: Option) {
     .join(" · ");
 }
 
-function optionRow(o: Option, first: boolean, tags: string[], longest: number) {
+function optionRow(o: Option, first: boolean, tags: string[], longest: number, trade: string | null, onChoose: () => void) {
   const j = o.journey !== undefined ? state.journeys[o.journey] : undefined;
   let head: Node;
   let sub: string;
@@ -919,10 +981,23 @@ function optionRow(o: Option, first: boolean, tags: string[], longest: number) {
     ),
     timeBar(o, longest),
     h("p", { class: "opt-breakdown" }, breakdown(o)),
+    trade ? h("p", { class: "opt-trade" }, trade) : null,
   ];
   if (o.journey === undefined) return h("div", { class: `option${first ? " best" : ""}` }, body);
   const ji = o.journey;
-  return h("button", { class: `option${first ? " best" : ""}`, onmouseenter: () => previewTrip(ji), onfocus: () => previewTrip(ji), onclick: () => go({ name: "trip", index: ji }) }, body);
+  return h(
+    "button",
+    {
+      class: `option${first ? " best" : ""}`,
+      onmouseenter: () => previewTrip(ji),
+      onfocus: () => previewTrip(ji),
+      onclick: () => {
+        onChoose();
+        go({ name: "trip", index: ji });
+      },
+    },
+    body,
+  );
 }
 
 function previewTrip(i: number) {

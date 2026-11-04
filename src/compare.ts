@@ -148,3 +148,62 @@ export function winners(options: Option[]) {
   };
   return { fast: best((o) => o.seconds), cheap: best(mid), walk: best((o) => o.walkMetres) };
 }
+
+// ---------- generalised cost: one number per option ----------
+// Each option is priced as money plus time, with walking and waiting weighted
+// heavier than riding (people feel them as longer) and a penalty per change.
+// The value of time is the rider's: set with the slider, nudged by choices.
+export interface Prefs {
+  vot: number; // value of time, DH per minute
+  walkWeight: number; // 1.5 normally, 3 when avoiding walking
+}
+export const DEFAULT_VOT = 0.15; // ~9 DH an hour, around half the minimum wage per hour
+export const VOT_RANGE: [number, number] = [0.02, 1.2];
+const WAIT_WEIGHT = 1.5;
+const CHANGE_MINUTES = 5;
+const TYPICAL_FARE = 4; // when a line's fare isn't published
+const RELIABILITY = 0.3; // per minute between the likely and the slow time
+
+/** Close enough that the rider should just pick (within 0.5 DH or 5%). */
+export const nearTie = (a: Option, b: Option, p: Prefs) => {
+  const ca = generalisedCost(a, p), cb = generalisedCost(b, p);
+  return cb - ca < Math.max(0.5, 0.05 * ca);
+};
+
+export function generalisedCost(o: Option, p: Prefs): number {
+  const min = (k: Part["k"]) => o.parts.filter((x) => x.k === k).reduce((n, x) => n + x.s, 0) / 60;
+  const rides = o.parts.filter((x) => x.k === "ride").length;
+  const fare = o.cost ? (o.cost.low + o.cost.high) / 2 : rides * TYPICAL_FARE;
+  const changes = Math.max(0, rides - 1);
+  // Reliability: an option that might run much later than its likely time costs
+  // something too (a bus in traffic, against the Trambus on its own lane).
+  const risk = Math.max(0, o.range[1] - o.seconds) / 60;
+  return fare + p.vot * (min("ride") + p.walkWeight * min("walk") + WAIT_WEIGHT * min("wait") + CHANGE_MINUTES * changes + RELIABILITY * risk);
+}
+
+export function recommend(options: Option[], p: Prefs): Option[] {
+  return [...options].sort((a, b) => generalisedCost(a, p) - generalisedCost(b, p) || a.seconds - b.seconds);
+}
+
+/** How b compares with a, for "2 DH cheaper but 10 min longer". */
+export function tradeoff(a: Option, b: Option) {
+  const dMin = Math.round((b.seconds - a.seconds) / 60);
+  const price = (o: Option) => (o.cost ? (o.cost.low + o.cost.high) / 2 : undefined);
+  const pa = price(a), pb = price(b);
+  const dDH = pa !== undefined && pb !== undefined ? Math.round((pb - pa) * 2) / 2 : undefined;
+  return { dMin, dDH };
+}
+
+/**
+ * The rider picked `chosen`. If it isn't the cheapest by generalised cost,
+ * find the value of time that would have made it so and move a third of the
+ * way there: a few choices teach the app, one odd choice doesn't.
+ */
+export function learnVot(chosen: Option, options: Option[], p: Prefs): number {
+  const grid: number[] = [];
+  for (let v = VOT_RANGE[0]; v <= VOT_RANGE[1]; v *= 1.15) grid.push(v);
+  const fits = grid.filter((v) => recommend(options, { ...p, vot: v })[0] === chosen);
+  if (!fits.length || fits.some((v) => Math.abs(Math.log(v / p.vot)) < 0.08)) return p.vot;
+  const target = fits.reduce((b, v) => (Math.abs(Math.log(v / p.vot)) < Math.abs(Math.log(b / p.vot)) ? v : b));
+  return Math.exp(Math.log(p.vot) + (Math.log(target) - Math.log(p.vot)) / 3);
+}

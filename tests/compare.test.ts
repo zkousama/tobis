@@ -44,3 +44,32 @@ test("an option worse on time, price and walking is dropped", async () => {
   const front = paretoFront([good, worse, taxi]);
   assert.deepEqual(front, [good, taxi]);
 });
+
+test("generalised cost: a little cheaper isn't worth a lot slower, unless time is cheap", async () => {
+  const { recommend } = await import("../src/compare.ts");
+  const parts = (ride: number, walk: number, wait: number) => [
+    { k: "walk" as const, s: walk * 60 },
+    { k: "wait" as const, s: wait * 60 },
+    { k: "ride" as const, s: ride * 60 },
+  ];
+  const tram = { ...opt("transit", 24, 5, 380), parts: parts(14, 5, 5) };
+  const bus = { ...opt("transit", 34, 2.5, 900), parts: parts(12, 12, 10) };
+  assert.equal(recommend([bus, tram], { vot: 0.3, walkWeight: 1.5 })[0], tram); // 2.5 DH isn't worth 10 min
+  assert.equal(recommend([bus, tram], { vot: 0.03, walkWeight: 1.5 })[0], bus); // on a tight budget it is
+});
+
+test("choices nudge the value of time, a third of the way", async () => {
+  const { learnVot, recommend } = await import("../src/compare.ts");
+  const parts = (ride: number, walk: number, wait: number) => [
+    { k: "walk" as const, s: walk * 60 },
+    { k: "wait" as const, s: wait * 60 },
+    { k: "ride" as const, s: ride * 60 },
+  ];
+  const tram = { ...opt("transit", 24, 5, 380), parts: parts(14, 5, 5) };
+  const bus = { ...opt("transit", 34, 2.5, 900), parts: parts(12, 12, 10) };
+  const p = { vot: 0.3, walkWeight: 1.5 };
+  assert.equal(recommend([bus, tram], p)[0], tram);
+  const v1 = learnVot(bus, [bus, tram], p); // picked the cheap bus anyway
+  assert.ok(v1 < 0.3 && v1 > 0.05, String(v1));
+  assert.equal(learnVot(tram, [bus, tram], p), 0.3); // picked what we recommended: no change
+});

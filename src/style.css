@@ -1445,3 +1445,57 @@ button.option:hover {
 .compare .segmented button {
   padding-inline: 6px;
 }
+
+/* ---------- what the rider prefers ---------- */
+.prefs {
+  display: grid;
+  gap: 6px;
+  margin: 6px 0 8px;
+}
+.pref-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.pref-end {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+.pref-slider {
+  flex: 1;
+  min-width: 0;
+  accent-color: var(--accent);
+  height: 28px;
+}
+.pref-row-2 {
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.chip-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-2);
+}
+.chip-toggle .icon {
+  width: 16px;
+  height: 16px;
+}
+.chip-toggle.on {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.opt-trade {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-2);
+}
