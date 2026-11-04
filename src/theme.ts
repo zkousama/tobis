@@ -17,7 +17,7 @@ function apply() {
   if (t === "auto") document.documentElement.removeAttribute("data-theme");
   else document.documentElement.dataset.theme = t;
   const dark = isDark();
-  document.querySelectorAll('meta[name="theme-color"]').forEach((m) => m.setAttribute("content", dark ? "#0f1b26" : "#f4ecdd"));
+  document.querySelectorAll('meta[name="theme-color"]').forEach((m) => m.setAttribute("content", dark ? "#111417" : "#ffffff"));
   listeners.forEach((f) => f(dark));
 }
 export function setTheme(t: Theme) {

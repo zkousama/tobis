@@ -83,10 +83,10 @@ app.replaceChildren();
 
 const mapEl = h("div", { id: "map" });
 const sheetBody = h("div", { class: "sheet-body" });
-const handle = h("button", { class: "sheet-handle", "aria-label": "Resize" });
+const handle = h("button", { class: "sheet-handle", "aria-label": t("sheetResize"), "aria-expanded": "false" });
 const sheet = h("section", { class: "sheet", "data-size": state.sheet }, handle, sheetBody);
 // The map gets the screen: one settings button, no title bar.
-const settingsBtn = h("button", { class: "icon-btn map-btn", "aria-label": t("settings"), onclick: () => go({ name: "about" }) }, icon.menu());
+const settingsBtn = h("button", { class: "map-btn", onclick: () => go({ name: "about" }) }, icon.menu(), h("span", { class: "map-btn-label" }, t("menuLabel")));
 const topbar = h("header", { class: "topbar" }, settingsBtn);
 // While the offline copy downloads: a thin bar along the top of the sheet.
 const progressBar = h("div", { class: "sheet-progress", hidden: true, role: "progressbar", "aria-label": t("downloading") });
@@ -96,6 +96,7 @@ const toast = h("div", { class: "toast", role: "status" });
 app.append(mapEl, topbar, locateBtn, sheet, toast);
 
 let net: Network;
+let offlineMB = 0; // size of the offline copy, shown before anyone installs
 let router: Router;
 let searchIndex: SearchIndex | undefined;
 let bmap: BusMap | undefined;
@@ -107,7 +108,7 @@ const nm = (n: Names | string | undefined) => (typeof n === "string" ? n : n ? n
 const meEndpoint = (ll: LngLat): Endpoint => ({ ll, label: { d: t("myLocation") }, kind: "me" });
 
 async function boot() {
-  sheetBody.replaceChildren(h("div", { class: "loading" }, h("div", { class: "spinner" })));
+  sheetBody.replaceChildren(h("div", { class: "loading" }, h("div", { class: "spinner" }), h("p", { class: "muted" }, t("loadingLines"))));
   performance.mark("boot");
   const res = await fetch(`${base}data/${CITY}.json`);
   performance.mark("fetched");
@@ -119,6 +120,14 @@ async function boot() {
   render(); // the planner is usable before the map has drawn
   performance.mark("rendered");
   watchLocationPermission();
+  fetch(`${base}precache.json`)
+    .then((r) => (r.ok ? r.json() : null))
+    .then((j: { sizes?: number[] } | null) => {
+      if (j?.sizes) offlineMB = Math.round(j.sizes.reduce((a, b) => a + b, 0) / 1048576);
+    })
+    .catch(() => {});
+  // Say what still works when the signal goes, once each time it happens.
+  addEventListener("offline", () => flash(t("offlineNow"), 7000));
   const { BusMap } = await mapModule;
   bmap = new BusMap(mapEl, net, getLang(), {
     onStop: (s) => go({ name: "stop", stop: s }),
@@ -156,6 +165,7 @@ function current(): View {
 // through the app instead of closing it.
 let historyDepth = 1;
 function go(v: View, reset = false) {
+  sheetEntry = false;
   if (reset) state.stack = [{ name: "home" }];
   if (v.name !== "home") {
     state.stack.push(v);
@@ -169,6 +179,11 @@ function back() {
 }
 addEventListener("popstate", () => {
   historyDepth = Math.max(1, historyDepth - 1);
+  if (sheetEntry) {
+    sheetEntry = false;
+    setSheet("half");
+    return;
+  }
   if (state.stack.length > 1) state.stack.pop();
   ride?.stop();
   render();
@@ -184,6 +199,15 @@ function setStack(views: View[]) {
 function setSheet(size: "peek" | "half" | "full") {
   state.sheet = size;
   sheet.dataset.size = size;
+  handle.setAttribute("aria-expanded", size === "full" ? "true" : "false");
+}
+// A sheet the rider pulled open is a step Back can undo, like a screen.
+let sheetEntry = false;
+function userOpenedSheet() {
+  if (sheetEntry || innerWidth >= 900) return;
+  sheetEntry = true;
+  history.pushState({ app: true, sheet: true }, "");
+  historyDepth++;
 }
 
 // ---------- endpoints and planning ----------
@@ -299,7 +323,10 @@ function onOfflineProgress(done: number, total: number) {
 }
 
 let toastTimer = 0;
-function flash(msg: string, ms = 3200) {
+function flash(msg: string, ms = 5000) {
+  // Like a snackbar: one at a time, just above the sheet.
+  const above = innerWidth >= 900 ? 24 : sheet.getBoundingClientRect().height + 12;
+  toast.style.bottom = `${above}px`;
   toast.textContent = msg;
   toast.classList.add("show");
   clearTimeout(toastTimer);
@@ -370,6 +397,9 @@ function render() {
       else bmap?.setPins(state.from?.ll, state.to?.ll);
       break;
     case "trip":
+      try {
+        localStorage.setItem("tripsSeen", String((Number(localStorage.getItem("tripsSeen")) || 0) + 1));
+      } catch {}
       setSheet("half");
       sheetBody.append(tripBody(v.index));
       previewTrip(v.index);
@@ -436,6 +466,7 @@ function planner(mode: "home" | "search" | "results", active?: "from" | "to") {
       autocomplete: "off",
       autocapitalize: "off",
       spellcheck: false,
+      autocorrect: "off",
       enterkeyhint: "search",
       onfocus: () => {
         const cur = current();
@@ -480,7 +511,9 @@ function planner(mode: "home" | "search" | "results", active?: "from" | "to") {
     );
     if (isActive) queueMicrotask(() => input.focus({ preventScroll: true }));
     const meDot = which === "from" && !ep && state.me ? h("span", { class: "me-live", title: t("youAreHere") }) : null;
-    return h("label", { class: `field field-${which}${isActive ? " active" : ""}` }, h("span", { class: `dot dot-${which}` }), input, meDot, clear);
+    // Once both ends are filled in, a small label keeps each one's meaning.
+    const field = mode === "results" ? h("span", { class: "field-stack" }, h("small", { class: "field-label" }, which === "to" ? t("to") : t("from")), input) : input;
+    return h("label", { class: `field field-${which}${isActive ? " active" : ""}` }, h("span", { class: `dot dot-${which}` }), field, meDot, clear);
   };
   const fields = mode === "home" ? [field("to")] : mode === "search" ? [field(active ?? "to")] : [field("from"), field("to")];
   const el = h(
@@ -514,13 +547,18 @@ function homeBody() {
         h("span", { class: "row-main" }, h("strong", null, t("useMyLocation")), h("small", { class: "muted" }, state.locPerm === "denied" ? t("locDenied") : t("useMyLocationSub"))),
       ),
     );
-  if (canInstall() && !dismissed)
+  let tripsSeen = 0;
+  try {
+    tripsSeen = Number(localStorage.getItem("tripsSeen")) || 0;
+  } catch {}
+  // Offer the install after the app has been useful once, never on first open.
+  if (canInstall() && !dismissed && tripsSeen > 0)
     cards.push(
       h(
         "div",
         { class: "tip tip-install" },
         h("span", { class: "row-icon" }, icon.offline()),
-        h("span", { class: "row-main" }, h("strong", null, t("installCard"))),
+        h("span", { class: "row-main" }, h("strong", null, t("installCard")), offlineMB ? h("small", { class: "muted" }, t("offlineSize", offlineMB)) : null),
         h("button", { class: "btn btn-small btn-primary", onclick: install }, t("installNow")),
         h(
           "button",
@@ -617,7 +655,7 @@ function searchBody(field: "from" | "to") {
     h("div", { class: "tip-actions" }, h("button", { class: "btn btn-small btn-primary", onclick: () => pasteFromClipboard(field) }, t("pasteLink")), h("button", { class: "link", onclick: () => go({ name: "help", section: "find" }) }, t("howTo"))),
   );
   const locSub = state.me ? fmtDistance(state.me.acc) + " ±" : state.locPerm === "denied" ? t("locDenied") : null;
-  return h(
+  const box = h(
     "div",
     { class: "search" },
     pasteRow,
@@ -662,6 +700,8 @@ function searchBody(field: "from" | "to") {
     ),
     h("p", { class: "fine" }, t("searchHint")),
   );
+  queueMicrotask(() => updateSearch(field, ""));
+  return box;
 }
 
 function updateSearch(field: "from" | "to", q: string) {
@@ -679,7 +719,14 @@ function updateSearch(field: "from" | "to", q: string) {
   );
   const near = state.me?.ll ?? net.center;
   const hits = q.trim() ? search().search(q, near, 12) : [];
-  searchList.replaceChildren(...hits.map((hit) => h("li", null, hitRow(hit, field, near))));
+  if (!q.trim()) {
+    // Before typing: the places you went to before.
+    searchList.replaceChildren(
+      ...recents().map((ep) =>
+        h("li", null, h("button", { class: "row", onclick: () => setEndpoint(field, ep) }, h("span", { class: "row-icon" }, icon.clock()), h("span", { class: "row-main" }, h("span", null, nm(ep.label)), ep.sub ? h("small", { class: "muted" }, nm(ep.sub)) : null))),
+      ),
+    );
+  } else searchList.replaceChildren(...hits.map((hit) => h("li", null, hitRow(hit, field, near))));
   // Typed a couple of letters: if the place isn't here, show the way round it.
   cantFind.hidden = q.trim().length < 3 || !pasteRow.hidden;
   cantFind.classList.toggle("tip-strong", !hits.length);
@@ -775,7 +822,19 @@ function resultsBody() {
       )
     : null;
   if (!state.journeys.length)
-    return h("div", null, h("div", { class: "empty-state" }, h("span", { class: "row-icon" }, icon.bus()), h("p", null, t("noTrip"))), nearBlock, dataNote());
+    return h(
+      "div",
+      null,
+      h(
+        "div",
+        { class: "empty-state" },
+        h("span", { class: "row-icon" }, icon.bus()),
+        h("p", null, t("noTrip")),
+        h("div", { class: "tip-actions" }, h("button", { class: "btn btn-small btn-primary", onclick: () => go({ name: "search", field: "from" }) }, t("changeStart")), h("button", { class: "btn btn-small", onclick: () => go({ name: "lines" }) }, t("seeLines"))),
+      ),
+      nearBlock,
+      dataNote(),
+    );
   return h("div", { class: "results" }, to?.sub ? h("p", { class: "muted", style: "margin:2px 0 4px" }, nm(to.sub)) : null, compareBlock(), nearBlock, dataNote());
 }
 
@@ -801,6 +860,7 @@ function savePrefs(p: Prefs) {
 const toSlider = (vot: number) => Math.round((100 * Math.log(vot / VOT_RANGE[0])) / Math.log(VOT_RANGE[1] / VOT_RANGE[0]));
 const fromSlider = (v: number) => VOT_RANGE[0] * (VOT_RANGE[1] / VOT_RANGE[0]) ** (v / 100);
 let showAllOptions = false;
+let prefsOpen = false;
 function compareBlock() {
   if (!state.from || !state.to) return null;
   const { options, note, night } = buildOptions(net, state.journeys, state.from.ll, state.to.ll, new Date(), walkPace());
@@ -811,16 +871,19 @@ function compareBlock() {
   const win = winners(options);
   const list = h("div", { class: "options" });
   const worth = h("small", { class: "muted pref-worth" });
+  const summary = h("span", { class: "pref-summary" });
   const draw = () => {
     const ranked = recommend(showAllOptions ? options : front, prefs);
     const longest = Math.max(...ranked.map((o) => o.range[1]), 1);
     worth.textContent = t("votLabel", Math.round(prefs.vot * 60));
+    summary.textContent = t("prefSummary", prefs.vot < 0.07 ? t("prefSave") : prefs.vot > 0.35 ? t("prefTime") : t("prefBalanced"), Math.round(prefs.vot * 60));
     list.replaceChildren(
       ...ranked.map((o, i) =>
         optionRow(
           o,
           i === 0,
-          [i === 0 && t("recommended"), i === 1 && nearTie(ranked[0], o, prefs) && t("nearTie"), win.fast === o && t("prioFast"), win.cheap === o && t("prioCheap"), win.walk === o && t("prioWalk")].filter(Boolean) as string[],
+          // The top option just says so; the others say what they're best at.
+          (i === 0 ? [t("recommended")] : [nearTie(ranked[0], o, prefs) && t("nearTie"), win.fast === o && t("prioFast"), win.cheap === o && t("prioCheap"), win.walk === o && t("prioWalk")]).filter(Boolean) as string[],
           longest,
           i === 0 ? null : tradeText(ranked[0], o),
           () => {
@@ -864,16 +927,27 @@ function compareBlock() {
     t("avoidWalk"),
   );
   draw();
+  // Folded by default: the options come first, the knob is one tap away.
+  const panel = h("div", { class: "pref-panel", hidden: !prefsOpen }, h("div", { class: "pref-row" }, h("span", { class: "pref-end" }, t("prefSave")), slider, h("span", { class: "pref-end" }, t("prefTime"))), worth);
+  const opener = h(
+    "button",
+    {
+      class: "pref-open",
+      "aria-label": t("prefTitle"),
+      "aria-expanded": prefsOpen ? "true" : "false",
+      onclick: () => {
+        prefsOpen = !prefsOpen;
+        panel.hidden = !prefsOpen;
+        opener.setAttribute("aria-expanded", prefsOpen ? "true" : "false");
+      },
+    },
+    summary,
+    icon.chevron(),
+  );
   return h(
     "div",
     { class: "compare" },
-    h(
-      "div",
-      { class: "prefs" },
-      h("p", { class: "label" }, t("prefTitle")),
-      h("div", { class: "pref-row" }, h("span", { class: "pref-end" }, t("prefSave")), slider, h("span", { class: "pref-end" }, t("prefTime"))),
-      h("div", { class: "pref-row pref-row-2" }, worth, walkToggle),
-    ),
+    h("div", { class: "prefs" }, h("div", { class: "pref-row pref-row-2" }, opener, walkToggle), panel),
     night ? h("p", { class: "tip tip-night" }, icon.clock(), h("small", null, t("nightNote"))) : null,
     h(
       "p",
@@ -896,7 +970,7 @@ function compareBlock() {
               render();
             },
           },
-          showAllOptions ? t("hideWorse") : t("showWorse", hidden),
+          showAllOptions ? t("hideWorse") : hidden === 1 ? t("showWorseOne") : t("showWorse", hidden),
         )
       : null,
     note ? h("p", { class: "tip" }, h("span", { class: "row-main" }, h("strong", null, t("petitTaxi")), h("small", null, t("petitTaxiOtherTown", note.town)))) : null,
@@ -913,14 +987,14 @@ function tradeText(best: Option, o: Option) {
 }
 const fmtNum = (n: number) => (n % 1 ? n.toFixed(1).replace(".", getLang() === "en" ? "." : ",") : String(n));
 
-function timeBar(o: Option, longest: number) {
+function timeBar(o: Option, longest: number, spoken: string) {
   const total = o.parts.reduce((n, p) => n + p.s, 0) || 1;
   const label: Record<Part["k"], Key> = { walk: "legendWalk", wait: "legendWait", ride: "legendRide" };
   // The bar is the likely time; the faint tail reaches the slow end of the range.
   const tail = Math.max(0, o.range[1] - o.seconds);
   return h(
     "div",
-    { class: "tbar-track" },
+    { class: "tbar-track", role: "img", "aria-label": spoken, title: spoken },
     h(
       "div",
       { class: "tbar", style: `width:${Math.max(14, (o.seconds / longest) * 100)}%` },
@@ -979,8 +1053,7 @@ function optionRow(o: Option, first: boolean, tags: string[], longest: number, t
         h("span", { class: "ticket-fare" }, price),
       ),
     ),
-    timeBar(o, longest),
-    h("p", { class: "opt-breakdown" }, breakdown(o)),
+    timeBar(o, longest, breakdown(o)),
     trade ? h("p", { class: "opt-trade" }, trade) : null,
   ];
   if (o.journey === undefined) return h("div", { class: `option${first ? " best" : ""}` }, body);
@@ -1135,7 +1208,7 @@ function rideBody(index: number) {
   const j = state.journeys[index];
   const box = h("div", { class: "ride" });
   const body = h("div", { class: "ride-body" });
-  box.append(body, h("div", { class: "actions" }, h("button", { class: "btn", onclick: back }, t("stopTrip"))));
+  box.append(body, h("p", { class: "fine" }, t("rideKeepOpen")), h("div", { class: "actions" }, h("button", { class: "btn", onclick: back }, t("stopTrip"))));
   ride = new RideTracker(net, j, (u) => {
     if (u.me) bmap?.setMe(u.me, u.acc);
     if (u.me && u.follow) bmap?.map.easeTo({ center: u.me, duration: 500 });
@@ -1323,8 +1396,8 @@ function installBlock() {
   return h(
     "div",
     { class: "install-steps" },
-    installEvent ? h("button", { class: "btn btn-primary", onclick: install }, icon.offline(), t("installNow")) : null,
-    h("ol", { class: "help-steps" }, isIos ? h("li", null, t("helpInstallIos")) : [h("li", null, t("helpInstallAndroid")), h("li", null, t("helpInstallIos"))]),
+    installEvent ? h("button", { class: "btn btn-primary", onclick: install }, icon.offline(), t("installNow")) : h("p", null, isIos ? t("helpInstallIos") : t("helpInstallAndroid")),
+    offlineMB ? h("small", { class: "muted" }, t("offlineSize", offlineMB)) : null,
   );
 }
 
@@ -1453,6 +1526,7 @@ function restoreFromHash() {
     sheet.style.height = "";
     if (Math.abs(moved) < 6) setSheet(state.sheet === "peek" ? "half" : state.sheet === "half" ? "full" : "peek");
     else setSheet(hgt > 0.7 ? "full" : hgt > 0.3 ? "half" : "peek");
+    if (state.sheet === "full") userOpenedSheet();
   };
   handle.addEventListener("pointerup", end);
   handle.addEventListener("pointercancel", end);

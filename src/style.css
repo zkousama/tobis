@@ -1499,3 +1499,114 @@ button.option:hover {
   font-weight: 600;
   color: var(--ink-2);
 }
+
+/* ---------- mobile guidelines pass (Apple HIG, Material, NN/g, WCAG 2.2) ---------- */
+/* The menu says what it is: icon plus a word. */
+.map-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: auto;
+  height: 44px;
+  padding: 0 14px 0 12px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 14px;
+}
+[dir="rtl"] .map-btn {
+  padding: 0 12px 0 14px;
+}
+/* Snackbar-style: just above the sheet (its offset is set when shown). */
+.toast {
+  top: auto;
+  bottom: calc(var(--sheet-half) + 12px);
+}
+.loading {
+  gap: 10px;
+  align-content: center;
+}
+/* Labels that stay once a field is filled. */
+.field-stack {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+.field-label {
+  font-size: 11.5px;
+  color: var(--muted);
+}
+/* Folded preferences: one line, the slider one tap away. */
+.pref-open {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: 10px;
+  background: var(--surface-2);
+}
+.pref-open .icon {
+  width: 16px;
+  height: 16px;
+  color: var(--muted);
+  margin-inline-start: auto;
+  transition: transform 0.2s;
+}
+.pref-open[aria-expanded="true"] .icon {
+  transform: rotate(90deg);
+}
+.pref-summary {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pref-panel {
+  display: grid;
+  gap: 4px;
+  padding: 6px 2px 2px;
+}
+.pref-row-2 {
+  flex-wrap: nowrap;
+  gap: 8px;
+}
+/* Arabic script reads better a little larger. */
+[dir="rtl"] body {
+  font-size: 16px;
+}
+/* Touch targets: at least 44px where fingers are the pointer. */
+@media (pointer: coarse) {
+  .link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 2px;
+  }
+  .segmented button {
+    min-height: 44px;
+  }
+  .chip-toggle {
+    height: 44px;
+  }
+  .field-clear {
+    width: 44px;
+    height: 44px;
+    margin-inline-end: -10px;
+  }
+  .cta {
+    min-height: 44px;
+  }
+  .btn-small {
+    height: 44px;
+  }
+  .sheet-handle {
+    height: 36px;
+  }
+  .sheet-handle::after {
+    top: 12px;
+  }
+}

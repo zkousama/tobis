@@ -151,7 +151,7 @@ const S = {
   free: { fr: "Gratuit", ar: "فابور", en: "Free" },
   fareUnknown: { fr: "prix non publié", ar: "الثمن ما منشورش", en: "fare not published" },
   nightNote: { fr: "Il est tard : les bus sont rares ou arrêtés, et le Trambus commence à 6 h.", ar: "الوقت معطل: الطوبيسات قلال ولا حابسين، والترامبيس كيبدا مع 6.", en: "It's late: buses are rare or stopped, and the Trambus starts at 6:00." },
-  showWorse: { fr: "Voir {x} autre(s) option(s), moins bonne(s) sur tout", ar: "شوف {x} اختيارات خرين، كاملين كفس", en: "Show {x} more option(s), worse on every count" },
+  showWorse: { fr: "Voir {x} autres options, moins bonnes sur tout", ar: "شوف {x} اختيارات خرين، كاملين كفس", en: "Show {x} more options, worse on every count" },
   hideWorse: { fr: "Masquer les options moins bonnes", ar: "خبّي الاختيارات اللي كفس", en: "Hide the worse options" },
   rangeTitle: { fr: "Si l'attente ou la circulation sont mauvaises", ar: "إلا طولات التسناية ولا كان الزحام", en: "If the wait or the traffic is bad" },
   segFast: { fr: "Rapide", ar: "سريع", en: "Fastest" },
@@ -168,6 +168,17 @@ const S = {
   tradeSlower: { fr: "{x} min de plus", ar: "{x} دقيقة كثر", en: "{x} min longer" },
   tradeFaster: { fr: "{x} min de moins", ar: "{x} دقيقة أقل", en: "{x} min quicker" },
   nearTie: { fr: "Presque aussi bien", ar: "تقريبا بحالو", en: "Almost as good" },
+  sheetResize: { fr: "Agrandir ou réduire le panneau", ar: "كبّر ولا صغّر", en: "Expand or shrink the panel" },
+  loadingLines: { fr: "Chargement des lignes…", ar: "كنشارجيو الخطوط…", en: "Loading the lines…" },
+  offlineNow: { fr: "Pas de réseau : tout marche, sauf l'ouverture des liens courts Google Maps.", ar: "ما كاينش الريزو: كلشي خدام، غير اللينكات القصار ديال Google Maps.", en: "No signal: everything works except opening short Google Maps links." },
+  rideKeepOpen: { fr: "Gardez l'app ouverte pendant le trajet : l'alerte ne marche pas écran éteint.", ar: "خلّي لابليكاسيون محلولة فالطريق: التنبيه ما كيخدمش ملي كتطفا الشاشة.", en: "Keep the app open during the ride: the alert can't work with the screen off." },
+  prefBalanced: { fr: "Équilibré", ar: "متوازن", en: "Balanced" },
+  prefSummary: { fr: "{x} · ~{y} DH/h", ar: "{x} · ~{y} درهم/ساعة", en: "{x} · ~{y} DH/h" },
+  changeStart: { fr: "Changer le départ", ar: "بدّل منين تبدا", en: "Change the start" },
+  seeLines: { fr: "Voir les lignes", ar: "شوف الخطوط", en: "See the lines" },
+  offlineSize: { fr: "Garde {x} Mo sur le téléphone pour marcher sans réseau.", ar: "كتخزن {x} ميغا فالتيليفون باش تخدم بلا ريزو.", en: "Keeps {x} MB on the phone to work with no signal." },
+  menuLabel: { fr: "Menu", ar: "القائمة", en: "Menu" },
+  showWorseOne: { fr: "Voir 1 autre option, moins bonne sur tout", ar: "شوف اختيار آخر، كفس فكلشي", en: "Show 1 more option, worse on every count" },
   heroA: { fr: "Vous allez ", ar: "فين ", en: "Where are you " },
   heroB: { fr: "où", ar: "غادي", en: "going" },
   heroC: { fr: " ?", ar: "؟", en: "?" },
@@ -233,7 +244,12 @@ export function setLang(l: Lang) {
   } catch {}
 }
 export const getLang = () => lang;
-export const t = (k: Key, x?: string | number) => (x === undefined ? S[k][lang] : S[k][lang].replace("{x}", String(x)));
+export const t = (k: Key, x?: string | number, y?: string | number) => {
+  let v: string = S[k][lang];
+  if (x !== undefined) v = v.replace("{x}", String(x));
+  if (y !== undefined) v = v.replace("{y}", String(y));
+  return v;
+};
 
 const arDigits = (s: string) => s; // Moroccan usage is Western digits; keep them.
 export function fmtMinutes(seconds: number): string {

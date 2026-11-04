@@ -108,8 +108,9 @@ export class RideTracker {
       }
     const atAlight = Math.abs(v.along[leg.alight] - along) < 40 || dist(me, this.net.stops[v.stops[leg.alight]].ll) < 40;
     const stopsLeft = atAlight ? 0 : Math.max(1, leg.alight - nextIdx + 1);
-    if (stopsLeft < this.lastAlert && stopsLeft <= 1) {
-      navigator.vibrate?.(stopsLeft === 0 ? [400, 150, 400, 150, 400] : [250, 120, 250]);
+    // Like Moovit: a light buzz 2 stops out, a stronger one at the last stop, a long one at yours.
+    if (stopsLeft < this.lastAlert && stopsLeft <= 2) {
+      navigator.vibrate?.(stopsLeft === 0 ? [400, 150, 400, 150, 400] : stopsLeft === 1 ? [250, 120, 250] : [120]);
     }
     this.lastAlert = Math.min(this.lastAlert, stopsLeft);
     this.cb({ status: "ok", leg: this.leg, me, acc, follow: true, stopsLeft, nextStop: v.stops[nextIdx] });
