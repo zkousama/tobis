@@ -10,9 +10,11 @@ export const WALK_SPEED = 1.25; // m/s, about 4.5 km/h
 export const DETOUR = 1.3; // street distance / straight-line distance, when no street path is known
 export const MAX_ACCESS = 1200; // metres walked to the first stop or from the last one
 export const MAX_TRANSFER = 400; // metres walked between two buses
-export const WAIT = { bus: 600, brt: 300 }; // expected wait per boarding when no frequency is published, seconds
+// Expected wait per boarding when no frequency is published, seconds.
+// A grand taxi leaves its stand when full: about 10 minutes.
+export const WAIT = { bus: 600, brt: 300, taxi: 600 };
 /** Expected wait: half the gap between buses when it's published, else a default. */
-export const waitFor = (line: { brt: boolean; headway?: number }) => (line.headway ? (line.headway * 60) / 2 : line.brt ? WAIT.brt : WAIT.bus);
+export const waitFor = (line: { brt: boolean; headway?: number; taxi?: boolean }) => (line.headway ? (line.headway * 60) / 2 : line.brt ? WAIT.brt : line.taxi ? WAIT.taxi : WAIT.bus);
 export const TRANSFER_PENALTY = 180; // extra seconds per change, so direct trips win ties
 export const DWELL = 20; // seconds lost at each intermediate stop
 

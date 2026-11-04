@@ -800,8 +800,32 @@ function resultsBody() {
         h("div", { class: "ticket-stub" }, h("span", { class: "ticket-time" }, String(Math.max(1, Math.round(j.seconds / 60))), h("small", null, t("min"))), fare ? h("span", { class: "ticket-fare" }, `≈ ${fmtDH(fare)}`) : null),
       );
     }),
+    petitTaxiBlock(),
     nearBlock,
     dataNote(),
+  );
+}
+
+/** Petit taxi as a rough alternative: drive time and a meter estimate. */
+function petitTaxiBlock() {
+  const pt = net.petitTaxi;
+  if (!pt || !state.from || !state.to) return null;
+  const crow = dist(state.from.ll, state.to.ll);
+  if (crow < 1500) return null; // short enough to walk
+  const km = (crow * 1.35) / 1000; // streets are longer than a straight line
+  const minutes = (km / 22) * 60 + 4; // ~22 km/h across town, plus a few minutes to find one
+  const low = Math.round((pt.start + pt.perKm * km * 0.8) / 5) * 5;
+  const high = Math.round((pt.start + pt.perKm * km * 1.2) / 5) * 5;
+  return h(
+    "div",
+    { class: "section" },
+    h("h3", { class: "section-title label" }, t("otherWays")),
+    h(
+      "div",
+      { class: "ticket ticket-taxi" },
+      h("div", { class: "ticket-main" }, h("strong", null, t("petitTaxi")), h("span", { class: "journey-sub" }, t("petitTaxiSub"))),
+      h("div", { class: "ticket-stub" }, h("span", { class: "ticket-time" }, String(Math.round(minutes)), h("small", null, t("min"))), h("span", { class: "ticket-fare" }, `≈ ${fmtDH(low)}–${fmtDH(high)}`)),
+    ),
   );
 }
 
@@ -875,7 +899,7 @@ function tripBody(index: number) {
           t("showStops"),
         )
       : null;
-    const waitNote = line.headway ? t("noteWait", line.headway) : t("noteWaitUnknown", fmtMinutes(waitFor(line)));
+    const waitNote = line.taxi ? t("taxiLeaves") : line.headway ? t("noteWait", line.headway) : t("noteWaitUnknown", fmtMinutes(waitFor(line)));
     steps.push(
       h(
         "li",
@@ -886,7 +910,7 @@ function tripBody(index: number) {
           { class: "tl-main" },
           h("strong", { class: "tl-stop-name" }, nm(net.stops[boardStop].n)),
           stopLine(boardStop),
-          h("div", { class: "tl-board" }, `${t("stepTake")} `, lineBadge(line.ref, line.colour), ` ${t("towards")} `, h("strong", null, v.to)),
+          h("div", { class: "tl-board" }, `${line.taxi ? t("takeTaxi") : t("stepTake")} `, lineBadge(line.ref, line.colour), ` ${t("towards")} `, h("strong", null, v.to)),
           note(icon.clock(), waitNote),
         ),
       ),
@@ -898,7 +922,7 @@ function tripBody(index: number) {
           "div",
           { class: "tl-main" },
           h("span", null, `${fmtStops(leg.alight - leg.board)} · ${fmtMinutes(leg.seconds)}`),
-          fare ? h("small", { class: "muted" }, `${t("fare")} ≈ ${fmtDH(fare.normal)}${fare.card && fare.card !== fare.normal ? `, ${fmtDH(fare.card)} ${t("withCard")}` : ""}`) : null,
+          fare ? h("small", { class: "muted" }, `${t("fare")} ≈ ${fmtDH(fare.normal)}${line.taxi ? ` ${t("perSeat")}` : ""}${fare.card && fare.card !== fare.normal ? `, ${fmtDH(fare.card)} ${t("withCard")}` : ""}`) : null,
           toggle,
           list,
         ),

@@ -39,7 +39,7 @@ export interface Variant {
 }
 
 export type LineFare =
-  | { kind: "flat"; normal: number; card?: number; transfer?: number; firstCard?: number }
+  | { kind: "flat"; normal: number; card?: number; transfer?: number; firstCard?: number; perSeat?: boolean }
   | { kind: "zones"; zones: { fr: string; ar?: string }[]; normal: Record<string, number>; card: Record<string, number> };
 
 export interface Line {
@@ -50,10 +50,12 @@ export interface Line {
   variants: Variant[];
   fare?: LineFare;
   headway?: number; // minutes between buses, when the operator publishes it
+  taxi?: boolean; // a grand taxi route: leaves its stand when full
 }
 
 export interface Network {
   alsaFetched?: string;
+  petitTaxi?: { start: number; perKm: number }; // meter rate, unverified
   city: string;
   name: Names & Record<string, string>;
   bbox: [number, number, number, number];

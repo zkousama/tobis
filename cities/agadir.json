@@ -96,5 +96,11 @@
       "Facultés",
       "Souk Lakhmis"
     ]
-  }
+  },
+  "petitTaxi": {
+    "start": 5,
+    "perKm": 6,
+    "source": "travel sites (gobytaxi.com, 2026); not an official tariff, to be checked locally"
+  },
+  "grandsTaxis": "data/taxis/agadir-grands-taxis.csv"
 }

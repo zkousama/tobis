@@ -59,5 +59,6 @@ export const icon = {
 /** A line number in the operator's own colour, readable on any background. */
 export function lineBadge(ref: string, colour: string, size: "sm" | "md" | "lg" = "md") {
   const bg = visible(colour, "#ffffff", 1.6);
-  return h("span", { class: `badge badge-${size}${ref === "BHNS" ? " badge-brt" : ""}`, style: `--c:${bg};--t:${textOn(bg)}` }, ref === "BHNS" ? "Trambus" : ref);
+  const label = ref === "BHNS" ? "Trambus" : ref.startsWith("GT") ? "Grand taxi" : ref;
+  return h("span", { class: `badge badge-${size}${ref === "BHNS" || ref.startsWith("GT") ? " badge-brt" : ""}`, style: `--c:${bg};--t:${textOn(bg)}` }, label);
 }

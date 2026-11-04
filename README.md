@@ -46,6 +46,12 @@ Deploy `dist/` with the `functions/` folder to Cloudflare Pages: `wrangler pages
 
 Other cities: add a `cities/<id>.json` with its bounding box and networks, and run the same scripts with that id.
 
+## Grands taxis
+
+Shared taxis have no published routes or fares, so they come from a list kept by hand: `data/taxis/agadir-grands-taxis.csv`. Each row is a stand (prefilled from OpenStreetMap) and one destination. Fill in `to` and `price_dh` (per seat); add `to_lat`/`to_lon` if the destination stand isn't the town centre; set `both_ways` to `no` for one-way routes. Rows without a price are left out. Rebuild with `node scripts/build-data.mjs agadir`.
+
+The petit taxi estimate uses the meter rate in `cities/agadir.json` (`petitTaxi`), taken from travel sites, not an official tariff.
+
 ## Licence
 
 The code is MIT (see `LICENSE`). The data keeps the licences listed above.

@@ -673,6 +673,70 @@ if (cfg.brt) {
   report.brt = { stations: stations.length, of: cfg.brt.stations.length, busways: busways.length };
 }
 
+// ---- Grands taxis: shared taxis from their stands, from a list kept by hand ----
+// data/taxis/<city>-grands-taxis.csv: stand, stand_lat, stand_lon, osm, to,
+// price_dh, to_lat, to_lon, both_ways, notes. Rows without a price are skipped.
+function parseCsv(text) {
+  const rows = [];
+  let row = [], cell = "", quoted = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (quoted) {
+      if (ch === '"' && text[i + 1] === '"') {
+        cell += '"';
+        i++;
+      } else if (ch === '"') quoted = false;
+      else cell += ch;
+    } else if (ch === '"') quoted = true;
+    else if (ch === ",") {
+      row.push(cell);
+      cell = "";
+    } else if (ch === "\n" || ch === "\r") {
+      if (ch === "\r" && text[i + 1] === "\n") i++;
+      row.push(cell);
+      if (row.some((v) => v !== "")) rows.push(row);
+      row = [];
+      cell = "";
+    } else cell += ch;
+  }
+  if (cell || row.length) rows.push([...row, cell]);
+  const [head, ...body] = rows;
+  return body.map((r) => Object.fromEntries(head.map((h, i) => [h.trim(), (r[i] ?? "").trim()])));
+}
+let taxiStopId = 9e12;
+function addPointStop(name, ll) {
+  const near = stops.findIndex((s) => s.src === "taxi" && s.n.d === name && dist(s.ll, ll) < 30);
+  if (near >= 0) return near;
+  stops.push({ id: taxiStopId++, src: "taxi", ll: [round5(ll[0]), round5(ll[1])], n: names({ name }) });
+  return stops.length - 1;
+}
+if (cfg.grandsTaxis) {
+  const text = await readFile(cfg.grandsTaxis, "utf8").catch(() => "");
+  const rows = text ? parseCsv(text).filter((r) => Number(r.price_dh) > 0) : [];
+  report.grandsTaxis = { rows: rows.length, skipped: [] };
+  rows.forEach((r, k) => {
+    const from = [Number(r.stand_lon), Number(r.stand_lat)];
+    let to = r.to_lat && r.to_lon ? [Number(r.to_lon), Number(r.to_lat)] : null;
+    if (!to) {
+      // The destination town or neighbourhood of that name nearest the stand.
+      const key = normKey(r.to);
+      const cand = places.filter((p) => (p.k === "town" || p.k === "area") && (normKey(p.n.d) === key || normKey(p.n.fr) === key));
+      to = cand.sort((a, b) => dist(a.ll, from) - dist(b.ll, from))[0]?.ll ?? null;
+    }
+    if (!to || !r.to) {
+      report.grandsTaxis.skipped.push(`${r.stand} → ${r.to}: destination not found`);
+      return;
+    }
+    const a = addPointStop(r.stand, from), b = addPointStop(r.to, to);
+    const fare = { kind: "flat", normal: Number(r.price_dh), perSeat: true };
+    for (const dir of r.both_ways === "no" ? [[a, b]] : [[a, b], [b, a]]) {
+      const rel = { id: `taxi:${k}:${dir[0]}`, members: [] };
+      const tr = trace(rel, dir);
+      entries.push({ rel, t: { from: stops[dir[0]].n.d, to: stops[dir[1]].n.d, name: `Grand taxi ${r.stand} – ${r.to}` }, ref: `GT${k}`, isBrt: false, taxi: true, seqIdx: dir, tr, alsa: true, fare, colour: "#5f6b76" });
+    }
+  });
+}
+
 // Repair directions whose stop order is scrambled in OSM, and keep the repair
 // only if it checks out better than what OSM has.
 for (const e of entries) {
@@ -746,13 +810,15 @@ for (const e of entries) {
     if (z) variant.zones = z;
     else report.zoneless = [...(report.zoneless ?? []), `${ref}:${t.to}`];
   }
-  if (!byRef.has(ref)) byRef.set(ref, { ref, brt: isBrt, name: t.name, variants: [], ...(e.fare ? { fare: e.fare } : {}), ...(e.colour ? { colour: e.colour } : {}), ...(e.headway ? { headway: e.headway } : {}) });
+  if (!byRef.has(ref)) byRef.set(ref, { ref, brt: isBrt, name: t.name, variants: [], ...(e.fare ? { fare: e.fare } : {}), ...(e.colour ? { colour: e.colour } : {}), ...(e.headway ? { headway: e.headway } : {}), ...(e.taxi ? { taxi: true } : {}) });
   byRef.get(ref).variants.push(variant);
 }
 
-const lines = [...byRef.values()].sort((a, b) => (a.brt ? -1 : b.brt ? 1 : (parseInt(a.ref) || 999) - (parseInt(b.ref) || 999)));
+const order = (l) => (l.brt ? -1 : l.taxi ? 10_000 : parseInt(l.ref) || 999);
+const lines = [...byRef.values()].sort((a, b) => order(a) - order(b));
 // The Trambus in Amalway's orange (beta.amalway.ma); bus lines keep ALSA's colours.
 lines.forEach((l, i) => (l.colour = l.brt ? "#ed6c36" : (l.colour ?? PALETTE[i % PALETTE.length])));
+for (const l of lines) if (l.taxi) l.variants.forEach((v) => (v.inferred = undefined));
 
 // Each place's nearest other town, to tell apart places with the same name.
 places.forEach((p, i) => {
@@ -798,6 +864,7 @@ const out = {
   center: cfg.center,
   zoom: cfg.zoom,
   osmTimestamp: routesRaw.osm3s?.timestamp_osm_base,
+  ...(cfg.petitTaxi ? { petitTaxi: { start: cfg.petitTaxi.start, perKm: cfg.petitTaxi.perKm } } : {}),
   ...(alsa ? { alsaFetched: (await readFile(`${ALSA_DIR}/fetched-at.txt`, "utf8").catch(() => "")).trim() || undefined } : {}),
   stops,
   places,

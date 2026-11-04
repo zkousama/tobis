@@ -1,0 +1,13 @@
+stand,stand_lat,stand_lon,osm,to,price_dh,to_lat,to_lon,both_ways,notes
+Grands taxis (Tamrout),30.6793,-9.48299,node/1660843258,,,,,yes,OSM: grand taxi
+Grands taxis Biougra vers Agadir,30.2181,-9.36994,node/3665401170,Agadir,,,,yes,"OSM: Grands Taxis [Destination Agadir, Ait Melloul, Inezgane]"
+Grands taxis Biougra vers Agadir,30.2181,-9.36994,node/3665401170,Ait Melloul,,,,yes,"OSM: Grands Taxis [Destination Agadir, Ait Melloul, Inezgane]"
+Grands taxis Biougra vers Agadir,30.2181,-9.36994,node/3665401170,Inezgane,,,,yes,"OSM: Grands Taxis [Destination Agadir, Ait Melloul, Inezgane]"
+Grands taxis Biougra vers Ait Amira,30.21189,-9.371,node/3665401733,Ait Amira,,,,yes,"OSM: Grands Taxis [Destination Ait Amira, Belfaa, Ait Mimoun]"
+Grands taxis Biougra vers Ait Amira,30.21189,-9.371,node/3665401733,Belfaa,,,,yes,"OSM: Grands Taxis [Destination Ait Amira, Belfaa, Ait Mimoun]"
+Grands taxis Biougra vers Ait Amira,30.21189,-9.371,node/3665401733,Ait Mimoun,,,,yes,"OSM: Grands Taxis [Destination Ait Amira, Belfaa, Ait Mimoun]"
+Gare des grands taxis Inezgane,30.35945,-9.52811,way/49217348,,,,,yes,OSM: Gare de Grande Taxis
+Grands taxis Souk El Had,30.41119,-9.57718,way/362662491,,,,,yes,OSM: Grand Taxis Souk El Had
+Grands taxis Salam,30.40507,-9.55031,way/385489374,,,,,yes,OSM: Taxi Station Salam
+Grands taxis Ait Melloul,30.34962,-9.50418,way/391779991,,,,,yes,OSM: سيارات الأجرة أيت ملول
+Station de taxis (Lqliaa),30.2922,-9.45811,way/1567810207,,,,,yes,OSM: محطة سيارة الأجرة
