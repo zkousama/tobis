@@ -27,7 +27,7 @@ export function trambusSettings(): Node[] {
     h("h3", { class: "section-title label" }, t("brt")),
     h(
       "div",
-      { class: "setting-chips" },
+      { class: "setting-list" },
       f?.firstCard ? settingToggle(t("haveCardSetting"), () => hasCard(brt.ref), () => setHasCard(brt.ref, !hasCard(brt.ref))) : null,
       settingToggle(
         t("skipBrt"),

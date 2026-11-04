@@ -427,7 +427,10 @@ function badge(text: string, colour: string, kind: "board" | "alight") {
   el.className = `stop-badge stop-badge-${kind}`;
   el.style.setProperty("--c", colour);
   const s = document.createElement("span");
-  s.textContent = text;
+  const name = document.createElement("b"); // the name alone, so a long one can end in "…" without clipping the pointer
+  name.textContent = text;
+  s.append(name);
+  el.title = text;
   el.append(s);
   return el;
 }

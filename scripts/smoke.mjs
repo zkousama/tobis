@@ -200,14 +200,14 @@ await step("trip view: steps, the card note, back to the list", async () => {
 
 await step("settings: language, appearance, Trambus, version", async () => {
   await run(() => (document.querySelector(".map-btn")?.click(), true));
-  await until("settings", () => document.querySelector(".setting-chips"));
+  await until("settings", () => document.querySelector(".setting-list"));
   const t = await run(() => document.querySelector(".sheet-body").innerText);
   ok(/Langue/.test(t) && /Apparence/.test(t) && /Trambus/.test(t), "a settings section is missing");
   await shot("settings");
 });
 
 await step("leaving the Trambus out removes it from the options", async () => {
-  await run(() => ([...document.querySelectorAll(".setting-chips button")].find((b) => /proposer/.test(b.innerText))?.click(), true));
+  await run(() => ([...document.querySelectorAll(".setting-list button")].find((b) => /proposer/.test(b.innerText))?.click(), true));
   await open(SITE + "?skip" + TRIP);
   await until("trip options", () => document.querySelector(".option"));
   const brt = await run(() => [...document.querySelectorAll(".option")].some((o) => /Trambus/.test(o.innerText)));

@@ -60,16 +60,16 @@ export function settingToggle(label: string, on: () => boolean, flip: () => void
   const b = h(
     "button",
     {
-      class: `chip-toggle${on() ? " on" : ""}`,
-      "aria-pressed": on() ? "true" : "false",
+      class: "setting-row",
+      role: "switch",
+      "aria-checked": on() ? "true" : "false",
       onclick: () => {
         flip();
-        b.classList.toggle("on", on());
-        b.setAttribute("aria-pressed", on() ? "true" : "false");
+        b.setAttribute("aria-checked", on() ? "true" : "false");
       },
     },
-    h("span", { class: "tick" }, icon.check()),
-    label,
+    h("span", { class: "setting-label" }, label),
+    h("span", { class: "switch" }),
   );
   return b;
 }

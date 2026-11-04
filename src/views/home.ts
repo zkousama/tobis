@@ -14,69 +14,51 @@ export function homeBody() {
   try {
     dismissed = localStorage.getItem("installDismissed") === "1";
   } catch {}
-  const cards: Node[] = [];
-  // Location: ask once, with a reason, rather than a surprise browser prompt.
-  if (!state.me && state.locPerm !== "granted")
-    cards.push(
-      h(
-        "button",
-        { class: "tip", onclick: () => locate(true) },
-        h("span", { class: "row-icon accent" }, icon.locate()),
-        h("span", { class: "row-main" }, h("strong", null, t("useMyLocation")), h("small", { class: "muted" }, state.locPerm === "denied" ? t("locDenied") : t("useMyLocationSub"))),
-      ),
-    );
+  // One look for everything under the search field: rows, like the search list.
+  const row = (onclick: () => void, lead: Node, main: (Node | null)[], end: Node | null = icon.chevron()) =>
+    h("li", null, h("button", { class: "row", onclick }, lead, h("span", { class: "row-main" }, ...main), end));
+
+  // Location: asked once, with a reason, rather than a surprise browser prompt.
+  const locRow =
+    !state.me && state.locPerm !== "granted"
+      ? h("ul", { class: "list" }, row(() => locate(true), h("span", { class: "row-icon accent" }, icon.locate()), [h("span", null, t("useMyLocation")), state.locPerm === "denied" ? h("small", { class: "muted" }, t("locDenied")) : null], null))
+      : null;
+
   let tripsSeen = 0;
   try {
     tripsSeen = Number(localStorage.getItem("tripsSeen")) || 0;
   } catch {}
-  // Offer the install after the app has been useful once, never on first open.
-  if (canInstall() && !dismissed && tripsSeen > 0)
-    cards.push(
-      h(
-        "div",
-        { class: "tip tip-install" },
-        h("span", { class: "row-icon" }, icon.offline()),
-        h("span", { class: "row-main" }, h("strong", null, t("installCard")), offlineMB ? h("small", { class: "muted" }, t("offlineSize", offlineMB)) : null),
-        h("button", { class: "btn btn-small btn-primary", onclick: install }, t("installNow")),
-        h(
-          "button",
-          {
-            class: "link",
-            onclick: () => {
-              try {
-                localStorage.setItem("installDismissed", "1");
-              } catch {}
-              render();
+  // Offered after the app has been useful once, never on first open. Dismissed for good with the cross.
+  const installBanner =
+    canInstall() && !dismissed && tripsSeen > 0
+      ? h(
+          "div",
+          { class: "install-banner" },
+          h("span", { class: "row-main" }, h("strong", null, t("installCard")), offlineMB ? h("small", { class: "muted" }, t("installSub", offlineMB)) : null),
+          h("button", { class: "btn btn-small btn-primary", onclick: install }, t("installNow")),
+          h(
+            "button",
+            {
+              class: "icon-btn",
+              "aria-label": t("later"),
+              onclick: () => {
+                try {
+                  localStorage.setItem("installDismissed", "1");
+                } catch {}
+                render();
+              },
             },
-          },
-          t("later"),
-        ),
-      ),
-    );
+            icon.close(),
+          ),
+        )
+      : null;
+
+  const brtLine = brt >= 0 ? net.lines[brt] : undefined;
   return h(
     "div",
     { class: "home" },
-    cards.length ? h("div", { class: "tips" }, cards) : null,
-    h(
-      "div",
-      { class: "quick" },
-      brt >= 0
-        ? h(
-            "button",
-            { class: "quick-card quick-brt", onclick: () => go({ name: "line", line: brt, variant: 0 }) },
-            lineBadge("BHNS", net.lines[brt].colour),
-            h("span", { class: "serif" }, `${net.lines[brt].variants[0].from} – ${net.lines[brt].variants[0].to}`),
-            net.lines[brt].headway ? h("small", null, t("noteWait", net.lines[brt].headway)) : null,
-          )
-        : null,
-      h(
-        "button",
-        { class: "quick-card", onclick: () => go({ name: "lines" }) },
-        h("span", { class: "row-icon" }, icon.bus()),
-        h("span", { class: "serif" }, t("allLines")),
-        h("small", null, `${net.lines.length} ${t("lines").toLowerCase()}`),
-      ),
-    ),
+    locRow,
+    installBanner,
     rec.length
       ? h(
           "div",
@@ -85,16 +67,26 @@ export function homeBody() {
           h(
             "ul",
             { class: "list" },
-            rec.map((ep) =>
-              h(
-                "li",
-                null,
-                h("button", { class: "row", onclick: () => setEndpoint("to", ep) }, h("span", { class: "row-icon" }, icon.clock()), h("span", { class: "row-main" }, h("span", null, nm(ep.label)), ep.sub ? h("small", { class: "muted" }, nm(ep.sub)) : null)),
-              ),
-            ),
+            rec.map((ep) => row(() => setEndpoint("to", ep), h("span", { class: "row-icon" }, icon.clock()), [h("span", null, nm(ep.label)), ep.sub ? h("small", { class: "muted" }, nm(ep.sub)) : null], null)),
           ),
         )
       : null,
+    h(
+      "div",
+      { class: "section" },
+      h("h3", { class: "section-title label" }, t("lines")),
+      h(
+        "ul",
+        { class: "list" },
+        brtLine
+          ? row(() => go({ name: "line", line: brt, variant: 0 }), lineBadge("BHNS", brtLine.colour), [
+              h("span", null, `${brtLine.variants[0].from} – ${brtLine.variants[0].to}`),
+              brtLine.headway ? h("small", { class: "muted" }, t("noteWait", brtLine.headway)) : null,
+            ])
+          : null,
+        row(() => go({ name: "lines" }), h("span", { class: "row-icon" }, icon.bus()), [h("span", null, t("allLines")), h("small", { class: "muted" }, `${net.lines.length} ${t("lines").toLowerCase()}`)]),
+      ),
+    ),
     h("button", { class: "cta", onclick: () => go({ name: "help" }) }, h("span", { class: "plus" }, "?"), t("helpLink")),
     dataNote(),
   );
