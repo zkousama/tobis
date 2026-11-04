@@ -12,7 +12,7 @@
   --surface-2: #f2f4f5;
   --ink: #15191d;
   --ink-2: #474e55;
-  --muted: #6b737b;
+  --muted: #565e66;
   --rule: #e2e5e8;
   --accent: #1f56a8;
   --accent-2: #17468d;
@@ -34,7 +34,7 @@
     --surface-2: #20252a;
     --ink: #eceff1;
     --ink-2: #bcc3c9;
-    --muted: #8d959c;
+    --muted: #9ba3aa;
     --rule: #2b3137;
     --accent: #7aa7f0;
     --accent-2: #9bbcf5;
@@ -50,7 +50,7 @@
   --surface-2: #20252a;
   --ink: #eceff1;
   --ink-2: #bcc3c9;
-  --muted: #8d959c;
+  --muted: #9ba3aa;
   --rule: #2b3137;
   --accent: #7aa7f0;
   --accent-2: #9bbcf5;
@@ -75,7 +75,7 @@ body {
   overscroll-behavior: none;
 }
 body {
-  font-size: 15px;
+  font-size: 0.9375rem;
   line-height: 1.45;
 }
 button,
@@ -120,7 +120,7 @@ p {
 }
 
 .display {
-  font-size: 28px;
+  font-size: 1.75rem;
   font-weight: 650;
   line-height: 1.15;
   letter-spacing: -0.015em;
@@ -132,15 +132,15 @@ p {
   color: var(--muted);
 }
 small {
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 .fine {
   margin-top: 20px;
-  font-size: 12px;
+  font-size: 0.75rem;
   color: var(--muted);
 }
 .label {
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 600;
   color: var(--muted);
 }
@@ -316,7 +316,7 @@ small {
 .hero-sub {
   margin-top: 6px;
   color: var(--ink-2);
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 .sheet[data-size="peek"] .hero {
   display: none;
@@ -326,7 +326,7 @@ small {
     display: none;
   }
   .display {
-    font-size: 24px;
+    font-size: 1.5rem;
   }
 }
 
@@ -363,7 +363,7 @@ small {
   border: 0;
   outline: 0;
   background: none;
-  font-size: 16px;
+  font-size: 1rem;
 }
 .field-input::placeholder {
   color: var(--muted);
@@ -496,7 +496,7 @@ small {
   height: 22px;
   border-radius: 50%;
   border: 1.5px solid currentColor;
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 700;
   line-height: 1;
 }
@@ -512,21 +512,21 @@ small {
   background: var(--c, var(--ink));
   color: var(--t, #fff);
   font-weight: 700;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-variant-numeric: tabular-nums;
   flex: none;
 }
 .badge-sm {
   min-width: 26px;
   height: 21px;
-  font-size: 12px;
+  font-size: 0.75rem;
   border-radius: 5px;
   padding: 0 5px;
 }
 .badge-lg {
   min-width: 44px;
   height: 34px;
-  font-size: 18px;
+  font-size: 1.125rem;
   border-radius: 7px;
 }
 .badge-brt {
@@ -611,7 +611,7 @@ small {
 }
 .quick-card small {
   color: var(--muted);
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 
 /* ---------- trip options ---------- */
@@ -646,28 +646,28 @@ small {
   gap: 2px;
 }
 .ticket-time {
-  font-size: 22px;
+  font-size: 1.375rem;
   font-weight: 700;
   line-height: 1;
   font-variant-numeric: tabular-nums;
 }
 .ticket-time small {
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 500;
   color: var(--muted);
   margin-inline-start: 2px;
 }
 .ticket-fare {
-  font-size: 12.5px;
+  font-size: 0.7812rem;
   color: var(--ink-2);
 }
 .best-label {
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 600;
   color: var(--accent);
 }
 .journey-sub {
-  font-size: 13.5px;
+  font-size: 0.8438rem;
   color: var(--ink-2);
 }
 .legs {
@@ -681,7 +681,7 @@ small {
   align-items: center;
   gap: 1px;
   color: var(--ink-2);
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 600;
 }
 .walk-chip .icon {
@@ -709,7 +709,7 @@ small {
   align-items: center;
   gap: 2px;
   font-weight: 600;
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: var(--ink-2);
   white-space: nowrap;
 }
@@ -736,12 +736,12 @@ small {
   padding-top: 7px;
 }
 .view-title h2 {
-  font-size: 19px;
+  font-size: 1.1875rem;
   font-weight: 650;
   line-height: 1.25;
 }
 .view-title p {
-  font-size: 13.5px;
+  font-size: 0.8438rem;
   margin-top: 2px;
 }
 .head-line,
@@ -763,7 +763,7 @@ small {
   border-bottom: 1px solid var(--rule);
 }
 .journey-time {
-  font-size: 26px;
+  font-size: 1.625rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
@@ -853,14 +853,14 @@ small {
 }
 .tl-walk .tl-main,
 .tl-ride .tl-main {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--ink-2);
 }
 .tl-ride {
   min-height: 56px;
 }
 .tl-stop-name {
-  font-size: 17px;
+  font-size: 1.0625rem;
   font-weight: 650;
 }
 .tl-board {
@@ -875,14 +875,14 @@ small {
   color: var(--ink-2);
 }
 .tl-off .tl-stop-name {
-  font-size: 19px;
+  font-size: 1.1875rem;
 }
 .tl-note {
   display: flex;
   align-items: center;
   gap: 6px;
   margin-top: 6px;
-  font-size: 13.5px;
+  font-size: 0.8438rem;
   color: var(--ink-2);
 }
 .tl-note .icon {
@@ -893,7 +893,7 @@ small {
 .mini-stops {
   margin: 6px 0 0;
   padding-inline-start: 18px;
-  font-size: 13.5px;
+  font-size: 0.8438rem;
   color: var(--muted);
   display: grid;
   gap: 3px;
@@ -901,7 +901,7 @@ small {
 .link {
   color: var(--accent);
   font-weight: 500;
-  font-size: 13.5px;
+  font-size: 0.8438rem;
   justify-self: start;
   align-self: flex-start;
   padding: 4px 0;
@@ -947,7 +947,7 @@ small {
 .btn-small {
   height: 40px;
   padding: 0 14px;
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 .btn .dot-to {
   background: currentColor;
@@ -970,7 +970,7 @@ small {
   flex: 1;
   padding: 8px 10px;
   border-radius: 8px;
-  font-size: 13.5px;
+  font-size: 0.8438rem;
   font-weight: 500;
   color: var(--ink-2);
   white-space: nowrap;
@@ -1019,7 +1019,7 @@ small {
   padding: 12px 14px;
   border-radius: 10px;
   background: var(--surface-2);
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 .notice .icon {
   vertical-align: -4px;
@@ -1057,18 +1057,18 @@ small {
   background: #fff;
   color: #15191d;
   font-weight: 700;
-  font-size: 20px;
+  font-size: 1.25rem;
 }
 .sign-text {
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: 600;
 }
 .sign-sub {
-  font-size: 13.5px;
+  font-size: 0.8438rem;
   color: #c9d0d6;
 }
 .ride-big {
-  font-size: 24px;
+  font-size: 1.5rem;
   font-weight: 650;
   line-height: 1.2;
   margin: 6px 0 4px;
@@ -1078,13 +1078,13 @@ small {
   flex-wrap: wrap;
 }
 .ride-big .num {
-  font-size: 52px;
+  font-size: 3.25rem;
   font-weight: 700;
   line-height: 0.9;
   font-variant-numeric: tabular-nums;
 }
 .ride-big small {
-  font-size: 15px;
+  font-size: 0.9375rem;
   font-weight: 500;
   color: var(--ink-2);
 }
@@ -1107,7 +1107,7 @@ small {
 }
 .help-section h3 {
   margin: 0 0 8px;
-  font-size: 17px;
+  font-size: 1.0625rem;
   font-weight: 650;
 }
 .help-list,
@@ -1205,7 +1205,7 @@ small {
   border-radius: 10px;
   background: #15191d;
   color: #fff;
-  font-size: 14px;
+  font-size: 0.875rem;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.2s, transform 0.2s;
@@ -1247,16 +1247,25 @@ small {
 .maplibregl-ctrl-attrib {
   font-family: var(--font);
 }
-.maplibregl-ctrl-bottom-right {
-  bottom: calc(var(--sheet-half) + 4px);
+/* #app raises these above MapLibre's own stylesheet, which loads later. */
+#app .maplibregl-ctrl-bottom-right {
+  bottom: calc(var(--sheet-half) + 10px);
 }
 #app:has(.sheet[data-size="peek"]) .maplibregl-ctrl-bottom-right {
-  bottom: calc(var(--sheet-peek) + 4px);
+  bottom: calc(var(--sheet-peek) + 10px);
+}
+#app:has(.sheet[data-size="full"]) .maplibregl-ctrl-bottom-right {
+  bottom: calc(var(--sheet-full) + 10px);
+}
+/* Clear of the locate button, which sits on the same side in French and English. */
+[dir="ltr"] #app .maplibregl-ctrl-bottom-right {
+  right: 62px;
 }
 @media (min-width: 900px) {
-  .maplibregl-ctrl-bottom-right,
-  #app:has(.sheet[data-size="peek"]) .maplibregl-ctrl-bottom-right {
+  #app .maplibregl-ctrl-bottom-right,
+  #app:has(.sheet[data-size]) .maplibregl-ctrl-bottom-right {
     bottom: 0;
+    right: 0;
   }
 }
 @media (pointer: coarse) {
@@ -1285,7 +1294,7 @@ small {
   gap: 6px;
   flex-wrap: wrap;
   margin: 2px 0 6px;
-  font-size: 12px;
+  font-size: 0.75rem;
   color: var(--muted);
 }
 .bar-legend .key {
@@ -1363,7 +1372,7 @@ button.option:hover {
   gap: 4px;
 }
 .opt-tag {
-  font-size: 11.5px;
+  font-size: 0.75rem;
   font-weight: 600;
   color: var(--accent);
   background: var(--accent-soft);
@@ -1382,7 +1391,7 @@ button.option:hover {
   color: var(--ink-2);
 }
 .ticket-range {
-  font-size: 12px;
+  font-size: 0.75rem;
   color: var(--muted);
   font-variant-numeric: tabular-nums;
 }
@@ -1421,7 +1430,7 @@ button.option:hover {
   opacity: 0.6;
 }
 .opt-breakdown {
-  font-size: 12.5px;
+  font-size: 0.7812rem;
   color: var(--muted);
 }
 .show-all {
@@ -1458,7 +1467,7 @@ button.option:hover {
   gap: 10px;
 }
 .pref-end {
-  font-size: 12.5px;
+  font-size: 0.7812rem;
   font-weight: 500;
   color: var(--ink-2);
   white-space: nowrap;
@@ -1481,7 +1490,7 @@ button.option:hover {
   padding: 0 12px;
   border-radius: 999px;
   border: 1px solid var(--rule);
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 500;
   color: var(--ink-2);
 }
@@ -1495,7 +1504,7 @@ button.option:hover {
   color: var(--accent);
 }
 .opt-trade {
-  font-size: 12.5px;
+  font-size: 0.7812rem;
   font-weight: 600;
   color: var(--ink-2);
 }
@@ -1511,7 +1520,7 @@ button.option:hover {
   padding: 0 14px 0 12px;
   border-radius: 999px;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 [dir="rtl"] .map-btn {
   padding: 0 12px 0 14px;
@@ -1534,7 +1543,7 @@ button.option:hover {
   line-height: 1.15;
 }
 .field-label {
-  font-size: 11.5px;
+  font-size: 0.75rem;
   color: var(--muted);
 }
 /* Folded preferences: one line, the slider one tap away. */
@@ -1576,7 +1585,7 @@ button.option:hover {
 }
 /* Arabic script reads better a little larger. */
 [dir="rtl"] body {
-  font-size: 16px;
+  font-size: 1rem;
 }
 /* Touch targets: at least 44px where fingers are the pointer. */
 @media (pointer: coarse) {
@@ -1609,4 +1618,115 @@ button.option:hover {
   .sheet-handle::after {
     top: 12px;
   }
+}
+
+
+/* ---------- Apple HIG pass ---------- */
+/* Text follows the phone's text-size setting: rem everywhere, and on iPhone
+   the base comes from Dynamic Type (-apple-system-body). */
+@supports (font: -apple-system-body) {
+  html {
+    font: -apple-system-body;
+  }
+}
+body {
+  font-size: 0.9375rem;
+}
+/* Controls grow with their text instead of clipping it. */
+.badge,
+.badge-sm,
+.badge-lg,
+.btn,
+.btn-small,
+.chip,
+.chip-toggle,
+.map-btn,
+.sign-num {
+  height: auto;
+  min-height: 2em;
+}
+.btn {
+  min-height: 3rem;
+  padding-block: 0.4rem;
+}
+.field {
+  min-height: 3.125rem;
+}
+/* Pressed state on everything tappable. */
+button:active,
+.row:active,
+.option:active {
+  opacity: 0.72;
+}
+/* On-states not shown by colour alone. */
+.segmented .on {
+  font-weight: 650;
+}
+.chip-toggle .tick {
+  display: none;
+}
+.chip-toggle.on .tick {
+  display: inline-flex;
+}
+/* Side safe areas (notch in landscape), on the side the buttons sit. */
+:root {
+  --safe-end: env(safe-area-inset-right, 0px);
+}
+[dir="rtl"] {
+  --safe-end: env(safe-area-inset-left, 0px);
+}
+@media (max-width: 899px) {
+  .topbar,
+  .fab {
+    inset-inline-end: max(10px, var(--safe-end));
+  }
+}
+/* No signal: a steady line at the top of the sheet while it lasts. */
+.offline-banner {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 16px 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: var(--surface-2);
+  font-size: 0.8125rem;
+  color: var(--ink-2);
+}
+.offline-banner[hidden] {
+  display: none;
+}
+.offline-banner .icon {
+  flex: none;
+  width: 16px;
+  height: 16px;
+}
+.clear-history {
+  margin: 4px 2px 8px;
+}
+/* Large text: rows wrap instead of pushing the sheet sideways. */
+.fields,
+.field-stack,
+.prefs > * {
+  min-width: 0;
+}
+.pref-row {
+  flex-wrap: wrap;
+}
+.pref-row-2 {
+  flex-wrap: wrap;
+}
+.pref-row-2 .pref-open {
+  flex: 1 1 12em;
+}
+.pref-slider {
+  flex: 1 1 8rem;
+}
+.pref-end {
+  white-space: normal;
+}
+.field-input {
+  min-width: 0;
+  width: 100%;
 }

@@ -91,6 +91,9 @@ const topbar = h("header", { class: "topbar" }, settingsBtn);
 // While the offline copy downloads: a thin bar along the top of the sheet.
 const progressBar = h("div", { class: "sheet-progress", hidden: true, role: "progressbar", "aria-label": t("downloading") });
 sheet.prepend(progressBar);
+// No signal: a steady line at the top of the sheet for as long as it lasts.
+const offlineBanner = h("p", { class: "offline-banner", role: "status", hidden: true }, icon.offline(), h("span", null, t("offlineNow")));
+sheet.insertBefore(offlineBanner, sheetBody);
 const locateBtn = h("button", { class: "fab fab-locate", "aria-label": t("myLocation"), onclick: () => locate(true) }, icon.locate());
 const toast = h("div", { class: "toast", role: "status" });
 app.append(mapEl, topbar, locateBtn, sheet, toast);
@@ -127,7 +130,10 @@ async function boot() {
     })
     .catch(() => {});
   // Say what still works when the signal goes, once each time it happens.
-  addEventListener("offline", () => flash(t("offlineNow"), 7000));
+  const signal = () => (offlineBanner.hidden = navigator.onLine);
+  addEventListener("offline", signal);
+  addEventListener("online", signal);
+  signal();
   const { BusMap } = await mapModule;
   bmap = new BusMap(mapEl, net, getLang(), {
     onStop: (s) => go({ name: "stop", stop: s }),
@@ -373,6 +379,11 @@ async function handleShare(): Promise<boolean> {
 function render() {
   const v = current();
   document.title = t("appName");
+  // The pieces that live outside the sheet body follow a language change too.
+  settingsBtn.lastElementChild!.textContent = t("menuLabel");
+  offlineBanner.lastElementChild!.textContent = t("offlineNow");
+  handle.setAttribute("aria-label", t("sheetResize"));
+  locateBtn.setAttribute("aria-label", t("myLocation"));
   sheetBody.replaceChildren();
   sheet.className = `sheet view-${v.name}`;
   ride?.stop();
@@ -721,10 +732,33 @@ function updateSearch(field: "from" | "to", q: string) {
   const hits = q.trim() ? search().search(q, near, 12) : [];
   if (!q.trim()) {
     // Before typing: the places you went to before.
+    const rec = recents();
     searchList.replaceChildren(
-      ...recents().map((ep) =>
+      ...rec.map((ep) =>
         h("li", null, h("button", { class: "row", onclick: () => setEndpoint(field, ep) }, h("span", { class: "row-icon" }, icon.clock()), h("span", { class: "row-main" }, h("span", null, nm(ep.label)), ep.sub ? h("small", { class: "muted" }, nm(ep.sub)) : null))),
       ),
+      ...(rec.length
+        ? [
+            h(
+              "li",
+              null,
+              h(
+                "button",
+                {
+                  class: "link clear-history",
+                  onclick: () => {
+                    try {
+                      localStorage.removeItem("recent");
+                      localStorage.removeItem("lastTrip");
+                    } catch {}
+                    searchList?.replaceChildren();
+                  },
+                },
+                t("clearHistory"),
+              ),
+            ),
+          ]
+        : []),
     );
   } else searchList.replaceChildren(...hits.map((hit) => h("li", null, hitRow(hit, field, near))));
   // Typed a couple of letters: if the place isn't here, show the way round it.
@@ -821,6 +855,14 @@ function resultsBody() {
         ),
       )
     : null;
+  if (state.from && to && dist(state.from.ll, to.ll) < 80)
+    return h(
+      "div",
+      { class: "empty-state" },
+      h("span", { class: "row-icon" }, icon.pin()),
+      h("p", null, t("samePlace")),
+      h("div", { class: "tip-actions" }, h("button", { class: "btn btn-small btn-primary", onclick: () => go({ name: "search", field: "to" }) }, t("changeDest"))),
+    );
   if (!state.journeys.length)
     return h(
       "div",
@@ -923,6 +965,7 @@ function compareBlock() {
         draw();
       },
     },
+    h("span", { class: "tick" }, icon.check()),
     icon.walk(),
     t("avoidWalk"),
   );
@@ -1211,7 +1254,7 @@ function rideBody(index: number) {
   box.append(body, h("p", { class: "fine" }, t("rideKeepOpen")), h("div", { class: "actions" }, h("button", { class: "btn", onclick: back }, t("stopTrip"))));
   ride = new RideTracker(net, j, (u) => {
     if (u.me) bmap?.setMe(u.me, u.acc);
-    if (u.me && u.follow) bmap?.map.easeTo({ center: u.me, duration: 500 });
+    if (u.me && u.follow) bmap?.map.easeTo({ center: u.me, duration: matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 500 });
     const leg = j.legs[u.leg];
     let main: Node;
     if (u.status === "nogps") main = h("p", null, t("noGps"));
@@ -1480,10 +1523,22 @@ function helpBody(section?: string) {
 function writeHash() {
   if (!state.from || !state.to) return;
   const enc = (e: Endpoint) => `${e.ll[0].toFixed(5)},${e.ll[1].toFixed(5)}${e.kind !== "map" && e.kind !== "me" ? `,${encodeURIComponent(nm(e.label))}` : ""}`;
-  history.replaceState(null, "", `#from=${enc(state.from)}&to=${enc(state.to)}`);
+  const hash = `#from=${enc(state.from)}&to=${enc(state.to)}`;
+  history.replaceState(null, "", hash);
+  try {
+    localStorage.setItem("lastTrip", JSON.stringify({ hash, at: Date.now() }));
+  } catch {}
+}
+const LAST_TRIP_MS = 2 * 3600 * 1000;
+function lastTripHash() {
+  try {
+    const j = JSON.parse(localStorage.getItem("lastTrip") ?? "null");
+    if (j && Date.now() - j.at < LAST_TRIP_MS) return String(j.hash);
+  } catch {}
+  return "";
 }
 function restoreFromHash() {
-  const p = new URLSearchParams(location.hash.slice(1));
+  const p = new URLSearchParams((location.hash || lastTripHash()).slice(1));
   const dec = (s: string | null): Endpoint | undefined => {
     if (!s) return;
     const [x, y, ...rest] = s.split(",");

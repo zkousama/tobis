@@ -35,6 +35,10 @@ export interface MapHandlers {
   onPoint(ll: LngLat): void;
 }
 
+// Reduce Motion on: the map jumps instead of flying.
+const calm = matchMedia("(prefers-reduced-motion: reduce)");
+export const motion = (ms: number) => (calm.matches ? 0 : ms);
+
 export class BusMap {
   readonly map: MLMap;
   private net: Network;
@@ -361,11 +365,11 @@ export class BusMap {
   }
 
   flyTo(ll: LngLat, zoom = 16) {
-    this.map.flyTo({ center: ll, zoom, padding: this.padding(), duration: 600 });
+    this.map.flyTo({ center: ll, zoom, padding: this.padding(), duration: motion(600) });
   }
 
   fit(b: maplibregl.LngLatBounds) {
-    this.map.fitBounds(b, { padding: this.padding(), maxZoom: 16.5, duration: 600 });
+    this.map.fitBounds(b, { padding: this.padding(), maxZoom: 16.5, duration: motion(600) });
   }
 
   /** Keep content clear of the panel: bottom sheet on phones, side panel on wide screens. */
