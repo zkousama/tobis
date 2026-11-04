@@ -50,7 +50,7 @@ Other cities: add a `cities/<id>.json` with its bounding box and networks, and r
 
 Shared taxis have no published routes or fares, so they come from a list kept by hand: `data/taxis/agadir-grands-taxis.csv`. Each row is a stand (prefilled from OpenStreetMap) and one destination. Fill in `to` and `price_dh` (per seat); add `to_lat`/`to_lon` if the destination stand isn't the town centre; set `both_ways` to `no` for one-way routes. Rows without a price are left out. Rebuild with `node scripts/build-data.mjs agadir`.
 
-The petit taxi estimate uses the meter rate in `cities/agadir.json` (`petitTaxi`), taken from travel sites, not an official tariff.
+Taxis: only the airport's fixed fares (published by ONDA) are shown. Petits taxis need Agadir's official meter tariff in `cities/agadir.json` (`petitTaxi`: start, perKm, minFare, night, nightFrom, nightTo) before the app shows them.
 
 ## Licence
 

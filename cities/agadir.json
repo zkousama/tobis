@@ -97,18 +97,6 @@
       "Souk Lakhmis"
     ]
   },
-  "petitTaxi": {
-    "start": 2,
-    "perKm": 2.5,
-    "minFare": 7,
-    "night": 0.5,
-    "nightFrom": 20,
-    "nightTo": 6,
-    "sources": [
-      "Le360 2022-03-25: minimum 6 DH by the governor's decision, shared rides from taxi stations",
-      "Fès decree (1.50 DH + 0.20 DH per 80 m), Tangier decree 744 of 2025 (minimum 7 DH): the usual structure; Agadir's own figures not found"
-    ]
-  },
   "grandsTaxis": "data/taxis/agadir-grands-taxis.csv",
   "airportTaxi": {
     "at": [
