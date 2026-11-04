@@ -6,3 +6,4 @@ public/basemap/*.pmtiles
 public/data/
 data/osm-drafts/
 data/raw/*/overture/
+.wrangler/

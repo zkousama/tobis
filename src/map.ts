@@ -1,6 +1,7 @@
 import maplibregl, { type GeoJSONSource, type Map as MLMap, type MapMouseEvent } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { Protocol } from "pmtiles";
+import { PMTiles, Protocol } from "pmtiles";
+import { RangeOrWholeSource } from "./tilesource.ts";
 import { layers, namedFlavor } from "@protomaps/basemaps";
 // The package only exports its source entry, so point at the built file directly.
 import rtlPluginUrl from "../node_modules/@mapbox/mapbox-gl-rtl-text/dist/mapbox-gl-rtl-text.js?url";
@@ -55,7 +56,7 @@ function paperFlavor(dark: boolean) {
 }
 const abs = (p: string) => new URL(p, base).href;
 
-let protocolAdded = false;
+let protocol: Protocol | undefined;
 type FC = GeoJSON.FeatureCollection;
 const empty = (): FC => ({ type: "FeatureCollection", features: [] });
 
@@ -78,11 +79,12 @@ export class BusMap {
     this.net = net;
     this.lang = lang;
     this.dark = matchMedia("(prefers-color-scheme: dark)").matches;
-    if (!protocolAdded) {
-      maplibregl.addProtocol("pmtiles", new Protocol().tile);
+    if (!protocol) {
+      protocol = new Protocol();
+      maplibregl.addProtocol("pmtiles", protocol.tile);
       if (maplibregl.getRTLTextPluginStatus() === "unavailable") maplibregl.setRTLTextPlugin(abs(rtlPluginUrl.replace(/^\//, "")), true);
-      protocolAdded = true;
     }
+    protocol.add(new PMTiles(new RangeOrWholeSource(abs(`basemap/${net.city}.pmtiles`))));
     const [w, s, e, n] = net.bbox;
     this.map = new maplibregl.Map({
       container: el,
