@@ -1146,7 +1146,7 @@ function aboutBody() {
       " · ",
       h("a", { href: "https://protomaps.com", target: "_blank", rel: "noopener" }, "Protomaps"),
       " · ",
-      h("a", { href: "https://github.com/zkousama/agadir-bus", target: "_blank", rel: "noopener" }, "GitHub"),
+      h("a", { href: "https://github.com/zkousama/tobis", target: "_blank", rel: "noopener" }, "GitHub"),
     ),
   );
 }
