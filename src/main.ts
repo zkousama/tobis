@@ -100,6 +100,7 @@ app.append(mapEl, topbar, locateBtn, sheet, toast);
 
 let net: Network;
 let offlineMB = 0; // size of the offline copy, shown before anyone installs
+let appVersion = ""; // content hash of this build, shown in Settings for bug reports
 let router: Router;
 let searchIndex: SearchIndex | undefined;
 let bmap: BusMap | undefined;
@@ -125,8 +126,9 @@ async function boot() {
   watchLocationPermission();
   fetch(`${base}precache.json`)
     .then((r) => (r.ok ? r.json() : null))
-    .then((j: { sizes?: number[] } | null) => {
+    .then((j: { sizes?: number[]; version?: string } | null) => {
       if (j?.sizes) offlineMB = Math.round(j.sizes.reduce((a, b) => a + b, 0) / 1048576);
+      if (j?.version) appVersion = j.version.slice(0, 7);
     })
     .catch(() => {});
   // Say what still works when the signal goes, once each time it happens.
@@ -151,7 +153,8 @@ async function boot() {
   await bmap.ready;
   if (state.me) bmap?.setMe(state.me.ll, state.me.acc);
   render();
-  registerOffline(onOfflineProgress, t);
+  // Switching versions reloads the page: fine while the app is just opening, not mid-search or mid-ride.
+  registerOffline(onOfflineProgress, t, () => performance.now() < 15000 && ["home", "results"].includes(current().name));
   // Street walking: swap it in once loaded, and redo an open plan with it.
   loadWalkGraph(`${base}data/${CITY}-walk.bin`)
     .then((walk: WalkFn) => {
@@ -1578,6 +1581,7 @@ function aboutBody() {
       " · ",
       h("a", { href: "https://github.com/zkousama/tobis", target: "_blank", rel: "noopener" }, "GitHub"),
     ),
+    appVersion ? h("p", { class: "fine" }, t("version", appVersion)) : null,
   );
 }
 

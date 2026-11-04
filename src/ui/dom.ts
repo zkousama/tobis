@@ -10,7 +10,6 @@ export function h<K extends keyof HTMLElementTagNameMap>(tag: K, attrs: Attrs | 
     for (const [k, v] of Object.entries(attrs)) {
       if (v === undefined || v === null || v === false) continue;
       if (k.startsWith("on") && typeof v === "function") el.addEventListener(k.slice(2), v as EventListener);
-      else if (k === "html") el.innerHTML = String(v);
       else if (k in el && k !== "style" && k !== "class" && !k.startsWith("aria-") && !k.startsWith("data-")) (el as unknown as Record<string, unknown>)[k] = v;
       else el.setAttribute(k === "class" ? "class" : k, v === true ? "" : String(v));
     }

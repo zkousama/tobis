@@ -29,6 +29,8 @@ function precache(): Plugin {
       const hash = createHash("sha256");
       for (const f of list) hash.update(f).update(readFileSync(join(outDir, f)));
       hash.update(readFileSync(join(outDir, "sw.js"))); // a fix to the worker alone is a new version too
+      // The saved page keeps the headers it was served with, so a header change is a new version too.
+      if (existsSync(join(outDir, "_headers"))) hash.update(readFileSync(join(outDir, "_headers")));
       const version = hash.digest("hex").slice(0, 12);
       const sizes = list.map((f) => statSync(join(outDir, f)).size);
       // Per-file fingerprints let an update keep the files that didn't change.
@@ -41,6 +43,9 @@ function precache(): Plugin {
       if (!src.includes('const VERSION = "__VERSION__";')) throw new Error("sw.js: VERSION placeholder not found");
       writeFileSync(sw, src.replace('const VERSION = "__VERSION__";', `const VERSION = "${version}";`));
       const total = sizes.reduce((a, b) => a + b, 0);
+      // Everyone downloads all of this: a change that grows it past the budget fails the build.
+      const BUDGET_MIB = 30;
+      if (total / 1048576 > BUDGET_MIB) throw new Error(`offline copy is ${(total / 1048576).toFixed(1)} MiB, over the ${BUDGET_MIB} MiB budget`);
       console.log(`precache: ${list.length} files, ${(total / 1048576).toFixed(1)} MiB, version ${version}`);
     },
   };

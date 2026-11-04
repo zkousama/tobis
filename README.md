@@ -42,7 +42,16 @@ bun run build
 
 `overturemaps` is the Overture Maps Python CLI (`pip install overturemaps`).
 
-Deploy `dist/` with the `functions/` folder to Cloudflare Pages: `wrangler pages deploy dist`.
+## Deploy
+
+Both commands run the checks and the build first, and stop if either fails.
+
+```sh
+bun run deploy:preview   # preview.tobis.pages.dev: try it on a phone first
+bun run deploy:live      # tobis.pages.dev
+```
+
+Installed copies pick up a new version the next time they open with signal. Only the files that changed are downloaded (`precache.json` lists a fingerprint per file). The new version takes over while the app is opening; if it's already in use, it shows a "new version" message and switches when tapped, so a page that's open never loses its files mid-trip. Settings shows the version, so a bug report can say which build it came from. The build fails if the offline copy grows past 30 MiB. `public/_headers` sets the security policy and keeps `sw.js` and `precache.json` uncached; a change to it is a new version too.
 
 Other cities: add a `cities/<id>.json` with its bounding box and networks, and run the same scripts with that id.
 

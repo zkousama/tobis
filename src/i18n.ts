@@ -78,6 +78,7 @@ const S = {
   arrive: { fr: "Arrivée", ar: "وصلتي", en: "Arrive" },
   youAreHere: { fr: "Vous êtes ici", ar: "نتا هنا", en: "You are here" },
   followLine: { fr: "Suivez la ligne", ar: "تبع الخط", en: "Follow the line" },
+  version: { fr: "Version {x}", ar: "النسخة {x}", en: "Version {x}" },
   updated: { fr: "Nouvelle version prête · Recharger", ar: "كاينة نسخة جديدة · عاود شارجي", en: "New version ready · Reload" },
   settings: { fr: "Réglages", ar: "الباراميترات", en: "Settings" },
   appearance: { fr: "Apparence", ar: "الشكل", en: "Appearance" },

@@ -26,7 +26,8 @@ async function precache() {
     const old = await caches.open(name);
     const prev = await (await old.match(scopeUrl("precache.json")))?.json().catch(() => null);
     if (!prev?.hashes) continue;
-    prev.files.forEach((f, i) => kept.set(`${scopeUrl(f)} ${prev.hashes[i]}`, old));
+    // Never the page itself: it is tiny, and its saved copy carries the old headers (the security policy).
+    prev.files.forEach((f, i) => f !== "./" && kept.set(`${scopeUrl(f)} ${prev.hashes[i]}`, old));
   }
   const hashOf = new Map(urls.map((u, i) => [u, list.hashes?.[i]]));
   // Small files first so the app is usable while the map downloads.
@@ -58,8 +59,10 @@ async function precache() {
   await Promise.all(Array.from({ length: 4 }, worker));
 }
 
+// A new version waits until the page says it's a good moment (at launch, or
+// when the rider taps "reload"), so an open page never loses its files mid-trip.
 self.addEventListener("install", (e) => {
-  e.waitUntil(precache().then(() => self.skipWaiting()));
+  e.waitUntil(precache());
 });
 
 self.addEventListener("activate", (e) => {
@@ -73,6 +76,7 @@ self.addEventListener("activate", (e) => {
 });
 
 self.addEventListener("message", async (e) => {
+  if (e.data?.type === "skipWaiting") return self.skipWaiting();
   if (e.data?.type !== "status") return;
   const cache = await caches.open(CACHE);
   const keys = await cache.keys();
