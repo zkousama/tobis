@@ -26,6 +26,9 @@ const queries = {
       node["public_transport"="platform"](${bb});
     );
     out body;`,
+  communes: `[out:json][timeout:180];
+    relation["boundary"="administrative"]["admin_level"="8"](${bb});
+    out geom;`,
   places: `[out:json][timeout:240];
     (
       nwr["place"~"^(city|town|village|suburb|neighbourhood|quarter|hamlet|isolated_dwelling)$"]["name"](${bb});

@@ -55,7 +55,9 @@ export interface Line {
 
 export interface Network {
   alsaFetched?: string;
-  petitTaxi?: { start: number; perKm: number }; // meter rate, unverified
+  petitTaxi?: { start: number; perKm: number; minFare: number; night: number; nightFrom: number; nightTo: number }; // meter, estimated
+  communes?: { n: Names; rings: LngLat[][] }[]; // commune outlines, for taxi rules
+  airportTaxi?: { at: [number, number]; radius: number; fares: { dh: number; to: string[] }[] }; // ONDA's fixed prices
   city: string;
   name: Names & Record<string, string>;
   bbox: [number, number, number, number];

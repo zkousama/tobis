@@ -328,6 +328,36 @@ const OV_KIND = (c) =>
   if (text) console.log(`${added} Overture places (${skipped} already in OSM)`);
 }
 
+// Commune outlines, for taxi rules (a petit taxi stays in its commune).
+const communes = [];
+{
+  const raw = await load("communes").catch(() => ({ elements: [] }));
+  const key = (p) => `${p[0].toFixed(7)},${p[1].toFixed(7)}`;
+  for (const rel of raw.elements) {
+    const parts = rel.members.filter((m) => m.type === "way" && m.role !== "inner" && m.geometry?.length).map((m) => m.geometry.map((g) => [g.lon, g.lat]));
+    const rings = [];
+    while (parts.length) {
+      let ring = parts.shift();
+      for (let grew = true; grew && key(ring[0]) !== key(ring.at(-1)); ) {
+        grew = false;
+        for (let i = 0; i < parts.length; i++) {
+          const w = parts[i];
+          if (key(w[0]) === key(ring.at(-1))) ring = ring.concat(w.slice(1));
+          else if (key(w.at(-1)) === key(ring.at(-1))) ring = ring.concat([...w].reverse().slice(1));
+          else continue;
+          parts.splice(i, 1);
+          grew = true;
+          break;
+        }
+      }
+      if (ring.length >= 4) rings.push(simplify(ring, 40).map(([x, y]) => [round5(x), round5(y)]));
+    }
+    const n = names(rel.tags ?? {});
+    if (rings.length && n.d) communes.push({ n, rings });
+  }
+  console.log(`${communes.length} commune outlines`);
+}
+
 // Street names, so "Avenue Hassan II" can be searched. One point per street per
 // area: the street's middle node, with same-named streets far apart kept apart.
 if (graph) {
@@ -715,6 +745,10 @@ if (cfg.grandsTaxis) {
   const rows = text ? parseCsv(text).filter((r) => Number(r.price_dh) > 0) : [];
   report.grandsTaxis = { rows: rows.length, skipped: [] };
   rows.forEach((r, k) => {
+    if (!r.stand_lat || !r.stand_lon) {
+      report.grandsTaxis.skipped.push(`${r.stand} → ${r.to}: stand position missing`);
+      return;
+    }
     const from = [Number(r.stand_lon), Number(r.stand_lat)];
     let to = r.to_lat && r.to_lon ? [Number(r.to_lon), Number(r.to_lat)] : null;
     if (!to) {
@@ -864,7 +898,9 @@ const out = {
   center: cfg.center,
   zoom: cfg.zoom,
   osmTimestamp: routesRaw.osm3s?.timestamp_osm_base,
-  ...(cfg.petitTaxi ? { petitTaxi: { start: cfg.petitTaxi.start, perKm: cfg.petitTaxi.perKm } } : {}),
+  ...(cfg.petitTaxi ? { petitTaxi: { start: cfg.petitTaxi.start, perKm: cfg.petitTaxi.perKm, minFare: cfg.petitTaxi.minFare, night: cfg.petitTaxi.night, nightFrom: cfg.petitTaxi.nightFrom, nightTo: cfg.petitTaxi.nightTo } } : {}),
+  communes,
+  ...(cfg.airportTaxi ? { airportTaxi: { at: cfg.airportTaxi.at, radius: cfg.airportTaxi.radius, fares: cfg.airportTaxi.fares } } : {}),
   ...(alsa ? { alsaFetched: (await readFile(`${ALSA_DIR}/fetched-at.txt`, "utf8").catch(() => "")).trim() || undefined } : {}),
   stops,
   places,

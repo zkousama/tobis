@@ -48,3 +48,12 @@ test("geo URIs, plain coordinates and plus codes in text", () => {
   assert.ok(parseInput("Code: C9FP+83 Agadir", AGADIR).ll);
   assert.equal(parseInput("pharmacie", AGADIR).ll, undefined);
 });
+
+test("point in polygon, with a hole", async () => {
+  const { inPolygon } = await import("../src/geo.ts");
+  const square: LngLat[] = [[0, 0], [10, 0], [10, 10], [0, 10], [0, 0]];
+  const hole: LngLat[] = [[4, 4], [6, 4], [6, 6], [4, 6], [4, 4]];
+  assert.ok(inPolygon([2, 2], [square]));
+  assert.ok(!inPolygon([12, 2], [square]));
+  assert.ok(!inPolygon([5, 5], [square, hole]));
+});

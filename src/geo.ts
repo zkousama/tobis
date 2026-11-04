@@ -94,3 +94,14 @@ export class Grid<T> {
     return out.sort((a, b) => a.d - b.d);
   }
 }
+
+/** Whether p is inside a polygon given as rings (even-odd rule). */
+export function inPolygon(p: LngLat, rings: LngLat[][]): boolean {
+  let inside = false;
+  for (const r of rings)
+    for (let i = 0, j = r.length - 1; i < r.length; j = i++) {
+      const [xi, yi] = r[i], [xj, yj] = r[j];
+      if (yi > p[1] !== yj > p[1] && p[0] < ((xj - xi) * (p[1] - yi)) / (yj - yi) + xi) inside = !inside;
+    }
+  return inside;
+}

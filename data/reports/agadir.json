@@ -820,8 +820,10 @@
     "busways": 11
   },
   "grandsTaxis": {
-    "rows": 0,
-    "skipped": []
+    "rows": 1,
+    "skipped": [
+      "Agadir (stand to confirm) → Taghazout: stand position missing"
+    ]
   },
   "zoneless": [
     "37:Terminus Lagfifat",

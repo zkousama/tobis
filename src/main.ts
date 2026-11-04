@@ -3,7 +3,7 @@ import type { BusMap } from "./map.ts";
 import { Router, waitFor, type Journey, type RideLeg, type WalkFn } from "./router.ts";
 import { SearchIndex, type Hit } from "./search.ts";
 import { nameOf, type Names, type Network } from "./network.ts";
-import { bearing, dist, type LngLat } from "./geo.ts";
+import { bearing, dist, inPolygon, type LngLat } from "./geo.ts";
 import { detectLang, fmtDistance, fmtMinutes, fmtStops, getLang, LANGS, setLang, t, typeLabel, type Lang } from "./i18n.ts";
 import { h, icon, lineBadge } from "./ui/dom.ts";
 import { visible } from "./ui/colour.ts";
@@ -806,28 +806,57 @@ function resultsBody() {
   );
 }
 
-/** Petit taxi as a rough alternative: drive time and a meter estimate. */
+/** The commune a point is in, for taxi rules (falls back to the nearest town centre). */
+function townOf(ll: LngLat) {
+  const c = net.communes?.find((x) => inPolygon(ll, x.rings));
+  if (c) return nm(c.n);
+  let best: { name: string; d: number } | undefined;
+  for (const p of net.places) {
+    if (p.k !== "town" || (p.t !== "city" && p.t !== "town")) continue;
+    const d = dist(ll, p.ll);
+    if (d < 8000 && (!best || d < best.d)) best = { name: p.n.d ?? "", d };
+  }
+  return best?.name;
+}
+
+/** Taxis as alternatives: ONDA's fixed fares from the airport, else a petit taxi estimate. */
 function petitTaxiBlock() {
-  const pt = net.petitTaxi;
-  if (!pt || !state.from || !state.to) return null;
+  if (!state.from || !state.to) return null;
   const crow = dist(state.from.ll, state.to.ll);
   if (crow < 1500) return null; // short enough to walk
+  const card = (title: string, sub: string, minutes: number | null, price: string) =>
+    h(
+      "div",
+      { class: "ticket ticket-taxi" },
+      h("div", { class: "ticket-main" }, h("strong", null, title), h("span", { class: "journey-sub" }, sub)),
+      h("div", { class: "ticket-stub" }, minutes !== null ? h("span", { class: "ticket-time" }, String(Math.round(minutes)), h("small", null, t("min"))) : null, h("span", { class: "ticket-fare" }, price)),
+    );
   const km = (crow * 1.35) / 1000; // streets are longer than a straight line
-  const minutes = (km / 22) * 60 + 4; // ~22 km/h across town, plus a few minutes to find one
-  const low = Math.round((pt.start + pt.perKm * km * 0.8) / 5) * 5;
-  const high = Math.round((pt.start + pt.perKm * km * 1.2) / 5) * 5;
+  // ~25 km/h in town, ~60 km/h on the open road past that, plus a few minutes to find one.
+  const minutes = (Math.min(km, 8) / 25 + Math.max(0, km - 8) / 60) * 60 + 4;
+  const at = net.airportTaxi;
+  if (at && dist(state.from.ll, at.at) < at.radius) {
+    const town = townOf(state.to.ll) ?? "";
+    const fare = at.fares.find((f) => f.to.some((n) => normalizeName(n) === normalizeName(town)));
+    if (fare) return h("div", { class: "section" }, h("h3", { class: "section-title label" }, t("otherWays")), card(t("airportTaxi"), t("airportTaxiSub"), minutes, `${fmtDH(fare.dh)} ${t("perCar")}`));
+  }
+  const pt = net.petitTaxi;
+  if (!pt) return null;
+  const fromTown = townOf(state.from.ll), toTown = townOf(state.to.ll);
+  if (fromTown && toTown && fromTown !== toTown)
+    return h("div", { class: "section" }, h("h3", { class: "section-title label" }, t("otherWays")), h("p", { class: "tip" }, h("span", { class: "row-main" }, h("strong", null, t("petitTaxi")), h("small", null, t("petitTaxiOtherTown", toTown)))));
+  const hour = new Date().getHours();
+  const night = hour >= pt.nightFrom || hour < pt.nightTo ? 1 + pt.night : 1;
+  const meter = (f: number) => Math.max(pt.minFare, pt.start + pt.perKm * km * f) * night;
+  const price = `≈ \u2066${Math.round(meter(0.85))}–${Math.round(meter(1.2))} DH\u2069`;
   return h(
     "div",
     { class: "section" },
     h("h3", { class: "section-title label" }, t("otherWays")),
-    h(
-      "div",
-      { class: "ticket ticket-taxi" },
-      h("div", { class: "ticket-main" }, h("strong", null, t("petitTaxi")), h("span", { class: "journey-sub" }, t("petitTaxiSub"))),
-      h("div", { class: "ticket-stub" }, h("span", { class: "ticket-time" }, String(Math.round(minutes)), h("small", null, t("min"))), h("span", { class: "ticket-fare" }, `≈ ${fmtDH(low)}–${fmtDH(high)}`)),
-    ),
+    card(t("petitTaxi"), night > 1 ? `${t("petitTaxiSub")} · ${t("petitTaxiNight")}` : t("petitTaxiSub"), minutes, price),
   );
 }
+const normalizeName = (v: string) => v.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z]/g, "");
 
 function previewTrip(i: number) {
   const j = state.journeys[i];
