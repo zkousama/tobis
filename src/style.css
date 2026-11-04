@@ -159,55 +159,12 @@ small {
   transform: scaleX(-1);
 }
 
-/* ---------- top bar ---------- */
+/* ---------- the one button on the map ---------- */
 .topbar {
   position: absolute;
   top: calc(env(safe-area-inset-top) + 10px);
-  inset-inline: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  pointer-events: none;
+  inset-inline-end: 10px;
   z-index: 3;
-}
-.topbar > * {
-  pointer-events: auto;
-}
-.brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  height: 40px;
-  padding: 0 14px 0 6px;
-  border-radius: 999px;
-  background: var(--surface);
-  box-shadow: var(--shadow);
-}
-[dir="rtl"] .brand {
-  padding: 0 6px 0 14px;
-}
-.brand-mark {
-  display: grid;
-  place-items: center;
-  width: 28px;
-  height: 28px;
-  border-radius: 7px;
-  background: var(--accent);
-  color: var(--on-accent);
-}
-.brand-mark .icon {
-  width: 17px;
-  height: 17px;
-}
-.brand-name {
-  font-size: 17px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-}
-.topbar-actions {
-  display: flex;
-  gap: 8px;
-  align-items: center;
 }
 .icon-btn {
   display: grid;
@@ -220,34 +177,34 @@ small {
 .icon-btn:hover {
   background: var(--surface-2);
 }
-.topbar .icon-btn {
+.map-btn {
+  width: 44px;
+  height: 44px;
   background: var(--surface);
   box-shadow: var(--shadow);
 }
-.chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  height: 32px;
-  padding: 0 12px;
-  border-radius: 999px;
+.map-btn:hover {
   background: var(--surface);
-  box-shadow: var(--shadow);
-  font-size: 13px;
-  font-weight: 500;
 }
-.chip .icon {
-  width: 15px;
-  height: 15px;
+
+/* Offline copy downloading: a thin bar along the top edge of the sheet. */
+.sheet-progress {
+  position: absolute;
+  top: 0;
+  inset-inline: 16px;
+  height: 3px;
+  border-radius: 0 0 3px 3px;
+  background: var(--rule);
+  overflow: hidden;
 }
-.chip-offline {
-  background: linear-gradient(90deg, var(--accent-soft) var(--p, 0%), var(--surface) var(--p, 0%));
-}
-[dir="rtl"] .chip-offline {
-  background: linear-gradient(270deg, var(--accent-soft) var(--p, 0%), var(--surface) var(--p, 0%));
-}
-.chip-offline.ready .icon {
-  color: #1e8e3e;
+.sheet-progress::after {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: var(--p, 0%);
+  background: var(--accent);
+  transition: width 0.3s ease;
 }
 
 .fab {
@@ -323,7 +280,7 @@ small {
 @media (min-width: 900px) {
   .sheet,
   .sheet[data-size] {
-    top: 66px;
+    top: 12px;
     bottom: 12px;
     inset-inline-start: 12px;
     inset-inline-end: auto;
@@ -340,7 +297,7 @@ small {
     padding-inline: 20px;
   }
   .topbar {
-    inset-inline: 12px;
+    inset-inline-end: 12px;
     top: 12px;
   }
   .fab,
@@ -452,6 +409,12 @@ small {
 }
 .planner-back {
   margin-inline-start: -8px;
+}
+.planner-home {
+  padding-top: 4px;
+}
+.planner-home .field {
+  min-height: 54px;
 }
 
 /* ---------- lists and rows ---------- */

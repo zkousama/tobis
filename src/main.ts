@@ -83,14 +83,12 @@ const mapEl = h("div", { id: "map" });
 const sheetBody = h("div", { class: "sheet-body" });
 const handle = h("button", { class: "sheet-handle", "aria-label": "Resize" });
 const sheet = h("section", { class: "sheet", "data-size": state.sheet }, handle, sheetBody);
-const offlineChip = h("button", { class: "chip chip-offline", hidden: true });
-const brandName = h("span", { class: "brand-name" }, t("appName"));
-const topbar = h(
-  "header",
-  { class: "topbar" },
-  h("button", { class: "brand", onclick: () => go({ name: "home" }, true) }, h("span", { class: "brand-mark" }, icon.bus()), brandName),
-  h("div", { class: "topbar-actions" }, offlineChip, h("button", { class: "icon-btn", "aria-label": t("settings"), onclick: () => go({ name: "about" }) }, icon.menu())),
-);
+// The map gets the screen: one settings button, no title bar.
+const settingsBtn = h("button", { class: "icon-btn map-btn", "aria-label": t("settings"), onclick: () => go({ name: "about" }) }, icon.menu());
+const topbar = h("header", { class: "topbar" }, settingsBtn);
+// While the offline copy downloads: a thin bar along the top of the sheet.
+const progressBar = h("div", { class: "sheet-progress", hidden: true, role: "progressbar", "aria-label": t("downloading") });
+sheet.prepend(progressBar);
 const locateBtn = h("button", { class: "fab fab-locate", "aria-label": t("myLocation"), onclick: () => locate(true) }, icon.locate());
 const toast = h("div", { class: "toast", role: "status" });
 app.append(mapEl, topbar, locateBtn, sheet, toast);
@@ -135,7 +133,7 @@ async function boot() {
   await bmap.ready;
   if (state.me) bmap?.setMe(state.me.ll, state.me.acc);
   render();
-  registerOffline(offlineChip, t);
+  registerOffline(onOfflineProgress, t);
   // Street walking: swap it in once loaded, and redo an open plan with it.
   loadWalkGraph(`${base}data/${CITY}-walk.bin`)
     .then((walk: WalkFn) => {
@@ -284,6 +282,19 @@ function watchLocationPermission() {
 }
 let refreshPlanner = () => {};
 
+// ---------- offline copy ----------
+let offline = { done: 0, total: 0 };
+function onOfflineProgress(done: number, total: number) {
+  const wasDownloading = offline.total > 0 && offline.done < offline.total;
+  offline = { done, total };
+  const complete = done >= total;
+  progressBar.hidden = complete;
+  progressBar.style.setProperty("--p", `${Math.floor((done / Math.max(1, total)) * 100)}%`);
+  // Say it once, when it becomes true; after that it's in Settings.
+  if (complete && wasDownloading) flash(t("offlineReady"), 4000);
+  if (current().name === "about") render();
+}
+
 let toastTimer = 0;
 function flash(msg: string, ms = 3200) {
   toast.textContent = msg;
@@ -332,7 +343,6 @@ async function handleShare(): Promise<boolean> {
 function render() {
   const v = current();
   document.title = t("appName");
-  brandName.textContent = t("appName");
   sheetBody.replaceChildren();
   sheet.className = `sheet view-${v.name}`;
   ride?.stop();
@@ -343,16 +353,16 @@ function render() {
   switch (v.name) {
     case "home":
       setSheet(state.sheet === "full" ? "half" : state.sheet);
-      sheetBody.append(homeHero(), planner(), homeBody());
+      sheetBody.append(planner("home"), homeBody());
       bmap?.setPins(state.from?.ll, state.to?.ll);
       break;
     case "search":
       setSheet("full");
-      sheetBody.append(planner(v.field), searchBody(v.field));
+      sheetBody.append(planner("search", v.field), searchBody(v.field));
       break;
     case "results":
       setSheet("half");
-      sheetBody.append(planner(), resultsBody());
+      sheetBody.append(planner("results"), resultsBody());
       if (state.journeys[0]) previewTrip(0);
       else bmap?.setPins(state.from?.ll, state.to?.ll);
       break;
@@ -405,16 +415,9 @@ function header(title: Node | string, sub?: Node | string | null) {
   );
 }
 
-function homeHero() {
-  return h(
-    "div",
-    { class: "hero" },
-    h("h1", { class: "display" }, `${t("heroA")}${t("heroB")}${t("heroC")}`),
-    h("p", { class: "hero-sub" }, t("heroSub")),
-  );
-}
-
-function planner(active?: "from" | "to") {
+// Home shows only "Where to?"; search shows the field being typed in; results
+// show both ends and the swap button.
+function planner(mode: "home" | "search" | "results", active?: "from" | "to") {
   const field = (which: "from" | "to") => {
     const ep = state[which];
     const isActive = active === which;
@@ -474,15 +477,16 @@ function planner(active?: "from" | "to") {
     const meDot = which === "from" && !ep && state.me ? h("span", { class: "me-live", title: t("youAreHere") }) : null;
     return h("label", { class: `field field-${which}${isActive ? " active" : ""}` }, h("span", { class: `dot dot-${which}` }), input, meDot, clear);
   };
+  const fields = mode === "home" ? [field("to")] : mode === "search" ? [field(active ?? "to")] : [field("from"), field("to")];
   const el = h(
     "div",
-    { class: `planner${active ? " planner-search" : ""}` },
-    active ? h("button", { class: "icon-btn planner-back", "aria-label": t("cancel"), onclick: back }, icon.back()) : null,
-    h("div", { class: "fields" }, field("from"), field("to")),
-    active ? null : h("button", { class: "icon-btn swap", "aria-label": t("swap"), onclick: swap }, icon.swap()),
+    { class: `planner planner-${mode}` },
+    mode === "search" ? h("button", { class: "icon-btn planner-back", "aria-label": t("cancel"), onclick: back }, icon.back()) : null,
+    h("div", { class: "fields" }, fields),
+    mode === "results" ? h("button", { class: "icon-btn swap", "aria-label": t("swap"), onclick: swap }, icon.swap()) : null,
   );
   refreshPlanner = () => {
-    if (current().name === "home") el.replaceWith(planner());
+    if (current().name === "results") el.replaceWith(planner("results"));
   };
   return el;
 }
@@ -1157,6 +1161,8 @@ function aboutBody() {
         render();
       },
     ),
+    h("h3", { class: "section-title label" }, t("helpOfflineTitle")),
+    h("p", { class: "notice" }, offline.total && offline.done >= offline.total ? [icon.check(), " ", t("offlineReady")] : offline.total ? `${t("downloading")} · ${Math.floor((offline.done / offline.total) * 100)} %` : t("helpOffline")),
     h("h3", { class: "section-title label" }, t("helpInstallTitle")),
     installBlock(),
     h("button", { class: "cta", onclick: () => go({ name: "help" }) }, h("span", { class: "plus" }, "?"), t("helpLink")),
