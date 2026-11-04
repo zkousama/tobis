@@ -14,7 +14,8 @@
     "check": "tsc --noEmit && oxlint src scripts tests && node --test \"tests/**/*.test.ts\"",
     "release": "bun run check && vite build",
     "deploy:preview": "bun run release && bunx wrangler@4.139.0 pages deploy dist --project-name tobis --branch preview",
-    "deploy:live": "bun run release && bunx wrangler@4.139.0 pages deploy dist --project-name tobis --branch master"
+    "deploy:live": "bun run release && bunx wrangler@4.139.0 pages deploy dist --project-name tobis --branch master",
+    "data:pack": "node scripts/pack-data.mjs"
   },
   "dependencies": {
     "@fontsource-variable/rubik": "5.3.0",

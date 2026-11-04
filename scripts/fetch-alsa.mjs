@@ -6,7 +6,7 @@ import { writeFile, mkdir } from "node:fs/promises";
 const BASE = "https://www.alsa.ma/fr/agadir/horaires?p_p_id=com_babel_alsa_ma_portlet_ServiceInformationPortlet&p_p_lifecycle=2&p_p_state=normal&p_p_mode=view&p_p_cacheability=cacheLevelPage&p_p_resource_id=";
 const P = "_com_babel_alsa_ma_portlet_ServiceInformationPortlet_";
 const CITY = 2; // Agadir
-const OUT = "data/raw/agadir/alsa";
+const OUT = process.env.ALSA_OUT ?? "data/raw/agadir/alsa"; // the weekly check fetches into a temp folder
 const UA = "agadir-bus-data/0.1 (open-source offline bus planner)";
 
 async function get(cmd, body) {

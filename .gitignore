@@ -7,3 +7,4 @@ public/data/
 data/osm-drafts/
 data/raw/*/overture/
 .wrangler/
+data-pack/

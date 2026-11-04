@@ -1,16 +1,27 @@
 # Tobis
 
-Trip planner for the buses and the Amalway Trambus in Greater Agadir (tobis is Darija for bus). Live at [tobis.pages.dev](https://tobis.pages.dev). It tells you which bus to take, where to wait for it, how many stops to ride, where to get off and how far to walk. Once it has loaded it works with no internet: the map, the search, the route finder and the live ride mode all run on the phone.
+**[tobis.pages.dev](https://tobis.pages.dev)** · bus and Trambus trip planner for Greater Agadir · French, Darija and English
 
-French, Darija and English.
+A couple of months ago Google Maps stopped showing Agadir's buses. You'd ask for a route and get driving or walking, and the bus lines were gone from the map. I take these buses, so I built my own planner. Tobis is Darija for bus.
+
+It's a web app you can add to your home screen, and once it has loaded it works with no signal.
+
+## What it does
+
+- Tells you which bus or Trambus to take, where to wait for it, how many stops to ride, where to get off and how far you'll walk.
+- Compares every way to get there (bus combinations, the Trambus, walking, and the fixed-fare taxi from the airport) on time, price and walking, and recommends one. A slider sets what a saved hour is worth to you, and the ranking adjusts to the options you pick.
+- Finds neighbourhoods, streets, stops, pharmacies, clinics and shops offline, misspellings included. For a place it doesn't know, share or paste a Google Maps link, or type a plus code.
+- Ride mode follows you along the line with GPS, counts the stops left and buzzes before yours.
+- Says when a trip needs the Trambus card (10 DH the first time, then you top it up), and can leave the Trambus out.
+- Light and dark themes, large text, and right-to-left in Darija.
 
 ## How it works
 
 - **Route finder**: a round-based search (like RAPTOR) over every line and direction, with up to two changes. There are no official timetables for most lines, so waits and ride times are estimates: the Trambus runs every 10 minutes, and ride time comes from the distance between stops.
 - **Walking**: real street distances and paths from a compact street graph shipped with the app (`public/data/agadir-walk.bin`).
 - **Map**: a vector map of Greater Agadir cut out of the Protomaps world build (`public/basemap/agadir.pmtiles`), read in pieces from the offline cache.
-- **Ride mode**: follows you along the line with GPS, counts the stops left and vibrates before yours.
-- **Search**: neighbourhoods, streets, stops, shops, pharmacies, clinics and more, offline. A Google Maps link (shared or pasted), a plus code or coordinates also work. Short `maps.app.goo.gl` links are opened by `functions/api/expand.js`, a Cloudflare Pages Function, so they need a connection.
+- **Ride mode**: GPS only, so it works offline too. It keeps the screen on while you ride.
+- **Search**: a prefix and typo-tolerant index built on the phone. Short `maps.app.goo.gl` links are opened by `functions/api/expand.js`, a Cloudflare Pages Function, so they need a connection.
 
 ## Data
 
@@ -44,12 +55,19 @@ bun run build
 
 ## Deploy
 
-Both commands run the checks and the build first, and stop if either fails.
+GitHub deploys it (`.github/workflows/deploy.yml`). Every push and pull request runs the checks, builds, and walks through the app in a headless Chrome (`scripts/smoke.mjs`: search, a trip, settings, Darija, 200 % text, offline). A push to `master` then deploys tobis.pages.dev; "Run workflow" deploys the preview, preview.tobis.pages.dev.
+
+The built data and map aren't in git. They go up as a GitHub release, and `data.lock.json` says which one a deploy uses (with its fingerprint). After rebuilding the data:
 
 ```sh
-bun run deploy:preview   # preview.tobis.pages.dev: try it on a phone first
-bun run deploy:live      # tobis.pages.dev
+bun run data:pack    # packs public/data and the map, updates data.lock.json, prints the release command
 ```
+
+Publish the release it prints, then commit `data.lock.json`.
+
+The deploy needs 2 repository secrets: `CLOUDFLARE_API_TOKEN` (Cloudflare Pages: Edit) and `CLOUDFLARE_ACCOUNT_ID`. From a laptop, `bun run deploy:preview` and `bun run deploy:live` do the same checks and deploy directly.
+
+A second workflow (`alsa-check.yml`) fetches ALSA's data every Monday and opens an issue when lines, stops, fares or timetables change, or when ALSA stops answering.
 
 Installed copies pick up a new version the next time they open with signal. Only the files that changed are downloaded (`precache.json` lists a fingerprint per file). The new version takes over while the app is opening; if it's already in use, it shows a "new version" message and switches when tapped, so a page that's open never loses its files mid-trip. Settings shows the version, so a bug report can say which build it came from. The build fails if the offline copy grows past 30 MiB. `public/_headers` sets the security policy and keeps `sw.js` and `precache.json` uncached; a change to it is a new version too.
 
