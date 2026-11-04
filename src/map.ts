@@ -3,6 +3,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { PMTiles, Protocol } from "pmtiles";
 import { RangeOrWholeSource } from "./tilesource.ts";
 import { isDark, onThemeChange } from "./theme.ts";
+import { visible } from "./ui/colour.ts";
 import { layers, namedFlavor } from "@protomaps/basemaps";
 // The package only exports its source entry, so point at the built file directly.
 import rtlPluginUrl from "../node_modules/@mapbox/mapbox-gl-rtl-text/dist/mapbox-gl-rtl-text.js?url";
@@ -13,47 +14,14 @@ import type { Journey } from "./router.ts";
 
 const base = new URL(import.meta.env.BASE_URL, location.href).href;
 
-// Paper-and-ink map colours, matching the app (see style.css).
+// Map colours: Protomaps' neutral base with bluer water; lines in their own colours.
 const INK = {
-  light: { paper: "#f4ecdd", ink: "#15283b", ink2: "#3e5264", marker: "#d9552c", markerSoft: "rgba(217,85,44,0.45)", stop: "#fbf6ec" },
-  dark: { paper: "#0f1b26", ink: "#f1e7d4", ink2: "#cdbfa8", marker: "#f07548", markerSoft: "rgba(240,117,72,0.5)", stop: "#142231" },
+  light: { paper: "#ffffff", ink: "#15191d", net: "#5b6570", casing: "#ffffff", stop: "#ffffff", walk: "#3c444c" },
+  dark: { paper: "#111417", ink: "#eceff1", net: "#9aa4ad", casing: "#111417", stop: "#181c20", walk: "#c9d0d6" },
 };
-function paperFlavor(dark: boolean) {
-  const f = namedFlavor(dark ? "black" : "white");
-  const c = dark
-    ? { earth: "#0f1b26", water: "#0a2233", park: "#13262a", sand: "#1a2530", building: "#17242f", road: "#22313e", major: "#2a3a48", label: "#cdbfa8", halo: "#0f1b26", minorLabel: "#8f99a0" }
-    : { earth: "#f4ecdd", water: "#bcd6de", park: "#e3e6cf", sand: "#efe2c6", building: "#e7dcc7", road: "#fffaf0", major: "#fdf3dc", label: "#3e5264", halo: "#f4ecdd", minorLabel: "#6f7b85" };
-  return {
-    ...f,
-    background: c.earth,
-    earth: c.earth,
-    water: c.water,
-    park_a: c.park,
-    park_b: c.park,
-    wood_a: c.park,
-    wood_b: c.park,
-    scrub_a: c.park,
-    scrub_b: c.park,
-    sand: c.sand,
-    beach: c.sand,
-    buildings: c.building,
-    minor_a: c.road,
-    minor_b: c.road,
-    minor_service: c.road,
-    other: c.road,
-    link: c.major,
-    major: c.major,
-    highway: c.major,
-    city_label: c.label,
-    city_label_halo: c.halo,
-    subplace_label: c.minorLabel,
-    subplace_label_halo: c.halo,
-    roads_label_minor: c.minorLabel,
-    roads_label_minor_halo: c.halo,
-    roads_label_major: c.label,
-    roads_label_major_halo: c.halo,
-    ocean_label: dark ? "#6fb4d3" : "#2b6f8e",
-  };
+function baseFlavor(dark: boolean) {
+  const f = namedFlavor(dark ? "dark" : "light");
+  return { ...f, water: dark ? "#0f2433" : "#b9d3e6", ocean_label: dark ? "#7fa9c8" : "#3b6f96" };
 }
 const abs = (p: string) => new URL(p, base).href;
 
@@ -122,7 +90,7 @@ export class BusMap {
   }
 
   private style(): maplibregl.StyleSpecification {
-    const flavor = paperFlavor(this.dark);
+    const flavor = baseFlavor(this.dark);
     return {
       version: 8,
       // Built by hand: URL() would escape the {fontstack}/{range} placeholders.
@@ -193,9 +161,9 @@ export class BusMap {
       source: "bus-lines",
       layout: { "line-cap": "round", "line-join": "round" },
       paint: {
-        "line-color": ["case", ["get", "brt"], P.marker, P.ink],
+        "line-color": ["case", ["get", "brt"], "#ed6c36", P.net],
         "line-width": ["interpolate", ["linear"], ["zoom"], 10, ["case", ["get", "brt"], 2.5, 0.9], 15, ["case", ["get", "brt"], 6, 2.2]],
-        "line-opacity": ["case", ["get", "brt"], 0.85, ["get", "routable"], 0.28, 0.12],
+        "line-opacity": ["case", ["get", "brt"], 0.9, ["get", "routable"], 0.35, 0.15],
       },
     });
     m.addLayer({
@@ -232,7 +200,7 @@ export class BusMap {
       source: "focus",
       filter: ["==", ["geometry-type"], "LineString"],
       layout: { "line-cap": "round", "line-join": "round" },
-      paint: { "line-color": P.markerSoft, "line-width": ["interpolate", ["linear"], ["zoom"], 10, 8, 16, 18] },
+      paint: { "line-color": P.casing, "line-width": ["interpolate", ["linear"], ["zoom"], 10, 6, 16, 13] },
     });
     m.addLayer({
       id: "focus-line",
@@ -240,7 +208,7 @@ export class BusMap {
       source: "focus",
       filter: ["==", ["geometry-type"], "LineString"],
       layout: { "line-cap": "round", "line-join": "round" },
-      paint: { "line-color": P.ink, "line-width": ["interpolate", ["linear"], ["zoom"], 10, 1.6, 16, 3] },
+      paint: { "line-color": ["get", "colour"], "line-width": ["interpolate", ["linear"], ["zoom"], 10, 3.5, 16, 8] },
     });
     m.addLayer({
       id: "focus-stops",
@@ -250,8 +218,8 @@ export class BusMap {
       paint: {
         "circle-radius": ["interpolate", ["linear"], ["zoom"], 11, 3, 16, 7],
         "circle-color": P.stop,
-        "circle-stroke-color": P.ink,
-        "circle-stroke-width": ["interpolate", ["linear"], ["zoom"], 11, 1.5, 16, 2.5],
+        "circle-stroke-color": ["get", "colour"],
+        "circle-stroke-width": ["interpolate", ["linear"], ["zoom"], 11, 2, 16, 3],
       },
     });
     // Planned trip: walking is dotted, riding is the line colour.
@@ -261,7 +229,7 @@ export class BusMap {
       source: "trip",
       filter: ["==", ["get", "kind"], "walk"],
       layout: { "line-cap": "round", "line-join": "round" },
-      paint: { "line-color": P.ink, "line-width": 3.5, "line-dasharray": [0, 1.7] },
+      paint: { "line-color": P.walk, "line-width": 4, "line-dasharray": [0, 1.6] },
     });
     m.addLayer({
       id: "trip-ride-casing",
@@ -269,7 +237,7 @@ export class BusMap {
       source: "trip",
       filter: ["==", ["get", "kind"], "ride"],
       layout: { "line-cap": "round", "line-join": "round" },
-      paint: { "line-color": P.markerSoft, "line-width": ["interpolate", ["linear"], ["zoom"], 10, 10, 16, 20] },
+      paint: { "line-color": P.casing, "line-width": ["interpolate", ["linear"], ["zoom"], 10, 7, 16, 14] },
     });
     m.addLayer({
       id: "trip-ride",
@@ -277,7 +245,7 @@ export class BusMap {
       source: "trip",
       filter: ["==", ["get", "kind"], "ride"],
       layout: { "line-cap": "round", "line-join": "round" },
-      paint: { "line-color": P.ink, "line-width": ["interpolate", ["linear"], ["zoom"], 10, 1.8, 16, 3.2] },
+      paint: { "line-color": ["get", "colour"], "line-width": ["interpolate", ["linear"], ["zoom"], 10, 4, 16, 9] },
     });
     m.addLayer({
       id: "trip-stops",
@@ -287,8 +255,8 @@ export class BusMap {
       paint: {
         "circle-radius": ["interpolate", ["linear"], ["zoom"], 11, 2.5, 16, 5],
         "circle-color": P.stop,
-        "circle-stroke-color": P.ink,
-        "circle-stroke-width": 1.8,
+        "circle-stroke-color": ["get", "colour"],
+        "circle-stroke-width": 2,
       },
     });
 
@@ -353,12 +321,13 @@ export class BusMap {
       const v = line.variants[leg.variant];
       const seg = sliceLine(v.shape, v.along[leg.board], v.along[leg.alight]);
       seg.forEach((c) => bounds.extend(c));
-      features.push({ type: "Feature", properties: { kind: "ride", colour: line.colour }, geometry: { type: "LineString", coordinates: seg } });
+      const colour = visible(line.colour, this.dark ? "#111417" : "#ffffff");
+      features.push({ type: "Feature", properties: { kind: "ride", colour }, geometry: { type: "LineString", coordinates: seg } });
       for (let i = leg.board; i <= leg.alight; i++)
-        features.push({ type: "Feature", properties: { kind: "stop", colour: line.colour, stop: v.stops[i] }, geometry: { type: "Point", coordinates: this.net.stops[v.stops[i]].ll } });
-      this.marker(this.net.stops[v.stops[leg.board]].ll, badge(line.brt ? "Trambus" : line.ref, line.colour, "board"), "bottom");
+        features.push({ type: "Feature", properties: { kind: "stop", colour, stop: v.stops[i] }, geometry: { type: "Point", coordinates: this.net.stops[v.stops[i]].ll } });
+      this.marker(this.net.stops[v.stops[leg.board]].ll, badge(line.brt ? "Trambus" : line.ref, colour, "board"), "bottom");
       const off = this.net.stops[v.stops[leg.alight]];
-      this.marker(off.ll, badge(`${labels?.alight ?? ""} ${off.n.d ?? ""}`.trim(), line.colour, "alight"), "bottom");
+      this.marker(off.ll, badge(off.n.d ?? labels?.alight ?? "", colour, "alight"), "bottom");
     }
     this.lastTrip = { type: "FeatureCollection", features };
     src.setData(this.lastTrip);
@@ -369,9 +338,10 @@ export class BusMap {
     const line = this.net.lines[li];
     const v = line.variants[vi];
     const src = this.map.getSource("focus") as GeoJSONSource;
+    const colour = visible(line.colour, this.dark ? "#111417" : "#ffffff");
     const features: GeoJSON.Feature[] = [
-      { type: "Feature", properties: { colour: line.colour }, geometry: { type: "LineString", coordinates: v.shape } },
-      ...v.stops.map((s) => ({ type: "Feature" as const, properties: { colour: line.colour, stop: s }, geometry: { type: "Point" as const, coordinates: this.net.stops[s].ll } })),
+      { type: "Feature", properties: { colour }, geometry: { type: "LineString", coordinates: v.shape } },
+      ...v.stops.map((s) => ({ type: "Feature" as const, properties: { colour, stop: s }, geometry: { type: "Point" as const, coordinates: this.net.stops[s].ll } })),
     ];
     this.lastFocus = { type: "FeatureCollection", features };
     src.setData(this.lastFocus);

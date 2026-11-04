@@ -1,3 +1,5 @@
+import { textOn, visible } from "./colour.ts";
+
 type Child = Node | string | number | null | undefined | false | Child[];
 type Attrs = Record<string, unknown> & { class?: string; style?: string };
 
@@ -49,10 +51,13 @@ export const icon = {
   globe: () => svg('<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18"/>'),
   info: () => svg('<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>'),
   flag: () => svg('<path d="M5 21V4h11l-2 4 2 4H5"/>'),
+  bell: () => svg('<path d="M6 16V11a6 6 0 0112 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 004 0"/>'),
   link: () => svg('<path d="M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1"/>'),
   arrow: () => svg('<path d="M5 12h14M13 6l6 6-6 6"/>', "icon flip-rtl"),
 };
 
+/** A line number in the operator's own colour, readable on any background. */
 export function lineBadge(ref: string, colour: string, size: "sm" | "md" | "lg" = "md") {
-  return h("span", { class: `badge badge-${size}${ref === "BHNS" ? " badge-brt" : ""}`, style: `--c:${colour}` }, ref === "BHNS" ? "Trambus" : ref);
+  const bg = visible(colour, "#ffffff", 1.6);
+  return h("span", { class: `badge badge-${size}${ref === "BHNS" ? " badge-brt" : ""}`, style: `--c:${bg};--t:${textOn(bg)}` }, ref === "BHNS" ? "Trambus" : ref);
 }

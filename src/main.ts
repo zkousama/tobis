@@ -6,7 +6,7 @@ import { nameOf, type Names, type Network } from "./network.ts";
 import { bearing, dist, type LngLat } from "./geo.ts";
 import { detectLang, fmtDistance, fmtMinutes, fmtStops, getLang, LANGS, setLang, t, typeLabel, type Lang } from "./i18n.ts";
 import { h, icon, lineBadge } from "./ui/dom.ts";
-import { busArt, noteArrow, waitingArt } from "./ui/art.ts";
+import { visible } from "./ui/colour.ts";
 import { RideTracker } from "./ride.ts";
 import { loadWalkGraph } from "./walk.ts";
 // The map library is the heaviest part: start fetching it right away, in parallel.
@@ -409,8 +409,7 @@ function homeHero() {
   return h(
     "div",
     { class: "hero" },
-    h("h1", { class: "display" }, t("heroA"), h("em", { class: "underlined" }, t("heroB")), t("heroC")),
-    busArt(),
+    h("h1", { class: "display" }, `${t("heroA")}${t("heroB")}${t("heroC")}`),
     h("p", { class: "hero-sub" }, t("heroSub")),
   );
 }
@@ -572,7 +571,6 @@ function homeBody() {
         )
       : null,
     h("button", { class: "cta", onclick: () => go({ name: "help" }) }, h("span", { class: "plus" }, "?"), t("helpLink")),
-    h("div", { class: "zigzag" }),
     dataNote(),
   );
 }
@@ -767,7 +765,7 @@ function resultsBody() {
       )
     : null;
   if (!state.journeys.length)
-    return h("div", null, h("div", { class: "empty-state" }, waitingArt(), h("p", { class: "serif" }, t("noTrip"))), nearBlock, dataNote());
+    return h("div", null, h("div", { class: "empty-state" }, h("span", { class: "row-icon" }, icon.bus()), h("p", null, t("noTrip"))), nearBlock, dataNote());
   return h(
     "div",
     { class: "results" },
@@ -828,11 +826,14 @@ function stopLine(stop: number) {
   return bits.length ? h("small", { class: "muted" }, bits.join(" · ")) : null;
 }
 
+// A trip as a vertical route: dotted line for walking, the line's colour for
+// riding, a dot at each place you change what you're doing.
 function tripBody(index: number) {
   const j = state.journeys[index];
   const steps: Node[] = [];
-  let n = 0;
-  const tag = () => h("span", { class: "step-tag" }, `${t("stepN")} ${++n}`);
+  const dot = (cls = "") => h("span", { class: `tl-mark ${cls}` });
+  const note = (ic: HTMLElement, text: string) => h("p", { class: "tl-note" }, ic, h("span", null, text));
+  steps.push(h("li", { class: "tl tl-place" }, dot("tl-start"), h("div", { class: "tl-main" }, h("strong", null, nm(state.from?.label)))));
   j.legs.forEach((leg, i) => {
     if (leg.kind === "walk") {
       const toDest = i === j.legs.length - 1;
@@ -841,53 +842,79 @@ function tripBody(index: number) {
       steps.push(
         h(
           "li",
-          { class: "step" },
-          tag(),
-          h("h3", { class: "step-title" }, `${toDest ? t("stepArrive") : t("stepWalkTo")} `, h("em", null, target)),
-          h("div", { class: "step-body" }, h("span", null, `${fmtMinutes(leg.seconds)} · ${fmtDistance(leg.metres)} · ${heading(leg.from, leg.to)}`), !toDest ? stopLine(variantOf(next!).stops[next!.board]) : null),
+          { class: "tl tl-walk" },
+          h("span", { class: "tl-mark tl-walk-icon" }, icon.walk()),
+          h("div", { class: "tl-main" }, h("span", null, `${toDest ? t("stepArrive") : t("stepWalkTo")} ${target}`), h("small", { class: "muted" }, `${fmtMinutes(leg.seconds)} · ${fmtDistance(leg.metres)} · ${heading(leg.from, leg.to)}`)),
         ),
       );
       return;
     }
     const line = net.lines[leg.line];
     const v = variantOf(leg);
+    const c = `--c:${visible(line.colour)}`;
+    const boardStop = v.stops[leg.board];
     const alightStop = v.stops[leg.alight];
-    const between = v.stops.slice(leg.board + 1, leg.alight + 1);
+    const between = v.stops.slice(leg.board + 1, leg.alight);
     const before = leg.alight - 1 > leg.board ? v.stops[leg.alight - 1] : undefined;
     const fare = fareFor(line, v, leg.board, leg.alight);
-    const list = h(
-      "ol",
-      { class: "mini-stops", hidden: true },
-      between.map((s, k) => h("li", { class: k === between.length - 1 ? "last" : "" }, nm(net.stops[s].n))),
-    );
-    const toggle = h("button", { class: "link", onclick: () => ((list.hidden = !list.hidden), (toggle.textContent = list.hidden ? t("showStops") : t("hideStops"))) }, t("showStops"));
+    const list = h("ol", { class: "mini-stops", hidden: true }, between.map((s) => h("li", null, nm(net.stops[s].n))));
+    const toggle = between.length
+      ? h(
+          "button",
+          {
+            class: "link",
+            onclick: () => {
+              list.hidden = !list.hidden;
+              toggle!.textContent = list.hidden ? t("showStops") : t("hideStops");
+            },
+          },
+          t("showStops"),
+        )
+      : null;
     const waitNote = line.headway ? t("noteWait", line.headway) : t("noteWaitUnknown", fmtMinutes(waitFor(line)));
     steps.push(
       h(
         "li",
-        { class: "step" },
-        tag(),
-        h("h3", { class: "step-title" }, `${t("stepTake")} `, h("span", { class: "circled" }, lineBadge(line.ref, line.colour, "lg")), ` ${t("towards")} `, h("em", null, v.to)),
+        { class: "tl tl-stop", style: c },
+        dot(),
         h(
           "div",
-          { class: "step-body" },
-          h("span", null, `${fmtStops(leg.alight - leg.board)} · ${fmtMinutes(leg.seconds)} · ${fmtDistance(leg.metres)}`),
-          fare ? h("span", null, `${t("fare")} ≈ ${fmtDH(fare.normal)}${fare.card && fare.card !== fare.normal ? ` (${fmtDH(fare.card)} ${t("withCard")})` : ""}`) : null,
-          toggle,
-          list,
+          { class: "tl-main" },
+          h("strong", { class: "tl-stop-name" }, nm(net.stops[boardStop].n)),
+          stopLine(boardStop),
+          h("div", { class: "tl-board" }, `${t("stepTake")} `, lineBadge(line.ref, line.colour), ` ${t("towards")} `, h("strong", null, v.to)),
+          note(icon.clock(), waitNote),
         ),
-        h("div", { class: "step-note hand" }, noteArrow(), h("span", null, waitNote)),
       ),
       h(
         "li",
-        { class: "step" },
-        tag(),
-        h("h3", { class: "step-title" }, `${t("stepGetOff")} `, h("span", { class: "marked" }, nm(net.stops[alightStop].n))),
-        h("div", { class: "step-body" }, stopLine(alightStop)),
-        before !== undefined ? h("div", { class: "step-note hand" }, noteArrow(), h("span", null, t("noteGetReady", nm(net.stops[before].n)))) : null,
+        { class: "tl tl-ride", style: c },
+        h("span", { class: "tl-mark" }),
+        h(
+          "div",
+          { class: "tl-main" },
+          h("span", null, `${fmtStops(leg.alight - leg.board)} · ${fmtMinutes(leg.seconds)}`),
+          fare ? h("small", { class: "muted" }, `${t("fare")} ≈ ${fmtDH(fare.normal)}${fare.card && fare.card !== fare.normal ? `, ${fmtDH(fare.card)} ${t("withCard")}` : ""}`) : null,
+          toggle,
+          list,
+        ),
+      ),
+      h(
+        "li",
+        { class: "tl tl-stop tl-off", style: c },
+        dot(),
+        h(
+          "div",
+          { class: "tl-main" },
+          h("small", { class: "tl-off-label" }, t("stepGetOff")),
+          h("strong", { class: "tl-stop-name" }, nm(net.stops[alightStop].n)),
+          stopLine(alightStop),
+          before !== undefined ? note(icon.bell(), t("noteGetReady", nm(net.stops[before].n))) : null,
+        ),
       ),
     );
   });
+  steps.push(h("li", { class: "tl tl-place" }, dot("tl-end"), h("div", { class: "tl-main" }, h("strong", null, nm(state.to?.label)))));
   const fare = journeyFare(j);
   return h(
     "div",
@@ -899,7 +926,7 @@ function tripBody(index: number) {
       h("span", { class: "journey-time" }, `≈ ${fmtMinutes(j.seconds)}`),
       h("span", { class: "muted" }, `${fmtDistance(j.walkMetres)} ${t("walkMin")}${fare ? ` · ≈ ${fmtDH(fare)}` : ""}`),
     ),
-    h("ol", { class: "steps" }, steps),
+    h("ol", { class: "timeline" }, steps),
     h("div", { class: "actions" }, h("button", { class: "btn btn-primary", onclick: () => go({ name: "ride", index }) }, icon.arrow(), t("startTrip"))),
     h("p", { class: "fine" }, t("estimates")),
   );
@@ -1133,7 +1160,6 @@ function aboutBody() {
     h("h3", { class: "section-title label" }, t("helpInstallTitle")),
     installBlock(),
     h("button", { class: "cta", onclick: () => go({ name: "help" }) }, h("span", { class: "plus" }, "?"), t("helpLink")),
-    h("div", { class: "zigzag small" }),
     h("p", null, t("aboutText")),
     dataNote(),
     h("p", { class: "fine" }, [t("dataAlsa"), t("dataAmalway"), t("dataOverture")].join(" · ")),
@@ -1165,7 +1191,7 @@ function helpBody(section?: string) {
       "find",
       t("helpFindTitle"),
       h("ol", { class: "help-steps" }, (["helpFind1", "helpFind2", "helpFind3", "helpFind4"] as const).map((k) => h("li", null, t(k)))),
-      h("div", { class: "step-note hand" }, noteArrow(), h("span", null, t("helpFindNote"))),
+      h("p", { class: "tl-note" }, icon.info(), h("span", null, t("helpFindNote"))),
       h("button", { class: "btn btn-small", onclick: () => pasteFromClipboard("to") }, icon.link(), t("pasteLink")),
     ),
     sec("install", t("helpInstallTitle"), installBlock()),

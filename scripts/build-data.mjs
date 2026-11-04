@@ -223,9 +223,12 @@ function splitScripts(v) {
   flush();
   return { latn: parts.latn.join(" "), arab: parts.arab.join(" "), tfng: parts.tfng.join(" ") };
 }
+// "ANNA HOTEL AGADIR" reads better as "Anna Hotel Agadir".
+const unshout = (v) => (v === v.toUpperCase() && /[A-Z]{4}/.test(v) && !/\.[A-Z]/.test(v) ? v.toLowerCase().replace(/(^|[\s(/'-])(\p{L})/gu, (_, a, b) => a + b.toUpperCase()) : v);
 function names(t = {}) {
   const n = {};
   for (const k of ["name", "name:fr", "name:ar", "name:en", "name:zgh"]) if (t[k] && !NUMERIC.test(t[k])) n[k === "name" ? "d" : k.slice(5)] = t[k].trim();
+  if (n.d) n.d = unshout(n.d);
   if (n.d) {
     const sp = splitScripts(n.d);
     const scripts = [sp.latn, sp.arab, sp.tfng].filter(Boolean).length;
@@ -748,7 +751,8 @@ for (const e of entries) {
 }
 
 const lines = [...byRef.values()].sort((a, b) => (a.brt ? -1 : b.brt ? 1 : (parseInt(a.ref) || 999) - (parseInt(b.ref) || 999)));
-lines.forEach((l, i) => (l.colour ??= l.brt ? "#00a19a" : PALETTE[i % PALETTE.length]));
+// The Trambus in Amalway's orange (beta.amalway.ma); bus lines keep ALSA's colours.
+lines.forEach((l, i) => (l.colour = l.brt ? "#ed6c36" : (l.colour ?? PALETTE[i % PALETTE.length])));
 
 // Each place's nearest other town, to tell apart places with the same name.
 places.forEach((p, i) => {
@@ -770,7 +774,8 @@ for (const s of stops) {
   for (const p of places) {
     const d = dist(s.ll, p.ll);
     // Landmarks people recognise: OSM places of a kind you'd give directions by.
-    if (p.k === "street" || p.src === "ov" || p.k === "food" || p.k === "bank" || p.k === "poi") continue;
+    const bigShop = p.k === "shop" && /mall|supermarket|department_store|marketplace/.test(p.t ?? "");
+    if (p.k === "street" || p.src === "ov" || p.k === "food" || p.k === "bank" || p.k === "poi" || (p.k === "shop" && !bigShop)) continue;
     if (p.k === "area" || p.k === "town") {
       if (d < areaD) {
         areaD = d;

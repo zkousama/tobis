@@ -181,7 +181,7 @@ export class Router {
       rides.push(cur);
       reach.push(walked);
       for (const e of egress) {
-        const lab = cur[e.stop]; // arrive by bus, not by a transfer walk
+        const lab = cur[e.stop]; // only a bus arrival can end the trip here
         if (lab) candidates.push({ round: k, stop: e.stop, cost: lab.cost + e.metres / WALK_SPEED, egressMetres: e.metres });
       }
     }

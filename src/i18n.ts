@@ -130,11 +130,7 @@ const S = {
   heroA: { fr: "Vous allez ", ar: "فين ", en: "Where are you " },
   heroB: { fr: "où", ar: "غادي", en: "going" },
   heroC: { fr: " ?", ar: "؟", en: "?" },
-  heroSub: {
-    fr: "Bus et Trambus du Grand Agadir : quel bus prendre, où monter, où descendre. Même sans réseau.",
-    ar: "الطوبيسات والترامبيس ف أكادير الكبير: شمن طوبيس، فين تطلع وفين تهبط. حتى بلا ريزو.",
-    en: "Buses and the Trambus across Greater Agadir: which bus, where to board, where to get off. Even with no signal.",
-  },
+  heroSub: { fr: "Les bus et le Trambus du Grand Agadir. L'app marche aussi hors ligne, une fois chargée.", ar: "الطوبيسات والترامبيس ف أكادير الكبير. لابليكاسيون كتخدم حتى بلا ريزو من بعد أول مرة.", en: "Buses and the Trambus in Greater Agadir. The app also works offline once it has loaded." },
   stepN: { fr: "Étape", ar: "الخطوة", en: "Step" },
   stepWalkTo: { fr: "Marchez jusqu'à", ar: "تمشى حتى ل", en: "Walk to" },
   stepTake: { fr: "Prenez le", ar: "طلع ف", en: "Take the" },
