@@ -213,6 +213,17 @@ await step("leaving the Trambus out removes it from the options", async () => {
   const brt = await run(() => [...document.querySelectorAll(".option")].some((o) => /Trambus/.test(o.innerText)));
   ok(!brt, "a Trambus option is still shown");
   ok(await run(() => !!document.querySelector(".brt-off")), "no 'Trambus left out' line");
+  // This trip ends at a stop near the screen's edge with a long name: its label must stay on screen.
+  await until("the stop labels", () => document.querySelectorAll(".stop-badge span").length >= 2);
+  await sleep(1500);
+  const out = await run(() => {
+    const box = document.querySelector(".maplibregl-map").getBoundingClientRect();
+    return [...document.querySelectorAll(".stop-badge span")]
+      .map((s) => ({ t: s.textContent, r: s.getBoundingClientRect() }))
+      .filter(({ r }) => r.right > box.right + 1 || r.left < box.left - 1)
+      .map(({ t, r }) => `${t} (${Math.round(r.left)}–${Math.round(r.right)} of ${Math.round(box.width)})`);
+  });
+  ok(!out.length, `stop label off the map: ${out.join(", ")}`);
   await run(() => (localStorage.removeItem("skipBrt"), true));
 });
 

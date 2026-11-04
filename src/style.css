@@ -1278,14 +1278,14 @@ button:active,
   display: block;
   font: inherit;
   white-space: nowrap;
-  max-width: min(40vw, 180px);
+  max-width: min(36vw, 150px);
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .stop-badge span::after {
   content: "";
   position: absolute;
-  left: 50%;
+  left: calc(50% + var(--ax, 0px));
   bottom: -5px;
   margin-left: -5px;
   border: 5px solid transparent;

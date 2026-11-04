@@ -82,6 +82,9 @@ export class BusMap {
         try {
           this.addOverlays(handlers);
           this.foldCredit();
+          // A stop label near the edge slides back inside the map; its pointer stays on the stop.
+          this.map.on("move", () => this.keepLabelsInside());
+          this.map.on("idle", () => this.keepLabelsInside());
           res();
         } catch (err) {
           rej(err);
@@ -364,6 +367,17 @@ export class BusMap {
     this.lastTrip = undefined;
     (this.map.getSource("trip") as GeoJSONSource | undefined)?.setData(empty());
     this.clearMarkers();
+  }
+
+  private keepLabelsInside() {
+    const box = this.map.getContainer().getBoundingClientRect();
+    for (const s of this.map.getContainer().querySelectorAll<HTMLElement>(".stop-badge span")) {
+      s.style.translate = "";
+      const r = s.getBoundingClientRect();
+      const dx = r.right > box.right - 6 ? box.right - 6 - r.right : r.left < box.left + 6 ? box.left + 6 - r.left : 0;
+      s.style.translate = dx ? `${dx}px 0` : "";
+      s.style.setProperty("--ax", `${-dx}px`);
+    }
   }
 
   /** The credit shows in full at launch, then folds to its (i) button after 5 s or on the first touch (OSMF attribution guidelines allow this). */
