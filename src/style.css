@@ -15,6 +15,7 @@
   --muted: #565e66;
   --rule: #e2e5e8;
   --accent: #1f56a8;
+  --dest: #c8392b; /* the destination pin: 5.5:1 on white */
   --accent-2: #17468d;
   --on-accent: #ffffff;
   --accent-soft: #e7eefa;
@@ -42,6 +43,7 @@
     --muted: #9ba3aa;
     --rule: #2b3137;
     --accent: #7aa7f0;
+  --dest: #ff7b6b;
     --accent-2: #9bbcf5;
     --on-accent: #0c1726;
     --accent-soft: #1b2738;
@@ -61,6 +63,7 @@
   --muted: #9ba3aa;
   --rule: #2b3137;
   --accent: #7aa7f0;
+  --dest: #ff7b6b;
   --accent-2: #9bbcf5;
   --on-accent: #0c1726;
   --accent-soft: #1b2738;
@@ -439,12 +442,17 @@ small {
   border-radius: 50%;
   flex: none;
 }
+/* Start: a ring. Destination: a filled pin (.icon-dest), as maps apps mark them. */
 .dot-from {
-  border: 2.5px solid var(--ink-2);
+  width: 12px;
+  height: 12px;
+  margin: 0 4px;
+  border: 3px solid var(--ink-2);
 }
-.dot-to {
-  border-radius: 2px;
-  background: var(--ink);
+.icon-dest {
+  width: 20px;
+  height: 20px;
+  color: var(--dest);
 }
 .me-live {
   width: 10px;
@@ -1254,12 +1262,14 @@ button:active,
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
 }
 .pin-dest {
-  width: 18px;
-  height: 18px;
-  border-radius: 3px;
-  background: #15191d;
-  border: 3px solid #fff;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+  width: 30px;
+  height: 37px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
+}
+.pin-dest svg {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 .stop-badge {
   transform: translateY(-8px);
@@ -1778,18 +1788,6 @@ button.option:hover {
   line-height: 1.2;
   text-align: center;
 }
-.day-chips {
-  display: flex;
-  gap: 6px;
-  overflow-x: auto;
-  scrollbar-width: none; /* swiped sideways; phones show no bar either */
-  padding-bottom: 2px;
-  margin-bottom: 8px;
-}
-.day-chips .chip-toggle {
-  flex: none;
-  background: var(--surface);
-}
 .when-time {
   display: flex;
   gap: 8px;
@@ -1894,4 +1892,44 @@ button.option:hover {
   [dir="ltr"] #app:has(.sheet[data-size]) .maplibregl-ctrl-bottom-right {
     right: 62px;
   }
+}
+.when-said {
+  margin: 6px 2px 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+.stop-passes {
+  font-weight: 600;
+  color: var(--ink-2);
+}
+.pref-scale {
+  display: grid;
+  gap: 2px;
+}
+.pref-scale .pref-slider {
+  width: 100%;
+}
+.pref-ends {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.7812rem;
+  font-weight: 500;
+  color: var(--ink-2);
+}
+/* The floating Démarrer button stays above the timeline's marks. */
+.trip .actions {
+  z-index: 3;
+}
+/* In a filled button the pin takes the button's text colour (red on blue didn't read). */
+.btn-primary .icon-dest {
+  color: currentColor;
+}
+/* "Démarrer": the navigation arrowhead tilted to go forward, as maps apps draw it. */
+.trip .btn-primary .icon svg {
+  transform: rotate(45deg);
+}
+[dir="rtl"] .trip .btn-primary .icon svg {
+  transform: rotate(-45deg);
 }

@@ -87,14 +87,14 @@ export function compareBlock(extraNote: Node | null = null) {
   const w = state.when;
   const at = w.mode === "arrive" ? new Date(w.at - 3600_000) : startTime();
   const { options, note, night } = buildOptions(net, state.journeys, state.from.ll, state.to.ll, at, walkPace());
-  // Clock times on each option: "07:30 → 08:16", or for arrive by, the latest time to leave.
+  // Clock times on each option: "07:30 – 08:16" (a timetable's dash), or for arrive by, the latest time to leave.
   const clockText = (o: Option) => {
     if (w.mode === "arrive") {
       const leave = new Date(w.at - o.range[1] * 1000);
       return leave.getTime() < Date.now() ? t("tooLate") : t("leaveBefore", clock(leave));
     }
     const t0 = startTime();
-    return `${clock(t0)} → ${clock(new Date(t0.getTime() + o.seconds * 1000))}`;
+    return `${clock(t0)} – ${clock(new Date(t0.getTime() + o.seconds * 1000))}`;
   };
   const prefs = getPrefs();
   // Drop options that are worse than another on time, price and walking at once.

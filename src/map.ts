@@ -441,6 +441,9 @@ function pin(kind: "origin" | "dest", label?: string) {
   const el = document.createElement("div");
   el.className = `pin pin-${kind}`;
   if (label) el.title = label;
+  // The destination is a pin whose point sits on the spot (the marker is anchored at its bottom).
+  if (kind === "dest")
+    el.innerHTML = '<svg viewBox="0 0 24 30" aria-hidden="true"><path d="M12 29s9-9.2 9-16.5A9 9 0 0 0 3 12.5C3 19.8 12 29 12 29z" fill="var(--dest)" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12.5" r="3.6" fill="#fff"/></svg>';
   return el;
 }
 function badge(text: string, colour: string, kind: "board" | "alight") {

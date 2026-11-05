@@ -7,7 +7,7 @@ import { h, icon, lineBadge } from "../ui/dom.ts";
 import { net, nm, render, router, state } from "../app/state.ts";
 import { avoidedLines, plan, setAvoided, setMode, skipBrt, skipBus } from "../app/plan.ts";
 import { header, linesAt, segmented, settingToggle } from "./common.ts";
-import { fromSlider, getPrefs, prefsChanged, savePrefs, toSlider } from "../app/prefs.ts";
+import { fromSlider, getPrefs, prefsChanged, routeOf, routePrefs, savePrefs, toSlider, type RoutePref } from "../app/prefs.ts";
 import { DEFAULT_VOT } from "../compare.ts";
 
 /** "07:30", 24-hour in every language, as timetables in Morocco are written. */
@@ -35,7 +35,7 @@ export function optionsCount() {
 let openPanel: "when" | "options" | null = null;
 // The choice being made in the time panel. It lives here, not in the panel, so a redraw
 // (the street graph arriving, a replan) doesn't throw away a half-made choice.
-let draft: { mode: "now" | "depart" | "arrive"; day: number; time: string } | null = null;
+let draft: { mode: "now" | "depart" | "arrive"; at: string } | null = null;
 
 export function tripControls() {
   const whenPanel = h("div", { class: "trip-panel", hidden: openPanel !== "when" }, whenBody());
@@ -92,51 +92,38 @@ function pickedChip(label: string, clear: () => void) {
   );
 }
 
+// One field for day and time, like a maps app: iPhone shows its date-and-time wheels,
+// Android its date then time pickers, a computer a calendar.
+const localValue = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}T${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
 function whenBody() {
   const w = state.when;
   const base = w.mode === "now" ? roundUp(new Date()) : new Date(w.at);
-  draft ??= { mode: w.mode, day: dayStart(base).getTime(), time: `${String(base.getHours()).padStart(2, "0")}:${String(base.getMinutes()).padStart(2, "0")}` };
+  draft ??= { mode: w.mode, at: localValue(base) };
   const d = draft;
   let mode = d.mode;
-  let day = new Date(d.day);
-  const time = h("input", {
-    type: "time",
+  const when = h("input", {
+    type: "datetime-local",
     class: "time-input",
-    "aria-label": t("time"),
-    value: d.time,
-    oninput: () => (d.time = time.value),
+    "aria-label": t("dayAndTime"),
+    value: d.at,
+    min: localValue(dayStart(new Date())),
+    step: 300,
+    oninput: () => (d.at = when.value),
   });
-  const days = Array.from({ length: 7 }, (_, i) => new Date(dayStart(new Date()).getTime() + i * 86400_000));
-  const dayRow = h(
-    "div",
-    { class: "day-chips", role: "group", "aria-label": t("day") },
-    days.map((dd) =>
-      h(
-        "button",
-        {
-          class: `chip-toggle${dd.getTime() === day.getTime() ? " on" : ""}`,
-          "aria-pressed": dd.getTime() === day.getTime() ? "true" : "false",
-          onclick: (e: Event) => {
-            day = dd;
-            draft!.day = dd.getTime();
-            dayRow.querySelectorAll("button").forEach((b) => {
-              const on = b === e.currentTarget;
-              b.classList.toggle("on", on);
-              b.setAttribute("aria-pressed", on ? "true" : "false");
-            });
-          },
-        },
-        h("span", { class: "tick" }, icon.check()),
-        dayLabel(dd),
-      ),
-    ),
-  );
-  const pickers = h("div", { class: "when-pick", hidden: mode === "now" }, dayRow, h("div", { class: "when-time" }, time, h("button", { class: "btn btn-small btn-primary", onclick: () => apply() }, t("apply"))));
+  // What the field holds, in words ("Demain · 07:30"), since the field's own text depends on the phone's settings.
+  const said = h("p", { class: "when-said", "aria-live": "polite" });
+  const sayIt = () => {
+    const v = when.value ? new Date(when.value) : null;
+    said.textContent = v && !isNaN(v.getTime()) ? `${dayLabel(v)} · ${clock(v)}` : "";
+  };
+  when.addEventListener("input", sayIt);
+  sayIt();
+  const pickers = h("div", { class: "when-pick", hidden: mode === "now" }, h("div", { class: "when-time" }, when, h("button", { class: "btn btn-small btn-primary", onclick: () => apply() }, t("apply"))), said);
   const apply = () => {
     if (mode === "now") state.when = { mode: "now" };
     else {
-      const [hh, mm] = (time.value || "00:00").split(":").map(Number);
-      state.when = { mode, at: new Date(day.getFullYear(), day.getMonth(), day.getDate(), hh, mm).getTime() };
+      const v = new Date(when.value || localValue(base));
+      state.when = { mode, at: isNaN(v.getTime()) ? base.getTime() : v.getTime() };
     }
     openPanel = null;
     draft = null;
@@ -219,17 +206,22 @@ function optionsBody() {
     "div",
     null,
     h("h3", { class: "section-title label" }, t("howYouLike")),
-    h("div", { class: "pref-row" }, h("span", { class: "pref-end" }, t("prefSave")), slider, h("span", { class: "pref-end" }, t("prefTime"))),
+    // The slider across, its two ends named underneath, so long labels never squeeze it.
+    h("div", { class: "pref-scale" }, slider, h("div", { class: "pref-ends" }, h("span", null, t("prefSave")), h("span", null, t("prefTime")))),
     worth,
-    h(
-      "div",
-      { class: "setting-list" },
-      settingToggle(t("avoidWalk"), () => getPrefs().walkWeight > 2, () => {
-        const p = getPrefs();
-        savePrefs({ ...p, walkWeight: p.walkWeight > 2 ? 1.5 : 3 });
+    h("h3", { class: "section-title label" }, t("routeTitle")),
+    segmented<RoutePref>(
+      [
+        { id: "best", label: t("routeBest") },
+        { id: "changes", label: t("routeChanges") },
+        { id: "walk", label: t("routeWalk") },
+      ],
+      routeOf(getPrefs()),
+      (id) => {
+        savePrefs({ ...getPrefs(), ...routePrefs(id) });
         openPanel = "options";
         render();
-      }),
+      },
     ),
     h("h3", { class: "section-title label" }, t("modes")),
     h(
@@ -250,7 +242,7 @@ function optionsBody() {
               setAvoided([]);
               setMode("skipBrt", false);
               setMode("skipBus", false);
-              savePrefs({ vot: DEFAULT_VOT, walkWeight: 1.5 });
+              savePrefs({ vot: DEFAULT_VOT, ...routePrefs("best") });
               replanSoon();
             },
           },

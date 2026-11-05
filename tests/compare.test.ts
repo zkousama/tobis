@@ -73,3 +73,14 @@ test("choices nudge the value of time, a third of the way", async () => {
   assert.ok(v1 < 0.3 && v1 > 0.05, String(v1));
   assert.equal(learnVot(tram, [bus, tram], p), 0.3); // picked what we recommended: no change
 });
+
+test("route preference 'fewer changes' puts a direct trip ahead of a slightly faster one with a change", async () => {
+  const { generalisedCost } = await import("../src/compare.ts");
+  const part = (k: "ride" | "walk" | "wait", min: number) => ({ k, s: min * 60 });
+  const direct: Option = { kind: "transit", seconds: 40 * 60, range: [40 * 60, 40 * 60], cost: { low: 4, high: 4 }, walkMetres: 300, parts: [part("walk", 4), part("wait", 5), part("ride", 31)] };
+  const oneChange: Option = { kind: "transit", seconds: 34 * 60, range: [34 * 60, 34 * 60], cost: { low: 4, high: 4 }, walkMetres: 300, parts: [part("walk", 4), part("wait", 3), part("ride", 12), part("wait", 3), part("ride", 12)] };
+  const best = { vot: 0.15, walkWeight: 1.5, changeMinutes: 5 };
+  const fewer = { ...best, changeMinutes: 20 };
+  assert.ok(generalisedCost(oneChange, best) < generalisedCost(direct, best), "normally the faster trip with a change wins");
+  assert.ok(generalisedCost(direct, fewer) < generalisedCost(oneChange, fewer), "with 'fewer changes' the direct trip wins");
+});

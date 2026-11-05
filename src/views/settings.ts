@@ -14,7 +14,7 @@ export function installBlock() {
   return h(
     "div",
     { class: "install-steps" },
-    installEvent ? h("button", { class: "btn btn-primary", onclick: install }, icon.offline(), t("installNow")) : h("p", null, isIos ? t("helpInstallIos") : t("helpInstallAndroid")),
+    installEvent ? h("button", { class: "btn btn-primary", onclick: install }, icon.download(), t("installNow")) : h("p", null, isIos ? t("helpInstallIos") : t("helpInstallAndroid")),
     offlineMB ? h("small", { class: "muted" }, t("offlineSize", offlineMB)) : null,
   );
 }

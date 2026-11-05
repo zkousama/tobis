@@ -156,6 +156,7 @@ export function winners(options: Option[]) {
 export interface Prefs {
   vot: number; // value of time, DH per minute
   walkWeight: number; // 1.5 normally, 3 when avoiding walking
+  changeMinutes?: number; // what one change costs, in minutes: 5 normally, 20 for "fewer changes"
 }
 export const DEFAULT_VOT = 0.15; // ~9 DH an hour, around half the minimum wage per hour
 export const VOT_RANGE: [number, number] = [0.02, 1.2];
@@ -178,7 +179,7 @@ export function generalisedCost(o: Option, p: Prefs): number {
   // Reliability: an option that might run much later than its likely time costs
   // something too (a bus in traffic, against the Trambus on its own lane).
   const risk = Math.max(0, o.range[1] - o.seconds) / 60;
-  return fare + p.vot * (min("ride") + p.walkWeight * min("walk") + WAIT_WEIGHT * min("wait") + CHANGE_MINUTES * changes + RELIABILITY * risk);
+  return fare + p.vot * (min("ride") + p.walkWeight * min("walk") + WAIT_WEIGHT * min("wait") + (p.changeMinutes ?? CHANGE_MINUTES) * changes + RELIABILITY * risk);
 }
 
 export function recommend(options: Option[], p: Prefs): Option[] {

@@ -5,6 +5,8 @@ import { fmtDH } from "../fares.ts";
 import { net, nm, render, router, state, type Endpoint } from "../app/state.ts";
 import { go } from "../app/nav.ts";
 import { plan, setEndpoint } from "../app/plan.ts";
+import { nextPasses } from "../passes.ts";
+import { clock } from "./tripopts.ts";
 import { header, linesAt, stopLine } from "./common.ts";
 
 export function linesBody() {
@@ -55,7 +57,7 @@ export function lineBody(li: number, vi: number) {
                   render();
                 },
               },
-              `→ ${x.to}`,
+              `${t("towards")} ${x.to}`,
             ),
           ),
         )
@@ -95,13 +97,27 @@ export function stopBody(si: number) {
         )
       : null,
     h("h3", { class: "section-title label" }, t("linesHere")),
+    serving.some(({ li }) => net.lines[li].hours) ? h("p", { class: "fine" }, t("passesNote")) : null,
     h(
       "ul",
       { class: "list" },
       serving.map(({ li, vi }) => {
         const l = net.lines[li];
         const v = l.variants[vi];
-        return h("li", null, h("button", { class: "row", onclick: () => go({ name: "line", line: li, variant: vi }) }, lineBadge(l.ref, l.colour), h("span", { class: "row-main" }, h("span", null, `${t("towards")} ${v.to}`)), icon.chevron()));
+        // Like a maps app's stop card: the next passages, estimated where the line publishes its times.
+        const passes = nextPasses(l, vi, v.stops.indexOf(si), new Date());
+        const when = passes.length ? h("small", { class: "stop-passes" }, passes.map(clock).join(" · ")) : h("small", { class: "muted" }, l.headway ? t("noteWait", l.headway) : t("timesNotPublished"));
+        return h(
+          "li",
+          null,
+          h(
+            "button",
+            { class: "row", onclick: () => go({ name: "line", line: li, variant: vi }) },
+            lineBadge(l.ref, l.colour),
+            h("span", { class: "row-main" }, h("span", null, `${t("towards")} ${v.to}`), when),
+            icon.chevron(),
+          ),
+        );
       }),
     ),
   );
@@ -112,7 +128,7 @@ export function endpointButtons(ep: Endpoint) {
     "div",
     { class: "actions two" },
     h("button", { class: "btn", onclick: () => setEndpoint("from", ep) }, h("span", { class: "dot dot-from" }), t("fromHere")),
-    h("button", { class: "btn btn-primary", onclick: () => setEndpoint("to", ep) }, h("span", { class: "dot dot-to" }), t("toHere")),
+    h("button", { class: "btn btn-primary", onclick: () => setEndpoint("to", ep) }, icon.dest(), t("toHere")),
   );
 }
 

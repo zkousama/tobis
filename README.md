@@ -9,7 +9,11 @@ It's a web app you can add to your home screen, and once it has loaded it works 
 ## What it does
 
 - Tells you which bus or Trambus to take, where to wait for it, how many stops to ride, where to get off and how far you'll walk.
-- Compares every way to get there (bus combinations, the Trambus, walking, and the fixed-fare taxi from the airport) on time, price and walking, and recommends one. A slider sets what a saved hour is worth to you, and the ranking adjusts to the options you pick.
+- Compares every way to get there (bus combinations, the Trambus, walking, and the fixed-fare taxi from the airport) on time, price and walking, and recommends one. In Options you set what a saved hour is worth to you, prefer fewer changes or less walking, turn buses or the Trambus off and leave out lines you don't want; the ranking also adjusts to the trips you pick.
+- Leave now, leave at a time or arrive by a time, any day. With no official timetables these are estimates, and the Trambus isn't offered before its 6:00 start.
+- Walk to the stop you choose, or get off where you want. When no bus is close by, it looks further and says how far the first stop is.
+- Each stop lists its lines, with the Trambus's next passages (estimated from its first departure and frequency).
+- Remembers the trips you make often and puts them on the home screen.
 - Finds neighbourhoods, streets, stops, pharmacies, clinics and shops offline, misspellings included. For a place it doesn't know, share or paste a Google Maps link, or type a plus code.
 - Ride mode follows you along the line with GPS, counts the stops left and buzzes before yours.
 - Says when a trip needs the Trambus card (10 DH the first time, then you top it up), and can leave the Trambus out.
@@ -32,6 +36,7 @@ It's a web app you can add to your home screen, and once it has loaded it works 
 | Streets, stops, places | OpenStreetMap | ODbL 1.0 |
 | More places (shops, clinics, offices) | Overture Maps, places theme | CDLA-Permissive-2.0 |
 | Base map | Protomaps daily build, from OpenStreetMap | ODbL 1.0 |
+| Icons | Tabler Icons | MIT |
 
 The built data in `public/data/` is a derived database of OpenStreetMap and is available under the ODbL.
 
@@ -55,7 +60,7 @@ bun run build
 
 ## Deploy
 
-GitHub deploys it (`.github/workflows/deploy.yml`). Every push and pull request runs the checks, builds, and walks through the app in a headless Chrome (`scripts/smoke.mjs`: search, a trip, settings, Darija, 200 % text, offline). A push to `master` then deploys tobis.pages.dev; "Run workflow" deploys the preview, preview.tobis.pages.dev.
+GitHub deploys it (`.github/workflows/deploy.yml`). Every push and pull request runs the checks, builds, and walks through every scenario in a headless Chrome, as a phone and as a desktop browser (`scripts/smoke.mjs`: search, links, trips, times, options, ride mode with a simulated GPS, settings, Darija, 200 % text, offline), with an accessibility check (axe, WCAG 2.2 AA) on each screen. A push to `master` then deploys tobis.pages.dev; "Run workflow" deploys the preview, preview.tobis.pages.dev.
 
 The built data and map aren't in git. They go up as a GitHub release, and `data.lock.json` says which one a deploy uses (with its fingerprint). After rebuilding the data:
 

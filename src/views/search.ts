@@ -76,7 +76,7 @@ export function planner(mode: "home" | "search" | "results", active?: "from" | "
     const meDot = which === "from" && !ep && state.me ? h("span", { class: "me-live", title: t("youAreHere") }) : null;
     // Once both ends are filled in, a small label keeps each one's meaning.
     const field = mode === "results" ? h("span", { class: "field-stack" }, h("small", { class: "field-label" }, which === "to" ? t("to") : t("from")), input) : input;
-    return h("label", { class: `field field-${which}${isActive ? " active" : ""}` }, h("span", { class: `dot dot-${which}` }), field, meDot, clear);
+    return h("label", { class: `field field-${which}${isActive ? " active" : ""}` }, which === "to" ? icon.dest() : h("span", { class: "dot dot-from" }), field, meDot, clear);
   };
   const fields = mode === "home" ? [field("to")] : mode === "search" ? [field(active ?? "to")] : [field("from"), field("to")];
   const el = h(
@@ -209,7 +209,7 @@ export function updateSearch(field: "from" | "to", q: string) {
   cantFind.classList.toggle("tip-strong", !hits.length);
 }
 
-export const KIND_ICON: Record<string, () => HTMLElement> = { street: icon.arrow };
+export const KIND_ICON: Record<string, () => HTMLElement> = { street: icon.road };
 export function hitRow(hit: Hit, field: "from" | "to", near: LngLat) {
   if (hit.kind === "line") {
     const l = net.lines[hit.index];

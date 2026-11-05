@@ -184,7 +184,7 @@ async function runProfile(P) {
     ok(!bad.length, `accessibility, ${screen}:\n${bad.map((v) => `${v.impact} ${v.id}: ${v.help}\n  at ${v.where.join("\n  at ")}`).join("\n")}`);
   };
   const setLang = (l) => run((l) => (localStorage.setItem("lang", l), true), l);
-  const clearPrefs = () => run(() => (["skipBrt", "skipBus", "avoidLines", "card:BHNS", "avoidWalk", "vot"].forEach((k) => localStorage.removeItem(k)), true));
+  const clearPrefs = () => run(() => (["skipBrt", "skipBus", "avoidLines", "card:BHNS", "avoidWalk", "route", "vot"].forEach((k) => localStorage.removeItem(k)), true));
   const tripOptions = () => until("trip options", () => document.querySelectorAll(".option").length);
   const optionLines = () => run(() => [...document.querySelectorAll(".option")].map((o) => [...o.querySelectorAll(".badge")].map((b) => b.textContent.trim())));
 
@@ -330,7 +330,8 @@ async function runProfile(P) {
     ok(n >= 2, `only ${n} option(s)`);
     ok(/Recommandé/.test(await text(".option:first-child .opt-tags")), "first option isn't 'Recommandé'");
     ok(/carte/.test(await text(".ticket-card")), "no card cost on the Trambus option");
-    ok(/→/.test(await text(".opt-clock")), "no clock times on the options");
+    // Times sit in direction marks (they read right inside Darija text): "⁦10:00⁩ – ⁦10:46⁩".
+    ok(/\d\d:\d\d\D{0,3} – \D{0,3}\d\d:\d\d/.test(await text(".opt-clock")), `no clock times on the options ("${await text(".opt-clock")}")`);
     await shot("results");
     await audit("results");
     // How you like to travel: in Options now, with the lines and modes.
@@ -347,8 +348,10 @@ async function runProfile(P) {
     ok((await text(".pref-worth")) !== before, "the slider doesn't change what a saved hour is worth");
     await shot("results-prefs");
     await audit("results, Options open");
-    await click(".trip-panel .setting-row", "Éviter la marche");
-    await until("'Éviter la marche' on", () => [...document.querySelectorAll(".trip-panel .setting-row")].some((r) => /Éviter la marche/.test(r.textContent) && r.getAttribute("aria-checked") === "true"));
+    await click(".trip-panel .segmented button", "Moins de marche");
+    await until("'Moins de marche' chosen", () => [...document.querySelectorAll(".trip-panel .segmented button")].some((b) => /Moins de marche/.test(b.textContent) && b.getAttribute("aria-pressed") === "true"));
+    await click(".trip-panel .segmented button", "Moins de changements");
+    await until("'Moins de changements' chosen", () => [...document.querySelectorAll(".trip-panel .segmented button")].some((b) => /Moins de changements/.test(b.textContent) && b.getAttribute("aria-pressed") === "true"));
     await run(() => ([...document.querySelectorAll(".trip-chip")][1].click(), true));
     const [a, b] = await run(() => [document.querySelector(".field-from input").value, document.querySelector(".field-to input").value]);
     await click(".swap");
@@ -367,9 +370,10 @@ async function runProfile(P) {
     await click(".trip-chip", "");
     await run((seg) => ([...document.querySelectorAll(".trip-panel .segmented button")][seg].click(), true), seg);
     await run((time) => {
-      [...document.querySelectorAll(".day-chips button")][1].click();
+      // Tomorrow at that time, in the one day-and-time field.
+      const d = new Date(Date.now() + 86400_000);
       const t = document.querySelector(".time-input");
-      t.value = time;
+      t.value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}T${time}`;
       t.dispatchEvent(new Event("input", { bubbles: true }));
       document.querySelector(".when-time button").click();
       return true;
@@ -562,6 +566,18 @@ async function runProfile(P) {
       await key("Escape");
       await until("Escape goes back", () => !document.querySelector(".line") && document.querySelectorAll(".sheet-body .row").length > 30);
     }
+  });
+
+  await step("a Trambus stop shows its next passages (estimated)", async () => {
+    await open(SITE + "?passes");
+    await click(".sheet-body .row", "Port");
+    await until("the Trambus line", () => document.querySelector(".line"));
+    await run(() => (document.querySelectorAll(".line .row")[5].click(), true));
+    await until("the stop", () => document.querySelector(".stop"));
+    const passes = await until("passing times", () => document.querySelector(".stop-passes")?.textContent);
+    ok(/10:\d\d.*10:\d\d/.test(passes), `passes at 10:00 are "${passes}"`);
+    ok(/estimées/.test(await text(".stop .fine")), "no 'estimated' note");
+    await audit("stop with passing times");
   });
 
   await step("a slow phone: typing in search before the map has loaded is kept", async () => {

@@ -161,3 +161,19 @@ test("every line's badge text reads at 4.5:1 or more (WCAG AA, small text)", { s
     assert.ok(ratio >= 4.5, `line ${l.ref} (${l.colour}): ${ratio.toFixed(2)}:1`);
   }
 });
+
+test("Trambus passing times at a stop: from 06:00 plus the ride there, every 10 minutes", { skip: !have }, async () => {
+  const { nextPasses } = await import("../src/passes.ts");
+  const brt = net.lines.find((l) => l.brt)!;
+  const v = brt.variants[0];
+  const mid = Math.floor(v.stops.length / 2);
+  const early = nextPasses(brt, 0, mid, new Date(2026, 10, 6, 4, 0));
+  assert.equal(early.length, 3);
+  assert.ok(early[0].getHours() === 6, `first pass at ${early[0]}`);
+  assert.equal((early[1].getTime() - early[0].getTime()) / 60000, brt.headway);
+  const later = nextPasses(brt, 0, mid, new Date(2026, 10, 6, 10, 3));
+  assert.ok(later[0].getTime() >= new Date(2026, 10, 6, 10, 3).getTime(), "a pass in the past");
+  assert.ok(later[0].getTime() - new Date(2026, 10, 6, 10, 3).getTime() <= brt.headway! * 60000, "next pass more than one gap away");
+  const bus = net.lines.find((l) => !l.brt && !l.hours)!;
+  assert.deepEqual(nextPasses(bus, 0, 1, new Date()), [], "a bus without published times gets none");
+});
