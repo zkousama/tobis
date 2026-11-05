@@ -1861,3 +1861,22 @@ button.option:hover {
     justify-content: center;
   }
 }
+.gh-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  margin: 6px 0 0;
+  color: var(--ink-2);
+  font-weight: 600;
+  text-decoration: none;
+}
+.gh-link .icon {
+  width: 20px;
+  height: 20px;
+}
+.tip-walk .icon {
+  flex: none;
+  width: 18px;
+  height: 18px;
+}

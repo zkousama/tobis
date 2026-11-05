@@ -89,8 +89,12 @@ export function aboutBody() {
       h("a", { href: "https://docs.overturemaps.org/attribution/", target: "_blank", rel: "noopener" }, "Overture Maps Foundation"),
       " · ",
       h("a", { href: "https://protomaps.com", target: "_blank", rel: "noopener" }, "Protomaps"),
-      " · ",
-      h("a", { href: "https://github.com/zkousama/tobis", target: "_blank", rel: "noopener" }, "GitHub"),
+    ),
+    h(
+      "a",
+      { class: "gh-link", href: "https://github.com/zkousama/tobis", target: "_blank", rel: "noopener" },
+      icon.github(),
+      h("span", null, t("sourceCode")),
     ),
     appVersion ? h("p", { class: "fine" }, t("version", appVersion)) : null,
   );

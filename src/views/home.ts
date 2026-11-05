@@ -4,7 +4,7 @@ import { net, nm, offlineMB, render, state } from "../app/state.ts";
 import { canInstall, install } from "../app/install.ts";
 import { go } from "../app/nav.ts";
 import { locate } from "../app/location.ts";
-import { recents, setEndpoint } from "../app/plan.ts";
+import { planUsual, recents, setEndpoint, usualTrips } from "../app/plan.ts";
 import { dataNote } from "./common.ts";
 
 export function homeBody() {
@@ -54,11 +54,29 @@ export function homeBody() {
       : null;
 
   const brtLine = brt >= 0 ? net.lines[brt] : undefined;
+  const usual = usualTrips();
   return h(
     "div",
     { class: "home" },
     locRow,
     installBanner,
+    usual.length
+      ? h(
+          "div",
+          { class: "section" },
+          h("h3", { class: "section-title label" }, t("usualTrips")),
+          h(
+            "ul",
+            { class: "list usual" },
+            usual.map((u) =>
+              row(() => planUsual(u), h("span", { class: "row-icon accent" }, icon.bus()), [
+                h("span", null, nm(u.to.label)),
+                h("small", { class: "muted" }, `${t("fromWord")} ${u.from.kind === "me" ? t("whereIAm") : nm(u.from.label)}`),
+              ]),
+            ),
+          ),
+        )
+      : null,
     rec.length
       ? h(
           "div",

@@ -238,7 +238,7 @@ export function pickStopBody(which: "board" | "alight") {
   const seen = new Set<string>();
   const stops = end
     ? router
-        .stopsNear(end.ll, 2000)
+        .stopsNear(end.ll, 3500)
         .sort((a, b) => a.crow - b.crow)
         .filter((x) => {
           const k = net.stops[x.stop].n.d ?? String(x.stop);

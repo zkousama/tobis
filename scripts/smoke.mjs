@@ -458,6 +458,30 @@ async function runProfile(P) {
     await where(...TALBORJT);
   });
 
+  await step("far from any stop: looks further and says how far", async () => {
+    // About 2.4 km from the nearest stop, north of Agadir.
+    await open(SITE + "?far#from=-9.7500,30.5500,Loin&to=" + TALBORJT.join(",") + ",Talborjt");
+    await tripOptions();
+    ok(/premier arrêt est à/.test(await text(".tip-walk")), "no 'first stop is X on foot' note");
+    ok((await optionLines()).some((l) => l.length), "no bus option, only walking");
+  });
+
+  await step("usual trips: a trip planned again shows on home, one tap plans it", async () => {
+    // The trip was planned once, two hours ago; planning it now makes it usual.
+    await run((k) => {
+      localStorage.setItem("trips", JSON.stringify({ [k]: { from: { ll: [-9.5981, 30.4202], label: { d: "Talborjt" }, kind: "place" }, to: { ll: [-9.53, 30.395], label: { d: "Dcheira" }, kind: "place" }, n: 1, last: Date.now() - 7200_000 } }));
+      return true;
+    }, "-9.598,30.420>-9.530,30.395");
+    await open(SITE + "?usual" + TRIP);
+    await tripOptions();
+    await run(() => (history.replaceState(null, "", location.pathname), localStorage.removeItem("lastTrip"), true));
+    await open(SITE + "?home");
+    await until("'Vos trajets'", () => /Vos trajets/.test(document.querySelector(".sheet-body").textContent) && document.querySelector(".usual .row"));
+    await click(".usual .row");
+    await tripOptions();
+    ok(/Dcheira/.test(await run(() => document.querySelector(".field-to input").value)), "the usual trip didn't plan Dcheira");
+  });
+
   await step("lines: list, a line, its other direction, a stop, back steps back", async () => {
     await open(SITE + "?lines");
     await click(".sheet-body .row", "Toutes les lignes");
@@ -513,6 +537,8 @@ async function runProfile(P) {
     await click(".map-btn");
     await until("settings", () => document.querySelector(".setting-list"));
     ok(/Version [0-9a-f]{7}/.test(await text(".sheet-body .fine")), "no version line");
+    ok((await run(() => document.querySelector(".gh-link")?.href)) === "https://github.com/zkousama/tobis", "no GitHub link");
+    ok(await run(() => !!document.querySelector(".gh-link svg")), "no GitHub mark");
     await shot("settings");
     await click(".about .segmented button", "English");
     await until("English", () => /Settings/.test(document.querySelector(".view-title").textContent) && /Menu/.test(document.querySelector(".map-btn").textContent));

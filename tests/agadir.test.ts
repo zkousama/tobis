@@ -135,3 +135,19 @@ test("trip options: the rider can walk to a stop of their choice", { skip: !have
   assert.ok(rides.length > 0, "trips from the picked stop");
   for (const j of rides) assert.equal(firstBoard(j), other.stop);
 });
+
+test("far from any stop: no bus within the usual walk, buses once the walk is wider", { skip: !have }, () => {
+  // A spot whose nearest stop is 1.5 to 3 km away (outskirts), going to the centre.
+  let spot: LngLat | undefined;
+  for (let lng = -9.75; lng < -9.3 && !spot; lng += 0.01)
+    for (let lat = 30.25; lat < 30.6 && !spot; lat += 0.01) {
+      const p: LngLat = [lng, lat];
+      const nearest = Math.min(...router.stopsNear(p, 4000).map((x) => x.crow));
+      if (nearest > 1500 && nearest < 3000) spot = p;
+    }
+  assert.ok(spot, "no outskirts spot found");
+  const usual = router.plan(spot!, PLACES.talborjt);
+  assert.ok(!usual.some((j) => j.rides > 0), "a bus within the usual walk");
+  const wide = router.plan(spot!, PLACES.talborjt, { maxAccess: 4000 });
+  assert.ok(wide.some((j) => j.rides > 0), "no bus even with a 4 km walk");
+});

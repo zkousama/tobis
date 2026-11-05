@@ -190,6 +190,7 @@ export function updateSearch(field: "from" | "to", q: string) {
                     try {
                       localStorage.removeItem("recent");
                       localStorage.removeItem("lastTrip");
+                      localStorage.removeItem("trips");
                     } catch {}
                     searchList?.replaceChildren();
                   },

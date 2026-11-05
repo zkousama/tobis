@@ -41,17 +41,27 @@ function planOptions(at: Date) {
 }
 export function replan() {
   if (!state.from || !state.to) return;
+  // Like a maps app: if no bus is within the usual walk, look further (about 30, then 50 minutes on foot).
+  for (const maxAccess of [undefined, 2500, 4000]) {
+    planWithin(maxAccess);
+    state.widened = maxAccess;
+    if (state.journeys.some((j) => j.rides > 0)) return;
+  }
+}
+function planWithin(maxAccess: number | undefined) {
+  if (!state.from || !state.to) return;
   const w = state.when;
   if (w.mode === "arrive") {
     // Arrive by: plan from an hour before, then again from when the slowest likely trip would have to leave.
-    const first = router.plan(state.from.ll, state.to.ll, planOptions(new Date(w.at - 3600_000)));
+    const first = router.plan(state.from.ll, state.to.ll, { ...planOptions(new Date(w.at - 3600_000)), maxAccess });
     const longest = Math.max(1200, ...first.map((j) => j.seconds));
-    state.journeys = router.plan(state.from.ll, state.to.ll, planOptions(new Date(w.at - longest * 1000 * 1.5)));
-  } else state.journeys = router.plan(state.from.ll, state.to.ll, planOptions(startTime()));
+    state.journeys = router.plan(state.from.ll, state.to.ll, { ...planOptions(new Date(w.at - longest * 1000 * 1.5)), maxAccess });
+  } else state.journeys = router.plan(state.from.ll, state.to.ll, { ...planOptions(startTime()), maxAccess });
 }
 export function plan() {
   if (!state.from || !state.to) return;
   replan();
+  rememberTrip(state.from, state.to);
   setStack([{ name: "results" }]);
   writeHash();
   render();
@@ -71,6 +81,56 @@ export function remember(ep: Endpoint) {
     localStorage.setItem("recent", JSON.stringify(next));
   } catch {}
 }
+// ---------- usual trips: the ones planned again and again ----------
+interface Usual {
+  from: Endpoint; // kind "me": from wherever the rider is at the time
+  to: Endpoint;
+  n: number;
+  last: number;
+}
+const tripKey = (from: Endpoint, to: Endpoint) => `${from.kind === "me" ? "me" : from.ll.map((x) => x.toFixed(3)).join(",")}>${to.ll.map((x) => x.toFixed(3)).join(",")}`;
+export function usualTrips(): Usual[] {
+  try {
+    const all: Record<string, Usual> = JSON.parse(localStorage.getItem("trips") ?? "{}");
+    return Object.values(all)
+      .filter((u) => u.n >= 2)
+      .sort((a, b) => b.n - a.n || b.last - a.last)
+      .slice(0, 3);
+  } catch {
+    return [];
+  }
+}
+// Counted once per hour at most, so replanning the same trip (options, time) isn't "using it again".
+function rememberTrip(from: Endpoint, to: Endpoint) {
+  if (to.kind === "me") return;
+  try {
+    const all: Record<string, Usual> = JSON.parse(localStorage.getItem("trips") ?? "{}");
+    const k = tripKey(from, to);
+    const u = all[k];
+    if (u && Date.now() - u.last < 3600_000) return;
+    all[k] = { from: from.kind === "me" ? { ...from, ll: [0, 0] } : from, to, n: (u?.n ?? 0) + 1, last: Date.now() };
+    // Keep the 30 most recent.
+    const keep = Object.entries(all).sort((a, b) => b[1].last - a[1].last).slice(0, 30);
+    localStorage.setItem("trips", JSON.stringify(Object.fromEntries(keep)));
+  } catch {}
+}
+export function forgetTrips() {
+  try {
+    localStorage.removeItem("trips");
+  } catch {}
+}
+/** Plan a usual trip again: from where the rider is now, if that's how it was saved. */
+export async function planUsual(u: Usual) {
+  if (u.from.kind === "me") {
+    const ll = state.me?.ll ?? (await locate(false));
+    if (!ll) return flash(t("locOff"));
+    state.from = meEndpoint(ll);
+  } else state.from = u.from;
+  state.to = u.to;
+  state.boardStop = state.alightStop = undefined;
+  plan();
+}
+
 export function recents(): Endpoint[] {
   try {
     return JSON.parse(localStorage.getItem("recent") ?? "[]");

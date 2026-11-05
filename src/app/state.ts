@@ -47,6 +47,8 @@ export const state = {
   // Stops the rider chose to walk to or get off at, for this trip only.
   boardStop: undefined as number | undefined,
   alightStop: undefined as number | undefined,
+  // Metres the last plan had to walk to find a bus, when that's more than usual.
+  widened: undefined as number | undefined,
 };
 
 export let net: Network;

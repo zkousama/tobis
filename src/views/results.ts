@@ -70,7 +70,10 @@ export function resultsBody() {
       nearBlock,
       dataNote(),
     );
-  return h("div", { class: "results" }, to?.sub ? h("p", { class: "muted", style: "margin:2px 0 4px" }, nm(to.sub)) : null, tripControls(), compareBlock(), nearBlock, dataNote());
+  // No bus within the usual walk: say how far the first stop is, before the options.
+  const firstWalk = state.journeys.find((j) => j.rides > 0)?.legs[0];
+  const longWalk = state.widened && firstWalk?.kind === "walk" ? h("p", { class: "tip tip-walk" }, icon.walk(), h("small", null, t("longWalk", fmtMinutes(firstWalk.seconds)))) : null;
+  return h("div", { class: "results" }, to?.sub ? h("p", { class: "muted", style: "margin:2px 0 4px" }, nm(to.sub)) : null, tripControls(), longWalk, compareBlock(), nearBlock, dataNote());
 }
 
 // ---------- comparing every way to get there ----------

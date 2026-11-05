@@ -40,6 +40,7 @@ export interface PlanOptions {
   skipBus?: boolean; // only the Trambus
   avoid?: ReadonlySet<number>; // line indices the rider doesn't want
   at?: Date; // when the trip starts: lines with published hours must be running at each boarding
+  maxAccess?: number; // metres walked to the first stop or from the last one (default MAX_ACCESS)
   boardStop?: number; // the rider picked the stop to walk to
   alightStop?: number; // ... or to get off at
 }
@@ -145,6 +146,7 @@ export class Router {
     const startMin = opts.at ? opts.at.getHours() * 60 + opts.at.getMinutes() + opts.at.getSeconds() / 60 : undefined;
     // A stop the rider picked can be further than the usual walking limit.
     const PICKED_MAX = 5000;
+    const access = opts.maxAccess ?? MAX_ACCESS;
     const n = this.net.stops.length;
     // rides[k][s]: reached s by getting off the k-th bus. reach[k][s]: rides[k], or a short walk on from one.
     const rides: (Label | undefined)[][] = [];
@@ -156,9 +158,9 @@ export class Router {
       const metres = this.walk(origin, this.net.stops[opts.boardStop].ll).metres;
       if (metres <= PICKED_MAX) r0[opts.boardStop] = { cost: metres / this.walkSpeed, via: { kind: "origin", metres } };
     } else
-      for (const { stop } of this.stopsNear(origin)) {
+      for (const { stop } of this.stopsNear(origin, access)) {
         const metres = this.walk(origin, this.net.stops[stop].ll).metres;
-        if (metres > MAX_ACCESS) continue;
+        if (metres > access) continue;
         r0[stop] = { cost: metres / this.walkSpeed, via: { kind: "origin", metres } };
       }
     rides.push(r0);
@@ -167,10 +169,10 @@ export class Router {
     const egress =
       opts.alightStop !== undefined
         ? [{ stop: opts.alightStop, metres: this.walk(dest, this.net.stops[opts.alightStop].ll).metres }].filter((e) => e.metres <= PICKED_MAX)
-        : this.stopsNear(dest)
+        : this.stopsNear(dest, access)
             // Walking is symmetric; rooting at dest lets the street search be reused for every stop.
             .map(({ stop }) => ({ stop, metres: this.walk(dest, this.net.stops[stop].ll).metres }))
-            .filter((e) => e.metres <= MAX_ACCESS);
+            .filter((e) => e.metres <= access);
 
     const candidates: { round: number; stop: number; cost: number; egressMetres: number }[] = [];
 
