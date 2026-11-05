@@ -119,7 +119,7 @@ const v = brt.variants.find((v) => v.stops.some((i) => net.stops[i].n.d === leg.
 const names = v.stops.map((i) => net.stops[i].n.d);
 const a = names.indexOf(leg.board);
 const path = v.stops.slice(a, names.indexOf(leg.alight, a) + 1).map((i) => net.stops[i].ll);
-await run(() => (document.querySelector(".trip .btn-primary").click(), true));
+await run(() => (document.querySelector(".trip-start .btn-primary").click(), true));
 await until("ride mode", () => document.querySelector(".ride"));
 for (const ll of path.slice(0, 6)) {
   await where(...ll);

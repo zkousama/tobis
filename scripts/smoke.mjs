@@ -330,6 +330,9 @@ async function runProfile(P) {
     ok(n >= 2, `only ${n} option(s)`);
     ok(/Recommandé/.test(await text(".option:first-child .opt-tags")), "first option isn't 'Recommandé'");
     ok(/carte/.test(await text(".ticket-card")), "no card cost on the Trambus option");
+    // Line badges stay compact pills (a broken shared style once made them tall blobs).
+    const tall = await run(() => Math.max(...[...document.querySelectorAll(".option .badge")].map((b) => b.getBoundingClientRect().height)));
+    ok(tall <= 40, `a line badge is ${Math.round(tall)}px tall`);
     // Times sit in direction marks (they read right inside Darija text): "⁦10:00⁩ – ⁦10:46⁩".
     ok(/\d\d:\d\d\D{0,3} – \D{0,3}\d\d:\d\d/.test(await text(".opt-clock")), `no clock times on the options ("${await text(".opt-clock")}")`);
     await shot("results");
@@ -502,7 +505,7 @@ async function runProfile(P) {
       if (a >= 0 && b > a) path = v.stops.slice(a, b + 1).map((i) => net.stops[i].ll);
     }
     ok(path, `can't find ${leg.line} from ${leg.board} to ${leg.alight} in the data`);
-    await click(".trip .btn-primary");
+    await click(".trip-start .btn-primary");
     await until("the ride screen", () => document.querySelector(".ride"));
     await where(...path[0]);
     await until("walking or waiting at the stop", () => document.querySelector(".ride-body")?.textContent.length > 0);
@@ -582,6 +585,30 @@ async function runProfile(P) {
       await key("Escape");
       await until("Escape goes back", () => !document.querySelector(".line") && document.querySelectorAll(".sheet-body .row").length > 30);
     }
+  });
+
+  await step("a stop: 'Prendre un bus ici' walks you there and plans from it", async () => {
+    await open(SITE + "?catch");
+    await click(".sheet-body .row", "Toutes les lignes");
+    await until("the lines list", () => document.querySelectorAll(".sheet-body .row").length > 30);
+    await run(() => ([...document.querySelectorAll(".sheet-body .row")].find((r) => r.querySelector(".badge")?.textContent.trim() === "5").click(), true));
+    await until("line 5", () => document.querySelector(".line .row"));
+    const stop = await run(() => {
+      const row = document.querySelectorAll(".line .row")[3];
+      const n = row.querySelector(".row-main span").textContent.trim();
+      row.click();
+      return n;
+    });
+    await until("the stop", () => document.querySelector(".stop .btn-take"));
+    await audit("stop, no trip planned");
+    await click(".stop .btn-take");
+    await until("search for where to", () => document.querySelector(".sheet.view-search .sheet-body input"));
+    await typeSearch("dcheira");
+    await until("results for dcheira", () => /dche[iï]ra/i.test(document.querySelector(".results-list .row")?.textContent ?? ""));
+    await click(".results-list .row");
+    await tripOptions();
+    ok((await text(".trip-chip")).includes(stop), `no 'Montée : ${stop}' chip`);
+    ok(/position|Ma position/i.test(await run(() => document.querySelector(".field-from input")?.value ?? "")), "the start isn't my location");
   });
 
   await step("a Trambus stop shows its next passages (estimated)", async () => {

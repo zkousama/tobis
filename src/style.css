@@ -1169,18 +1169,6 @@ button:active,
   align-items: center;
   gap: 10px;
 }
-.sign-num {
-  display: grid;
-  place-items: center;
-  min-width: 46px;
-  height: 36px;
-  padding: 0 8px;
-  border-radius: 6px;
-  background: #fff;
-  color: #15191d;
-  font-weight: 700;
-  font-size: 1.25rem;
-}
 .sign-text {
   font-size: 1.125rem;
   font-weight: 600;
@@ -1709,8 +1697,7 @@ button.option:hover {
 .btn,
 .btn-small,
 .chip-toggle,
-.map-btn,
-.sign-num {
+.map-btn {
   height: auto;
   min-height: 2em;
 }
@@ -1926,19 +1913,15 @@ button.option:hover {
   font-weight: 500;
   color: var(--ink-2);
 }
-/* The floating Démarrer button stays above the timeline's marks. */
-.trip .actions {
-  z-index: 3;
-}
 /* In a filled button the pin takes the button's text colour (red on blue didn't read). */
 .btn-primary .icon-dest {
   color: currentColor;
 }
 /* "Démarrer": the navigation arrowhead tilted to go forward, as maps apps draw it. */
-.trip .btn-primary .icon svg {
+.trip-start .icon svg {
   transform: rotate(45deg);
 }
-[dir="rtl"] .trip .btn-primary .icon svg {
+[dir="rtl"] .trip-start .icon svg {
   transform: rotate(-45deg);
 }
 /* Direction tabs on a line: arrow and destination side by side, centred on the text. */
@@ -1951,4 +1934,32 @@ button.option:hover {
 .icon-toward {
   width: 18px;
   height: 18px;
+}
+/* The line's own badge on the ride sign, outlined so a dark line colour still stands out on the dark sign. */
+.sign .badge {
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.9);
+}
+/* "Prendre un bus ici": two lines, what it does and how you get there. */
+.btn-take {
+  justify-content: flex-start;
+  text-align: start;
+  gap: 12px;
+}
+.btn-two-lines {
+  display: grid;
+  line-height: 1.25;
+}
+.btn-two-lines small {
+  font-weight: 500;
+  opacity: 0.8;
+}
+/* "Autre arrêt" is a small link: give it a full 24px target (WCAG 2.2). */
+.tl-other {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+}
+.trip-start {
+  display: grid;
+  margin: 2px 0 14px;
 }

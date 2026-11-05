@@ -4,7 +4,7 @@ import { h, icon, lineBadge } from "../ui/dom.ts";
 import { fmtDH } from "../fares.ts";
 import { net, nm, render, router, state, type Endpoint } from "../app/state.ts";
 import { go } from "../app/nav.ts";
-import { plan, setEndpoint } from "../app/plan.ts";
+import { catchBusHere, plan, setEndpoint } from "../app/plan.ts";
 import { nextPasses } from "../passes.ts";
 import { clock } from "./tripopts.ts";
 import { header, linesAt, stopLine } from "./common.ts";
@@ -98,7 +98,17 @@ export function stopBody(si: number) {
           h("button", { class: "btn", onclick: () => ((state.boardStop = si), plan()) }, t("getOnHere")),
           h("button", { class: "btn", onclick: () => ((state.alightStop = si), plan()) }, t("getOffHere")),
         )
-      : null,
+      : // No trip yet: walk here from where you are and take a bus from this stop, then say where to.
+        h(
+          "div",
+          { class: "actions" },
+          h(
+            "button",
+            { class: "btn btn-take", onclick: () => catchBusHere(si) },
+            icon.bus(),
+            h("span", { class: "btn-two-lines" }, h("span", null, t("takeBusHere")), h("small", null, t("takeBusHereSub"))),
+          ),
+        ),
     h("h3", { class: "section-title label" }, t("linesHere")),
     serving.some(({ li }) => net.lines[li].hours) ? h("p", { class: "fine" }, t("passesNote")) : null,
     h(

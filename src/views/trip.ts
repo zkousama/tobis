@@ -125,8 +125,9 @@ export function tripBody(index: number) {
       h("span", { class: "journey-time" }, `≈ ${fmtMinutes(j.seconds)}`),
       h("span", { class: "muted" }, `${fmtDistance(j.walkMetres)} ${t("walkMin")}${fare ? ` · ≈ ${fmtDH(fare)}` : ""}`),
     ),
+    // Start sits under the summary, as in a maps app: seen at once, and never floating over the steps.
+    h("div", { class: "trip-start" }, h("button", { class: "btn btn-primary", onclick: () => go({ name: "ride", index }) }, icon.arrow(), t("startTrip"))),
     h("ol", { class: "timeline" }, steps),
-    h("div", { class: "actions" }, h("button", { class: "btn btn-primary", onclick: () => go({ name: "ride", index }) }, icon.arrow(), t("startTrip"))),
     h("p", { class: "fine" }, t("estimates")),
   );
 }

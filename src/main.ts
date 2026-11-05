@@ -101,7 +101,7 @@ function render() {
   switch (v.name) {
     case "home":
       // Back on home after a trip: start fresh, as a maps app does.
-      if (state.journeys.length) clearTripState();
+      if (state.journeys.length || state.boardStop !== undefined) clearTripState();
       setSheet(state.sheet === "full" ? "half" : state.sheet);
       sheetBody.append(planner("home"), homeBody());
       bmap?.setPins(state.from?.ll, state.to?.ll);

@@ -1,6 +1,6 @@
 import type { RideLeg } from "../router.ts";
 import { fmtDistance, t } from "../i18n.ts";
-import { h } from "../ui/dom.ts";
+import { h, lineBadge } from "../ui/dom.ts";
 import { RideTracker } from "../ride.ts";
 import { bmap, net, nm, ride, setRide, state } from "../app/state.ts";
 import { back } from "../app/nav.ts";
@@ -27,7 +27,7 @@ export function rideBody(index: number) {
         h("p", { class: "ride-big" }, next ? nm(net.stops[variantOf(next).stops[next.board]].n) : nm(state.to?.label)),
         h("p", { class: "muted" }, u.remaining !== undefined ? fmtDistance(u.remaining) : t("locating")),
         next && u.remaining !== undefined && u.remaining < 40
-          ? h("div", { class: "sign" }, h("div", { class: "sign-row" }, h("span", { class: "sign-num" }, net.lines[next.line].brt ? "T" : net.lines[next.line].ref), h("span", { class: "sign-text" }, variantOf(next).to)), h("div", { class: "sign-sub" }, t("boardHere")))
+          ? h("div", { class: "sign" }, h("div", { class: "sign-row" }, lineBadge(net.lines[next.line].ref, net.lines[next.line].colour, "lg"), h("span", { class: "sign-text" }, variantOf(next).to)), h("div", { class: "sign-sub" }, t("boardHere")))
           : null,
       );
     } else {
@@ -41,7 +41,7 @@ export function rideBody(index: number) {
         h(
           "div",
           { class: "sign" },
-          h("div", { class: "sign-row" }, h("span", { class: "sign-num" }, line.brt ? "T" : line.ref), h("span", { class: "sign-text" }, v.to)),
+          h("div", { class: "sign-row" }, lineBadge(line.ref, line.colour, "lg"), h("span", { class: "sign-text" }, v.to)),
           u.nextStop !== undefined ? h("div", { class: "sign-sub" }, `${t("nextIs")} · ${nm(net.stops[u.nextStop].n)}`) : null,
         ),
         h(

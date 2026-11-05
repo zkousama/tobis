@@ -67,6 +67,16 @@ export function plan() {
   render();
 }
 
+/** From a stop's screen: walk to it from where I am, take a bus from it; then choose where to. */
+export async function catchBusHere(stop: number) {
+  const ll = state.me?.ll ?? (await locate(false));
+  if (ll) state.from = meEndpoint(ll);
+  state.boardStop = stop;
+  state.alightStop = undefined;
+  flash(t("takeBusWhereTo"), 5000);
+  go({ name: "search", field: "to" });
+}
+
 /** Forget the current trip: both ends (unless the start is "my location"), time, picked stops, the saved last trip. */
 export function clearTripState() {
   state.to = undefined;
