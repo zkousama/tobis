@@ -411,6 +411,11 @@ export class BusMap {
   }
 
   /** Keep content clear of the panel: bottom sheet on phones, side panel on wide screens. */
+  /** Keep the rider's position in the part of the map the panel doesn't cover (ride mode). */
+  follow(ll: LngLat) {
+    this.map.easeTo({ center: ll, padding: this.padding(), duration: motion(500) });
+  }
+
   padding() {
     const wide = innerWidth >= 900;
     const sheet = document.querySelector<HTMLElement>(".sheet");

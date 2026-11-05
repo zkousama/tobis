@@ -125,7 +125,8 @@ function render() {
       previewTrip(v.index);
       break;
     case "ride":
-      setSheet("peek");
+      // Half height: the sign, the stops left and where to get off must all show (peek cut them off).
+      setSheet("half");
       sheetBody.append(rideBody(v.index));
       previewTrip(v.index);
       break;

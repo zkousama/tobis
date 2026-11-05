@@ -13,7 +13,7 @@ export function rideBody(index: number) {
   box.append(body, h("p", { class: "fine" }, t("rideKeepOpen")), h("div", { class: "actions" }, h("button", { class: "btn", onclick: back }, t("stopTrip"))));
   setRide(new RideTracker(net, j, (u) => {
     if (u.me) bmap?.setMe(u.me, u.acc);
-    if (u.me && u.follow) bmap?.map.easeTo({ center: u.me, duration: matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 500 });
+    if (u.me && u.follow) bmap?.follow(u.me);
     const leg = j.legs[u.leg];
     let main: Node;
     if (u.status === "nogps") main = h("p", null, t("noGps"));

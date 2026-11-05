@@ -1,10 +1,44 @@
-# Tobis
+<p align="center">
+  <img src="public/icons/icon-512.png" width="96" height="96" alt="Tobis icon: a bus on the Agadir coast road under the sun">
+</p>
 
-**[tobis.pages.dev](https://tobis.pages.dev)** · bus and Trambus trip planner for Greater Agadir · French, Darija and English
+<h1 align="center">Tobis</h1>
+
+<p align="center">
+  Bus and Trambus trip planner for Greater Agadir. Works offline. French, Darija and English.<br>
+  <a href="https://tobis.pages.dev"><b>tobis.pages.dev</b></a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/zkousama/tobis/actions/workflows/deploy.yml"><img src="https://github.com/zkousama/tobis/actions/workflows/deploy.yml/badge.svg" alt="deploy"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/licence-MIT-blue" alt="MIT licence"></a>
+</p>
+
+<table align="center">
+  <tr>
+    <td align="center"><img src="docs/screenshots/home.png" width="220" alt="Home: the map of Agadir with the Trambus line, and 'Où allez-vous ?'"><br><sub>Where to?</sub></td>
+    <td align="center"><img src="docs/screenshots/results.png" width="220" alt="Trip options from Talborjt to Dcheira, the Trambus recommended"><br><sub>Every way there, compared</sub></td>
+    <td align="center"><img src="docs/screenshots/trip.png" width="220" alt="Trip steps: walk to Rue de la Foire, take the Trambus towards El Hajeb"><br><sub>Where to get on and off</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/ride.png" width="220" alt="Ride mode: 15 stops before getting off at Ahl Souss"><br><sub>Counts the stops on the way</sub></td>
+    <td align="center"><img src="docs/screenshots/stop.png" width="220" alt="A Trambus stop with its next passing times"><br><sub>Next passages at a stop</sub></td>
+    <td align="center"><img src="docs/screenshots/darija-dark.png" width="220" alt="Trip options in Darija, right to left, dark theme"><br><sub>Darija, dark mode</sub></td>
+  </tr>
+</table>
 
 A couple of months ago Google Maps stopped showing Agadir's buses. You'd ask for a route and get driving or walking, and the bus lines were gone from the map. I take these buses, so I built my own planner. Tobis is Darija for bus.
 
 It's a web app you can add to your home screen, and once it has loaded it works with no signal.
+
+## Put it on your phone
+
+Open [tobis.pages.dev](https://tobis.pages.dev), then:
+
+- **iPhone (Safari):** Share, then *Add to Home Screen*. Open it once with signal so it saves the map and lines.
+- **Android (Chrome):** the app offers *Installer* after your first trip; it's also in *Menu*, under *Installer l'app sur le téléphone*.
+
+It updates itself the next time it opens with signal.
 
 ## What it does
 
@@ -58,6 +92,8 @@ bun run build
 
 `overturemaps` is the Overture Maps Python CLI (`pip install overturemaps`).
 
+The screenshots above come from the built app in a real Chrome: `bun run screenshots` (with a local server and Chrome's debugging port open) retakes them into `docs/screenshots/`.
+
 ## Deploy
 
 GitHub deploys it (`.github/workflows/deploy.yml`). Every push and pull request runs the checks, builds, and walks through every scenario in a headless Chrome, as a phone and as a desktop browser (`scripts/smoke.mjs`: search, links, trips, times, options, ride mode with a simulated GPS, settings, Darija, 200 % text, offline), with an accessibility check (axe, WCAG 2.2 AA) on each screen. A push to `master` then deploys tobis.pages.dev; "Run workflow" deploys the preview, preview.tobis.pages.dev.
@@ -83,6 +119,10 @@ Other cities: add a `cities/<id>.json` with its bounding box and networks, and r
 Shared taxis have no published routes or fares, so they come from a list kept by hand: `data/taxis/agadir-grands-taxis.csv`. Each row is a stand (prefilled from OpenStreetMap) and one destination. Fill in `to` and `price_dh` (per seat); add `to_lat`/`to_lon` if the destination stand isn't the town centre; set `both_ways` to `no` for one-way routes. Rows without a price are left out. Rebuild with `node scripts/build-data.mjs agadir`.
 
 Taxis: only the airport's fixed fares (published by ONDA) are shown. Petits taxis need Agadir's official meter tariff in `cities/agadir.json` (`petitTaxi`: start, perKm, minFare, night, nightFrom, nightTo) before the app shows them.
+
+## Something wrong?
+
+A stop in the wrong place, a line that changed, a place search can't find: [open an issue](https://github.com/zkousama/tobis/issues). Streets, stops and most places come from OpenStreetMap, so a fix made there reaches Tobis with the next data build.
 
 ## Licence
 

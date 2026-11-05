@@ -514,6 +514,22 @@ async function runProfile(P) {
       if (n >= 0) lefts.push(n);
     }
     await audit("ride");
+    // What matters while riding is on screen, not under the bottom edge.
+    const cut = await run(() => {
+      const r = document.querySelector(".ride-big")?.getBoundingClientRect();
+      return r ? r.bottom - innerHeight : 999;
+    });
+    ok(cut <= 0, `the stops-left line is ${Math.round(cut)}px below the screen`);
+    // And the rider's own dot is on the visible map, above the panel.
+    // Not under the panel (below it on a phone, beside it on a desktop) and on screen.
+    const dot = await run(() => {
+      const d = document.querySelector(".me-dot")?.getBoundingClientRect();
+      const p = document.querySelector(".sheet").getBoundingClientRect();
+      if (!d) return null;
+      const x = d.left + d.width / 2, y = d.top + d.height / 2;
+      return { x, y, covered: x >= p.left && x <= p.right && y >= p.top && y <= p.bottom, onScreen: x >= 0 && x <= innerWidth && y >= 0 && y <= innerHeight };
+    });
+    ok(dot && !dot.covered && dot.onScreen, `my position is hidden (${JSON.stringify(dot)})`);
     ok(lefts.length >= 2, `stops-left count never showed (${lefts.join(",")})`);
     ok(lefts.every((n, i) => i === 0 || n <= lefts[i - 1]), `stops left went up: ${lefts.join(",")}`);
     await until("'Descendez ici'", () => /Descendez ici/.test(document.querySelector(".ride-body").textContent), 8000);
