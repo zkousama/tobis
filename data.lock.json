@@ -1,9 +1,9 @@
 {
-  "tag": "data-2026-11-03-alsa-2026-11-03-430878be",
-  "file": "tobis-data-2026-11-03-alsa-2026-11-03-430878be.tar.gz",
-  "sha256": "f10a10973d8f57eb54e29392cf6a0dcc275e8256c5cc7cfffb97f847a173bb9d",
+  "tag": "data-2026-11-03-alsa-2026-11-03-2beff15b",
+  "file": "tobis-data-2026-11-03-alsa-2026-11-03-2beff15b.tar.gz",
+  "sha256": "8179c2c10c58d324d77ce9f3167e3e982a3e36c2d1de2a05ee03a2d0300d7e54",
   "files": {
-    "public/data/agadir.json": "83029b5151776944eb271cb54c224e5c12b52a72b4e355527c8bbaf03238c027",
+    "public/data/agadir.json": "c5ac292ca22c3aecffb5f8ae0f6451405aa8f691dd0688e165032260cdba9af9",
     "public/data/agadir-walk.bin": "2a0bb85c9649b61ec152229fc993f9ec47d32894003bd8ebebbcc349396c9683",
     "public/basemap/agadir.pmtiles": "b30075e6a6292dffa50bce2b75ea2a9a100d220648893e25d63ea3b90b15a65f"
   }

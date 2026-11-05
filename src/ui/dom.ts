@@ -67,8 +67,28 @@ const tabler = (raw: string, cls = "icon") => () => {
   s.innerHTML = raw.replace(/\s(width|height|class)="[^"]*"/g, "");
   return s;
 };
+// Where a trip starts: a solid round mark with its centre punched out, the partner of the
+// destination's filled pin (same weight, same hole; the background shows through in any theme).
+const originMark = () => {
+  const s = document.createElement("span");
+  s.className = "icon icon-origin";
+  s.setAttribute("aria-hidden", "true");
+  s.innerHTML = '<svg viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M12 3.5a8.5 8.5 0 1 0 0 17a8.5 8.5 0 1 0 0-17zM12 8.6a3.4 3.4 0 1 1 0 6.8a3.4 3.4 0 1 1 0-6.8z"/></svg>';
+  return s;
+};
+// "Towards": a short shaft and a big open head, so it reads as an arrow at text size
+// (the font's "→" is a long line with a tiny head). Points the other way in Darija.
+const towardMark = () => {
+  const s = document.createElement("span");
+  s.className = "icon icon-toward flip-rtl";
+  s.setAttribute("aria-hidden", "true");
+  s.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 12h12"/><path d="M12 5.5l6.5 6.5-6.5 6.5"/></svg>';
+  return s;
+};
 export const icon = {
   github: ghMark,
+  origin: originMark,
+  toward: towardMark,
   walk: tabler(walkSvg),
   bus: tabler(busSvg),
   swap: tabler(swapSvg),

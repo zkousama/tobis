@@ -26,7 +26,7 @@ export function tripBody(index: number) {
   const steps: Node[] = [];
   const dot = (cls = "") => h("span", { class: `tl-mark ${cls}` });
   const note = (ic: HTMLElement, text: string) => h("p", { class: "tl-note" }, ic, h("span", null, text));
-  steps.push(h("li", { class: "tl tl-place" }, dot("tl-start"), h("div", { class: "tl-main" }, h("strong", null, nm(state.from?.label)))));
+  steps.push(h("li", { class: "tl tl-place" }, h("span", { class: "tl-mark tl-start" }, icon.origin()), h("div", { class: "tl-main" }, h("strong", null, nm(state.from?.label)))));
   j.legs.forEach((leg, i) => {
     if (leg.kind === "walk") {
       const toDest = i === j.legs.length - 1;
@@ -113,7 +113,7 @@ export function tripBody(index: number) {
       ),
     );
   });
-  steps.push(h("li", { class: "tl tl-place" }, dot("tl-end"), h("div", { class: "tl-main" }, h("strong", null, nm(state.to?.label)))));
+  steps.push(h("li", { class: "tl tl-place" }, h("span", { class: "tl-mark tl-end" }, icon.dest()), h("div", { class: "tl-main" }, h("strong", null, nm(state.to?.label)))));
   const fare = journeyFare(j);
   return h(
     "div",

@@ -616,7 +616,14 @@ if (alsa) {
       }
       const rel = { id: `alsa:${l.id}:${dirKey}`, members: osmWaysFor(ref) };
       const tr = trace(rel, seqIdx);
-      const t = { from: cleanName(dir.lineHeader), to: cleanName(dir.lineEnd), name: cleanName(l.surname.replace(/^[^A-Z]*:\s*/, "")) };
+      // ALSA gives the return the outbound's names (same header and end) for almost every line:
+      // the return goes from the outbound's end back to its start.
+      const copied = dirKey === "return" && dir.lineHeader === l.outgoing?.lineHeader && dir.lineEnd === l.outgoing?.lineEnd;
+      const t = {
+        from: cleanName(copied ? dir.lineEnd : dir.lineHeader),
+        to: cleanName(copied ? dir.lineHeader : dir.lineEnd),
+        name: cleanName(l.surname.replace(/^[^A-Z]*:\s*/, "")),
+      };
       entries.push({ rel, t, ref, isBrt: false, seqIdx, tr, alsa: true, fare, colour: `#${String(l.color).replace("#", "")}` });
       if (tr) report.sides.push({ rel: rel.id, ref, clean: tr.share <= SCRAMBLED, ...rightSide(tr) });
     }

@@ -16,6 +16,7 @@
   --rule: #e2e5e8;
   --accent: #1f56a8;
   --dest: #c8392b; /* the destination pin: 5.5:1 on white */
+  --origin: #39424b; /* the start mark */
   --accent-2: #17468d;
   --on-accent: #ffffff;
   --accent-soft: #e7eefa;
@@ -44,6 +45,7 @@
     --rule: #2b3137;
     --accent: #7aa7f0;
   --dest: #ff7b6b;
+  --origin: #dbe2e8;
     --accent-2: #9bbcf5;
     --on-accent: #0c1726;
     --accent-soft: #1b2738;
@@ -64,6 +66,7 @@
   --rule: #2b3137;
   --accent: #7aa7f0;
   --dest: #ff7b6b;
+  --origin: #dbe2e8;
   --accent-2: #9bbcf5;
   --on-accent: #0c1726;
   --accent-soft: #1b2738;
@@ -442,12 +445,11 @@ small {
   border-radius: 50%;
   flex: none;
 }
-/* Start: a ring. Destination: a filled pin (.icon-dest), as maps apps mark them. */
-.dot-from {
-  width: 12px;
-  height: 12px;
-  margin: 0 4px;
-  border: 3px solid var(--ink-2);
+/* Start: a punched round mark (.icon-origin). Destination: a filled pin (.icon-dest). */
+.icon-origin {
+  width: 20px;
+  height: 20px;
+  color: var(--origin);
 }
 .icon-dest {
   width: 20px;
@@ -869,13 +871,17 @@ button:active,
   box-sizing: border-box;
   z-index: 1;
 }
-.tl-place .tl-start::before {
-  border-color: var(--ink-2);
-}
+/* The timeline's two ends carry the same marks as the fields and the map. */
+.tl-place .tl-start::before,
 .tl-place .tl-end::before {
-  border-radius: 3px;
-  background: var(--ink);
-  border-color: var(--ink);
+  display: none;
+}
+.tl-place .tl-mark {
+  z-index: 1;
+}
+.tl-place .tl-mark .icon {
+  background: var(--surface);
+  border-radius: 50%;
 }
 .tl-walk-icon {
   color: var(--muted);
@@ -1254,12 +1260,14 @@ button:active,
 
 /* ---------- map markers ---------- */
 .pin-origin {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: #fff;
-  border: 4px solid #15191d;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+  width: 24px;
+  height: 24px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.35));
+}
+.pin-origin svg {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 .pin-dest {
   width: 30px;
@@ -1932,4 +1940,15 @@ button.option:hover {
 }
 [dir="rtl"] .trip .btn-primary .icon svg {
   transform: rotate(-45deg);
+}
+/* Direction tabs on a line: arrow and destination side by side, centred on the text. */
+.line .segmented button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.icon-toward {
+  width: 18px;
+  height: 18px;
 }

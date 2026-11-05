@@ -56,8 +56,11 @@ export function lineBody(li: number, vi: number) {
                   state.stack[state.stack.length - 1] = { name: "line", line: li, variant: i };
                   render();
                 },
+                // Screen readers hear "direction Taghazout"; the eye sees the arrow.
+                "aria-label": `${t("towards")} ${x.to}`,
               },
-              `${t("towards")} ${x.to}`,
+              icon.toward(),
+              h("span", null, x.to),
             ),
           ),
         )
@@ -127,7 +130,7 @@ export function endpointButtons(ep: Endpoint) {
   return h(
     "div",
     { class: "actions two" },
-    h("button", { class: "btn", onclick: () => setEndpoint("from", ep) }, h("span", { class: "dot dot-from" }), t("fromHere")),
+    h("button", { class: "btn", onclick: () => setEndpoint("from", ep) }, icon.origin(), t("fromHere")),
     h("button", { class: "btn btn-primary", onclick: () => setEndpoint("to", ep) }, icon.dest(), t("toHere")),
   );
 }

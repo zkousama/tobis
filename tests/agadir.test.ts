@@ -177,3 +177,11 @@ test("Trambus passing times at a stop: from 06:00 plus the ride there, every 10 
   const bus = net.lines.find((l) => !l.brt && !l.hours)!;
   assert.deepEqual(nextPasses(bus, 0, 1, new Date()), [], "a bus without published times gets none");
 });
+
+test("each line's two directions head to different places (ALSA copies the outbound names onto the return)", { skip: !have }, () => {
+  for (const l of net.lines) {
+    if (l.variants.length < 2) continue;
+    const tos = l.variants.map((v) => v.to);
+    assert.equal(new Set(tos).size, tos.length, `line ${l.ref}: ${tos.join(" / ")}`);
+  }
+});
