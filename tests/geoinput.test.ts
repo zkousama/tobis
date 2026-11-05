@@ -59,3 +59,12 @@ test("point in polygon, with a hole", async () => {
   assert.ok(!inPolygon([12, 2], [square]));
   assert.ok(!inPolygon([5, 5], [square, hole]));
 });
+
+test("a Google Maps share link that lands on a plus code and a name (no coordinates)", () => {
+  // Where maps.app.goo.gl/fibajnXkNwHeuHor5 leads (Nov 2026): the "+" of the plus code reads as a space.
+  const p = parseMapsUrl("https://maps.google.com/maps?q=CC65+5MW+Cabinet+de+Neurologie+Dr.+Latifa+Hadrane,+Agadir+80000&ftid=0xdb3b6f8b32adeef:0xe33fccab78366c34&entry=gps", AGADIR);
+  assert.equal(p.name, "Cabinet de Neurologie Dr. Latifa Hadrane");
+  assert.ok(p.ll && Math.abs(p.ll[0] - -9.5908) < 0.001 && Math.abs(p.ll[1] - 30.4105) < 0.001, `at ${p.ll}`);
+  // Without a nearby reference a short plus code means nothing.
+  assert.equal(parseMapsUrl("https://maps.google.com/maps?q=CC65+5MW+Cabinet").ll, undefined);
+});

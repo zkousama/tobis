@@ -8,7 +8,7 @@ import { current, meEndpoint, net, nm, render, search, state } from "../app/stat
 import { flash } from "../app/chrome.ts";
 import { back, go, setSheet, setStack } from "../app/nav.ts";
 import { locate, setRefreshPlanner } from "../app/location.ts";
-import { pasteFromClipboard, recents, resolveParsed, setEndpoint, swap } from "../app/plan.ts";
+import { newTrip, pasteFromClipboard, recents, resolveParsed, setEndpoint, swap } from "../app/plan.ts";
 import { linesAt } from "./common.ts";
 
 // Home shows only "Where to?"; search shows the field being typed in; results
@@ -83,6 +83,8 @@ export function planner(mode: "home" | "search" | "results", active?: "from" | "
     "div",
     { class: `planner planner-${mode}` },
     mode === "search" ? h("button", { class: "icon-btn planner-back", "aria-label": t("cancel"), onclick: back }, icon.back()) : null,
+    // Results: a way out that clears the trip (an installed iPhone app has no back button).
+    mode === "results" ? h("button", { class: "icon-btn planner-back planner-close", "aria-label": t("newTrip"), title: t("newTrip"), onclick: newTrip }, icon.close()) : null,
     h("div", { class: "fields" }, fields),
     mode === "results" ? h("button", { class: "icon-btn swap", "aria-label": t("swap"), onclick: swap }, icon.swap()) : null,
   );

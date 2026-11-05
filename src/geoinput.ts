@@ -1,7 +1,7 @@
 // Turning what people paste into a position: Google Maps links, plus codes,
 // "geo:" URIs and plain coordinates. All of it works offline except short
 // links (maps.app.goo.gl), which only the network can unshorten.
-import type { LngLat } from "./geo.ts";
+import { dist, type LngLat } from "./geo.ts";
 
 export interface Parsed {
   ll?: LngLat;
@@ -75,7 +75,7 @@ const num = (s: string) => Number(s);
 const valid = (lat: number, lng: number) => Number.isFinite(lat) && Number.isFinite(lng) && Math.abs(lat) <= 90 && Math.abs(lng) <= 180;
 
 /** Coordinates and place name inside a Google Maps URL, if any. */
-export function parseMapsUrl(raw: string): Parsed {
+export function parseMapsUrl(raw: string, ref?: LngLat): Parsed {
   let url: URL;
   try {
     url = new URL(raw);
@@ -98,6 +98,20 @@ export function parseMapsUrl(raw: string): Parsed {
   }
   const at = /@(-?\d+\.\d+),(-?\d+\.\d+)/.exec(s);
   if (at && valid(num(at[1]), num(at[2]))) return { ll: [num(at[2]), num(at[1])], name: label };
+  // Google Maps' own share links can land on ?q=<plus code> <name>, <town> with no coordinates:
+  // "CC65+5MW Cabinet de Neurologie Dr. Latifa Hadrane, Agadir 80000". The plus code is the place.
+  const q = url.searchParams.get("q") ?? url.searchParams.get("query");
+  // Google doesn't escape the code's "+", so in the address it reads as a space: "CC65 5MW".
+  const pc = q && /^\s*([23456789CFGHJMPQRVWX]{4,8})[+ ]([23456789CFGHJMPQRVWX]{2,3})(?=\s|,|$)\s*(.*)$/i.exec(q);
+  if (pc && ref) {
+    const code = `${pc[1]}+${pc[2]}`.toUpperCase();
+    const ll = recoverPlusCode(code, ref);
+    // The name, without the town and postcode Google adds after it.
+    const rest = pc[3].split(",")[0].trim();
+    // Only a place near the reference: anything far off means the guess was wrong.
+    if (ll && dist(ll, ref) < 60_000) return { ll, name: label ?? (rest || code) };
+  }
+  if (!label && q && !/^\s*-?\d/.test(q)) return { name: q.split(",")[0].trim() };
   return label ? { name: label } : {};
 }
 
@@ -110,7 +124,7 @@ export function parseInput(text: string, ref: LngLat): Parsed {
   if (!t) return {};
   const urlMatch = /(https?:\/\/\S+)/.exec(t);
   if (urlMatch) {
-    const parsed = parseMapsUrl(urlMatch[1]);
+    const parsed = parseMapsUrl(urlMatch[1], ref);
     // Google's share text puts the place name before the link.
     const before = t.slice(0, urlMatch.index).trim().replace(/[\s,:-]+$/, "");
     if (!parsed.name && before) parsed.name = before.split("\n")[0];
@@ -129,10 +143,10 @@ export function parseInput(text: string, ref: LngLat): Parsed {
 }
 
 /** Ask our small server function to unshorten a maps.app.goo.gl link (online only). */
-export async function expandShortUrl(shortUrl: string): Promise<Parsed> {
+export async function expandShortUrl(shortUrl: string, ref?: LngLat): Promise<Parsed> {
   const res = await fetch(`${import.meta.env.BASE_URL}api/expand?u=${encodeURIComponent(shortUrl)}`);
   if (!res.ok) throw new Error(`expand: HTTP ${res.status}`);
   const j = (await res.json()) as { url?: string; lat?: number; lng?: number; name?: string };
   if (j.lat !== undefined && j.lng !== undefined) return { ll: [j.lng, j.lat], name: j.name };
-  return j.url ? parseMapsUrl(j.url) : {};
+  return j.url ? parseMapsUrl(j.url, ref) : {};
 }

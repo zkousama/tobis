@@ -67,6 +67,26 @@ export function plan() {
   render();
 }
 
+/** Forget the current trip: both ends (unless the start is "my location"), time, picked stops, the saved last trip. */
+export function clearTripState() {
+  state.to = undefined;
+  if (state.from?.kind !== "me") state.from = undefined;
+  state.journeys = [];
+  state.boardStop = state.alightStop = undefined;
+  state.when = { mode: "now" };
+  state.widened = undefined;
+  try {
+    localStorage.removeItem("lastTrip");
+  } catch {}
+  if (location.hash) history.replaceState(history.state, "", location.pathname + location.search);
+}
+/** The ✕ on the results: start again from an empty home. */
+export function newTrip() {
+  clearTripState();
+  setStack([]);
+  render();
+}
+
 export function swap() {
   [state.from, state.to] = [state.to, state.from];
   state.boardStop = state.alightStop = undefined;
@@ -149,7 +169,7 @@ export async function resolveParsed(p: Parsed): Promise<Endpoint | undefined> {
     }
     flash(t("opening"), 8000);
     try {
-      const ex = await expandShortUrl(r.shortUrl);
+      const ex = await expandShortUrl(r.shortUrl, net.center);
       r = { ...ex, name: r.name ?? ex.name };
     } catch {
       flash(t("linkFailed"));

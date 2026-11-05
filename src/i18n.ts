@@ -116,6 +116,7 @@ const S = {
   fromWord: { fr: "Depuis", ar: "من", en: "From" },
   whereIAm: { fr: "là où je suis", ar: "فين ما كنت", en: "where I am" },
   sourceCode: { fr: "Code source sur GitHub", ar: "الكود على GitHub", en: "Source code on GitHub" },
+  newTrip: { fr: "Effacer le trajet", ar: "مسح الطريق", en: "Clear this trip" },
   version: { fr: "Version {x}", ar: "النسخة {x}", en: "Version {x}" },
   updated: { fr: "Nouvelle version prête · Recharger", ar: "كاينة نسخة جديدة · عاود شارجي", en: "New version ready · Reload" },
   settings: { fr: "Réglages", ar: "الباراميترات", en: "Settings" },

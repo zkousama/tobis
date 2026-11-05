@@ -270,6 +270,29 @@ async function runProfile(P) {
     ok(/Pharmacie/.test(to), `destination is "${to}"`);
   });
 
+  await step("search: a Google share link that only has a plus code and a name", async () => {
+    await open(SITE + "?pc");
+    await openSearch();
+    await typeSearch("https://maps.google.com/maps?q=CC65+5MW+Cabinet+de+Neurologie+Dr.+Latifa+Hadrane,+Agadir+80000&ftid=0xdb3b6f8b32adeef:0xe33fccab78366c34");
+    await until("the 'Aller à ce point' row", () => [...document.querySelectorAll(".sheet-body .row")].some((r) => /Aller à ce point/.test(r.textContent) && r.getClientRects().length));
+    await click(".sheet-body .row", "Aller à ce point");
+    await tripOptions();
+    ok(/Latifa Hadrane/.test(await run(() => document.querySelector(".field-to input")?.value ?? "")), "destination isn't the practice");
+  });
+
+  await step("results: the ✕ clears the trip; back on home starts fresh", async () => {
+    await open(SITE + "?clear" + TRIP);
+    await tripOptions();
+    await click(".planner-close");
+    await until("an empty home", () => document.querySelector(".sheet.view-home") && document.querySelector(".sheet-body input")?.value === "");
+    ok(await run(() => localStorage.getItem("lastTrip") === null && !location.hash), "the trip is still remembered");
+    await open(SITE + "?clear2" + TRIP);
+    await tripOptions();
+    await run(() => (history.back(), true));
+    await until("home", () => document.querySelector(".sheet.view-home"));
+    ok(await run(() => document.querySelector(".sheet-body input")?.value === ""), "home still shows the old destination");
+  });
+
   await step("shared to the app (?text=…) sets the destination", async () => {
     await open(SITE + "?text=" + encodeURIComponent("Pharmacie partagée\nhttps://www.google.com/maps/@30.4167,-9.5745,17z"));
     await tripOptions();

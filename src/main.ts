@@ -10,7 +10,7 @@ import { base, bmap, CITY, current, net, ride, router, search, setAppVersion, se
 import { handle, locateBtn, mapEl, offlineBanner, onOfflineProgress, settingsBtn, sheet, sheetBody } from "./app/chrome.ts";
 import { go, setSheet } from "./app/nav.ts";
 import { watchLocationPermission } from "./app/location.ts";
-import { handleShare, plan, restoreFromHash, setEndpoint } from "./app/plan.ts";
+import { clearTripState, handleShare, plan, restoreFromHash, setEndpoint } from "./app/plan.ts";
 import { previewTrip } from "./views/common.ts";
 import { planner, searchBody } from "./views/search.ts";
 import { homeBody } from "./views/home.ts";
@@ -99,6 +99,8 @@ function render() {
   bmap?.showNetwork(["home", "lines", "stop", "point", "search"].includes(v.name));
   switch (v.name) {
     case "home":
+      // Back on home after a trip: start fresh, as a maps app does.
+      if (state.journeys.length) clearTripState();
       setSheet(state.sheet === "full" ? "half" : state.sheet);
       sheetBody.append(planner("home"), homeBody());
       bmap?.setPins(state.from?.ll, state.to?.ll);
