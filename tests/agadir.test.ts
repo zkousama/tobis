@@ -151,3 +151,13 @@ test("far from any stop: no bus within the usual walk, buses once the walk is wi
   const wide = router.plan(spot!, PLACES.talborjt, { maxAccess: 4000 });
   assert.ok(wide.some((j) => j.rides > 0), "no bus even with a 4 km walk");
 });
+
+test("every line's badge text reads at 4.5:1 or more (WCAG AA, small text)", { skip: !have }, async () => {
+  const { badgeColours, luminance, visible } = await import("../src/ui/colour.ts");
+  for (const l of net.lines) {
+    const { bg, text } = badgeColours(visible(l.colour ?? "#555555", "#ffffff", 1.6));
+    const [a, b] = [luminance(bg), luminance(text)];
+    const ratio = (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+    assert.ok(ratio >= 4.5, `line ${l.ref} (${l.colour}): ${ratio.toFixed(2)}:1`);
+  }
+});

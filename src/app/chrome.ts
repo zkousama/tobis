@@ -10,10 +10,11 @@ setLang(detectLang());
 export const app = document.getElementById("app")!;
 app.replaceChildren();
 
-export const mapEl = h("div", { id: "map" });
+// Landmarks, so screen readers can jump between the map and the panel.
+export const mapEl = h("div", { id: "map", role: "region", "aria-label": t("mapLabel") });
 export const sheetBody = h("div", { class: "sheet-body" });
 export const handle = h("button", { class: "sheet-handle", "aria-label": t("sheetResize"), "aria-expanded": "false" });
-export const sheet = h("section", { class: "sheet", "data-size": state.sheet }, handle, sheetBody);
+export const sheet = h("main", { class: "sheet", "data-size": state.sheet }, handle, sheetBody);
 // The map gets the screen: one settings button, no title bar.
 export const settingsBtn = h("button", { class: "map-btn", onclick: () => go({ name: "about" }) }, icon.menu(), h("span", { class: "map-btn-label" }, t("menuLabel")));
 export const topbar = h("header", { class: "topbar" }, settingsBtn);

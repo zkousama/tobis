@@ -1,4 +1,4 @@
-import { textOn, visible } from "./colour.ts";
+import { badgeColours, visible } from "./colour.ts";
 
 type Child = Node | string | number | null | undefined | false | Child[];
 type Attrs = Record<string, unknown> & { class?: string; style?: string };
@@ -67,7 +67,7 @@ export const icon = {
 
 /** A line number in the operator's own colour, readable on any background. */
 export function lineBadge(ref: string, colour: string, size: "sm" | "md" | "lg" = "md") {
-  const bg = visible(colour, "#ffffff", 1.6);
+  const { bg, text } = badgeColours(visible(colour, "#ffffff", 1.6));
   const label = ref === "BHNS" ? "Trambus" : ref.startsWith("GT") ? "Grand taxi" : ref;
-  return h("span", { class: `badge badge-${size}${ref === "BHNS" || ref.startsWith("GT") ? " badge-brt" : ""}`, style: `--c:${bg};--t:${textOn(bg)}` }, label);
+  return h("span", { class: `badge badge-${size}${ref === "BHNS" || ref.startsWith("GT") ? " badge-brt" : ""}`, style: `--c:${bg};--t:${text}` }, label);
 }

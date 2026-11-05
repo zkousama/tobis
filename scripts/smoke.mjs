@@ -15,6 +15,11 @@ const CDP = opt("cdp", "http://127.0.0.1:9222");
 const STYLES = opt("styles");
 const ONLY = opt("only");
 
+// The accessibility checker (axe, WCAG 2.2 AA rules plus best practices), put into the page on demand.
+const { readFileSync } = await import("node:fs");
+const AXE = readFileSync(new URL("../node_modules/axe-core/axe.min.js", import.meta.url), "utf8");
+const notes = []; // moderate and minor accessibility findings: listed, not failed
+
 const PROFILES = [
   { name: "phone", width: 393, height: 852, mobile: true, touch: true },
   { name: "desktop", width: 1366, height: 768, mobile: false, touch: false },
@@ -61,6 +66,7 @@ if (STYLES) {
   writeFileSync(STYLES, JSON.stringify(styles));
 }
 console.log(results.join("\n"));
+if (notes.length) console.log(`\naccessibility notes (moderate or minor, not failures):\n  ${[...new Set(notes)].join("\n  ")}`);
 console.log(failed ? "\nsmoke: FAILED" : "\nsmoke: all passed");
 process.exit(failed ? 1 : 0);
 
@@ -161,6 +167,22 @@ async function runProfile(P) {
     await sleep(150);
     styles[name] = await run(snapshot);
   };
+  /** Accessibility check of what's on screen now: serious or critical problems fail the step. */
+  const audit = async (screen) => {
+    await send("Runtime.evaluate", { expression: `window.axe ? true : ((() => { ${AXE}\n })(), true)`, returnByValue: true }, s);
+    const found = await run(async () => {
+      const r = await window.axe.run(document, {
+        runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa", "best-practice"] },
+        // The map's canvas is a picture of the streets; its controls and labels are still checked.
+        exclude: [[".maplibregl-canvas-container"]],
+        resultTypes: ["violations"],
+      });
+      return r.violations.map((v) => ({ id: v.id, impact: v.impact, help: v.help, where: v.nodes.slice(0, 3).map((n) => n.target.join(" ")) }));
+    });
+    const bad = found.filter((v) => v.impact === "serious" || v.impact === "critical");
+    for (const v of found.filter((v) => !bad.includes(v))) notes.push(`${P.name} ${screen}: ${v.impact} ${v.id} (${v.help}) at ${v.where.join(", ")}`);
+    ok(!bad.length, `accessibility, ${screen}:\n${bad.map((v) => `${v.impact} ${v.id}: ${v.help}\n  at ${v.where.join("\n  at ")}`).join("\n")}`);
+  };
   const setLang = (l) => run((l) => (localStorage.setItem("lang", l), true), l);
   const clearPrefs = () => run(() => (["skipBrt", "skipBus", "avoidLines", "card:BHNS", "avoidWalk", "vot"].forEach((k) => localStorage.removeItem(k)), true));
   const tripOptions = () => until("trip options", () => document.querySelectorAll(".option").length);
@@ -183,6 +205,7 @@ async function runProfile(P) {
       ok(r.width < 520 && r.height > 600, `the panel isn't a side panel on desktop (${Math.round(r.width)}×${Math.round(r.height)})`);
     }
     await shot("home");
+    await audit("home");
   });
 
   await step("first visit doesn't reload by itself when the offline copy is saved", async () => {
@@ -240,6 +263,7 @@ async function runProfile(P) {
     await typeSearch("32");
     await until("line 32", () => [...document.querySelectorAll(".results-list .badge")].some((b) => b.textContent.trim() === "32"));
     await shot("search");
+    await audit("search");
   });
 
   await step("search: Enter picks the first place and plans from my location", async () => {
@@ -263,8 +287,8 @@ async function runProfile(P) {
 
   await step("search: a Google Maps link with coordinates", async () => {
     await typeSearch("Pharmacie test https://www.google.com/maps/place/Pharmacie/@30.4167,-9.5745,17z");
-    await until("the 'Aller à ce point' row", () => [...document.querySelectorAll(".sheet-body .row")].some((r) => /Aller à ce point/.test(r.textContent) && /Pharmacie/.test(r.textContent)));
-    await click(".sheet-body .row", "Aller à ce point");
+    await until("the 'Utiliser ce lieu' row", () => [...document.querySelectorAll(".sheet-body .row")].some((r) => /Utiliser ce lieu/.test(r.textContent) && /Pharmacie/.test(r.textContent)));
+    await click(".sheet-body .row", "Utiliser ce lieu");
     await tripOptions();
     const to = await run(() => document.querySelector(".field-to input")?.value ?? "");
     ok(/Pharmacie/.test(to), `destination is "${to}"`);
@@ -274,8 +298,8 @@ async function runProfile(P) {
     await open(SITE + "?pc");
     await openSearch();
     await typeSearch("https://maps.google.com/maps?q=CC65+5MW+Cabinet+de+Neurologie+Dr.+Latifa+Hadrane,+Agadir+80000&ftid=0xdb3b6f8b32adeef:0xe33fccab78366c34");
-    await until("the 'Aller à ce point' row", () => [...document.querySelectorAll(".sheet-body .row")].some((r) => /Aller à ce point/.test(r.textContent) && r.getClientRects().length));
-    await click(".sheet-body .row", "Aller à ce point");
+    await until("the 'Utiliser ce lieu' row", () => [...document.querySelectorAll(".sheet-body .row")].some((r) => /Utiliser ce lieu/.test(r.textContent) && r.getClientRects().length));
+    await click(".sheet-body .row", "Utiliser ce lieu");
     await tripOptions();
     ok(/Latifa Hadrane/.test(await run(() => document.querySelector(".field-to input")?.value ?? "")), "destination isn't the practice");
   });
@@ -308,18 +332,24 @@ async function runProfile(P) {
     ok(/carte/.test(await text(".ticket-card")), "no card cost on the Trambus option");
     ok(/→/.test(await text(".opt-clock")), "no clock times on the options");
     await shot("results");
-    await click(".pref-open");
-    const before = await text(".pref-summary");
+    await audit("results");
+    // How you like to travel: in Options now, with the lines and modes.
+    await run(() => ([...document.querySelectorAll(".trip-chip")][1].click(), true));
+    const before = await text(".pref-worth");
     await run(() => {
       const r = document.querySelector(".pref-slider");
       r.value = "95";
       r.dispatchEvent(new Event("input", { bubbles: true }));
+      r.dispatchEvent(new Event("change", { bubbles: true }));
       return true;
     });
-    ok((await text(".pref-summary")) !== before, "the slider doesn't change the preference");
+    await until("re-ranked", () => /Options · 1/.test(document.querySelector(".trip-chips").textContent));
+    ok((await text(".pref-worth")) !== before, "the slider doesn't change what a saved hour is worth");
     await shot("results-prefs");
-    await click(".prefs .chip-toggle");
-    ok(await run(() => document.querySelector(".prefs .chip-toggle").getAttribute("aria-pressed") === "true"), "'Éviter la marche' didn't switch on");
+    await audit("results, Options open");
+    await click(".trip-panel .setting-row", "Éviter la marche");
+    await until("'Éviter la marche' on", () => [...document.querySelectorAll(".trip-panel .setting-row")].some((r) => /Éviter la marche/.test(r.textContent) && r.getAttribute("aria-checked") === "true"));
+    await run(() => ([...document.querySelectorAll(".trip-chip")][1].click(), true));
     const [a, b] = await run(() => [document.querySelector(".field-from input").value, document.querySelector(".field-to input").value]);
     await click(".swap");
     await until("swapped", (a) => document.querySelector(".field-to input")?.value === a, 5000, a);
@@ -349,6 +379,9 @@ async function runProfile(P) {
   await step("when: leave at tomorrow 07:30, then arrive by 08:00, then now", async () => {
     await open(SITE + "?when" + TRIP);
     await tripOptions();
+    await click(".trip-chip", "");
+    await audit("results, time panel open");
+    await click(".trip-chip", "");
     await setWhen(1, "07:30");
     await until("07:30 departures", () => document.querySelector(".opt-clock") && [...document.querySelectorAll(".opt-clock")].every((e) => e.textContent.includes("07:30")));
     ok(/Départ.*07:30.*Demain/.test(await text(".trip-chip")), `chip says "${await text(".trip-chip")}"`);
@@ -396,6 +429,7 @@ async function runProfile(P) {
     await until("the trip steps", () => document.querySelector(".tl-stop"));
     ok(await run(() => !!document.querySelector(".card-note")), "no card note");
     await shot("trip");
+    await audit("trip");
     await click(".card-note .chip-toggle");
     await until("the note to go", () => !document.querySelector(".card-note"));
     await click(".tl-ride .link", "arrêts");
@@ -413,6 +447,7 @@ async function runProfile(P) {
     await until("the trip", () => document.querySelector(".tl-other"));
     await click(".tl-other");
     await until("the stop list", () => document.querySelectorAll(".pick-stop .row").length > 4);
+    await audit("pick a stop");
     const on = await run(() => {
       const row = document.querySelectorAll(".pick-stop .row")[4];
       const n = row.querySelector(".row-main span").textContent;
@@ -436,6 +471,7 @@ async function runProfile(P) {
     await tripOptions();
     await click(".stop-near .row");
     await until("the stop screen", () => document.querySelector(".stop"));
+    await audit("stop");
     await click(".stop .btn", "Descendre ici");
     await until("'Descente' chip", () => [...document.querySelectorAll(".trip-chip")].some((c) => /Descente/.test(c.textContent)));
   });
@@ -473,6 +509,7 @@ async function runProfile(P) {
       const n = await run(() => Number(document.querySelector(".ride-big .num")?.textContent ?? -1));
       if (n >= 0) lefts.push(n);
     }
+    await audit("ride");
     ok(lefts.length >= 2, `stops-left count never showed (${lefts.join(",")})`);
     ok(lefts.every((n, i) => i === 0 || n <= lefts[i - 1]), `stops left went up: ${lefts.join(",")}`);
     await until("'Descendez ici'", () => /Descendez ici/.test(document.querySelector(".ride-body").textContent), 8000);
@@ -511,6 +548,7 @@ async function runProfile(P) {
     await until("the lines list", () => document.querySelectorAll(".sheet-body .row").length > 30);
     await run(() => ([...document.querySelectorAll(".sheet-body .row")].find((r) => r.querySelector(".badge")?.textContent.trim() === "32").click(), true));
     await until("line 32", () => document.querySelector(".line"));
+    await audit("line");
     const dirs = await run(() => document.querySelectorAll(".line .segmented button").length);
     if (dirs > 1) {
       await run(() => ([...document.querySelectorAll(".line .segmented button")][1].click(), true));
@@ -563,6 +601,7 @@ async function runProfile(P) {
     ok((await run(() => document.querySelector(".gh-link")?.href)) === "https://github.com/zkousama/tobis", "no GitHub link");
     ok(await run(() => !!document.querySelector(".gh-link svg")), "no GitHub mark");
     await shot("settings");
+    await audit("settings");
     await click(".about .segmented button", "English");
     await until("English", () => /Settings/.test(document.querySelector(".view-title").textContent) && /Menu/.test(document.querySelector(".map-btn").textContent));
     await click(".about .segmented button", "الدارجة");
@@ -589,6 +628,7 @@ async function runProfile(P) {
     const ids = await run(() => [...document.querySelectorAll(".help-section")].map((s) => s.id).join(","));
     for (const id of ["what", "cant", "find", "install", "offline", "location"]) ok(ids.includes(`help-${id}`), `no '${id}' section (${ids})`);
     await shot("help");
+    await audit("help");
   });
 
   await step("Darija, right to left, dark: results", async () => {
@@ -599,6 +639,7 @@ async function runProfile(P) {
     ok((await run(() => document.documentElement.dir)) === "rtl", "page isn't right to left");
     await noSideways("Darija results");
     await shot("results-ar-dark");
+    await audit("results in Darija, dark");
     await setLang("fr");
     await look("light");
   });
@@ -644,10 +685,11 @@ async function runProfile(P) {
     await tripOptions();
     await until("the map offline", () => document.querySelector(".maplibregl-canvas")?.width > 0);
     ok(await run(() => !document.querySelector(".offline-banner").hidden), "no offline banner");
+    await audit("offline");
     await open(SITE + "?offline2");
     await openSearch();
     await typeSearch("https://maps.app.goo.gl/AbCdEf123");
-    await until("the 'Aller à ce point' row", () => [...document.querySelectorAll(".sheet-body .row")].some((r) => /Aller à ce point/.test(r.textContent) && r.getClientRects().length), 8000).catch(async () => {
+    await until("the 'Utiliser ce lieu' row", () => [...document.querySelectorAll(".sheet-body .row")].some((r) => /Utiliser ce lieu/.test(r.textContent) && r.getClientRects().length), 8000).catch(async () => {
       throw new Error(`no visible link row: ${await run(() => JSON.stringify({ view: document.querySelector(".sheet").className, input: document.querySelector(".sheet-body input")?.value, inputs: document.querySelectorAll(".sheet-body input").length, rows: [...document.querySelectorAll(".sheet-body .row")].map((r) => `${r.getClientRects().length ? "" : "(hidden) "}${r.textContent.slice(0, 50)}`) }))}`);
     });
     await run(() => {
@@ -656,7 +698,7 @@ async function runProfile(P) {
       window.__onLineAtClick = navigator.onLine; // reported if the check fails
       return true;
     });
-    await click(".sheet-body .row", "Aller à ce point");
+    await click(".sheet-body .row", "Utiliser ce lieu");
     // Every message shown since the tap (a later one can replace it before we look).
     await until("the 'needs internet' message", () => window.__flashes.some((f) => /internet/i.test(f)), 5000).catch(async () => {
       throw new Error(`no 'needs internet' message; shown: ${await run(() => JSON.stringify({ onLineAtTap: window.__onLineAtClick, messages: window.__flashes }))}`);

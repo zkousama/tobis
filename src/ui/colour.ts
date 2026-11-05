@@ -25,5 +25,19 @@ export function visible(hex: string, against = "#ffffff", min = 3): string {
   return toHex(c);
 }
 
-/** Text colour for a badge filled with `bg`. */
-export const textOn = (bg: string) => (contrast(luminance(bg), 0) > contrast(luminance(bg), 1) ? "#111418" : "#ffffff");
+const DARK_TEXT = "#111418";
+const LIGHT_TEXT = "#ffffff";
+/** Text colour for a badge filled with `bg`: the one that reads better (measured against the real text colours). */
+export const textOn = (bg: string) => (contrast(luminance(bg), luminance(DARK_TEXT)) > contrast(luminance(bg), luminance(LIGHT_TEXT)) ? DARK_TEXT : LIGHT_TEXT);
+
+/**
+ * A badge's fill and text: the line's colour, nudged lighter (under dark text) or darker
+ * (under white text) until the text reaches 4.5:1, as WCAG asks for small text.
+ */
+export function badgeColours(hex: string): { bg: string; text: string } {
+  let c = rgb(hex);
+  const text = textOn(hex);
+  const t = luminance(text);
+  for (let i = 0; i < 30 && contrast(luminance(toHex(c)), t) < 4.5; i++) c = c.map((v) => (text === DARK_TEXT ? v + (255 - v) * 0.08 : v * 0.92)) as [number, number, number];
+  return { bg: toHex(c), text };
+}

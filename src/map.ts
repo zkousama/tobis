@@ -3,7 +3,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { PMTiles, Protocol } from "pmtiles";
 import { RangeOrWholeSource } from "./tilesource.ts";
 import { isDark, onThemeChange } from "./theme.ts";
-import { visible } from "./ui/colour.ts";
+import { badgeColours, visible } from "./ui/colour.ts";
 import { layers, namedFlavor } from "@protomaps/basemaps";
 // The package only exports its source entry, so point at the built file directly.
 import rtlPluginUrl from "../node_modules/@mapbox/mapbox-gl-rtl-text/dist/mapbox-gl-rtl-text.js?url";
@@ -446,7 +446,10 @@ function pin(kind: "origin" | "dest", label?: string) {
 function badge(text: string, colour: string, kind: "board" | "alight") {
   const el = document.createElement("div");
   el.className = `stop-badge stop-badge-${kind}`;
-  el.style.setProperty("--c", colour);
+  // Black or white text on a fill nudged until it reads (white on the Trambus orange didn't).
+  const bc = kind === "board" ? badgeColours(colour) : undefined;
+  el.style.setProperty("--c", bc?.bg ?? colour);
+  if (bc) el.style.setProperty("--on", bc.text);
   const s = document.createElement("span");
   const name = document.createElement("b"); // the name alone, so a long one can end in "…" without clipping the pointer
   name.textContent = text;

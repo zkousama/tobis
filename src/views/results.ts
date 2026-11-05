@@ -3,7 +3,8 @@ import { dist } from "../geo.ts";
 import { fmtDistance, fmtMinutes, getLang, t, type Key } from "../i18n.ts";
 import { h, icon } from "../ui/dom.ts";
 import { fmtDH } from "../fares.ts";
-import { buildOptions, DEFAULT_VOT, learnVot, nearTie, paretoFront, recommend, tradeoff, VOT_RANGE, winners, type Option, type Part, type Prefs } from "../compare.ts";
+import { buildOptions, learnVot, nearTie, paretoFront, recommend, tradeoff, winners, type Option, type Part } from "../compare.ts";
+import { getPrefs, savePrefs } from "../app/prefs.ts";
 import { walkPace } from "../pace.ts";
 import { net, nm, render, router, state } from "../app/state.ts";
 import { go } from "../app/nav.ts";
@@ -73,33 +74,14 @@ export function resultsBody() {
   // No bus within the usual walk: say how far the first stop is, before the options.
   const firstWalk = state.journeys.find((j) => j.rides > 0)?.legs[0];
   const longWalk = state.widened && firstWalk?.kind === "walk" ? h("p", { class: "tip tip-walk" }, icon.walk(), h("small", null, t("longWalk", fmtMinutes(firstWalk.seconds)))) : null;
-  return h("div", { class: "results" }, to?.sub ? h("p", { class: "muted", style: "margin:2px 0 4px" }, nm(to.sub)) : null, tripControls(), longWalk, compareBlock(), nearBlock, dataNote());
+  return h("div", { class: "results" }, to?.sub ? h("p", { class: "muted", style: "margin:2px 0 4px" }, nm(to.sub)) : null, tripControls(), compareBlock(longWalk), nearBlock, dataNote());
 }
 
 // ---------- comparing every way to get there ----------
 // Options are ranked by generalised cost: price plus time, priced at the
 // rider's own value of time (the slider), walking and waiting weighted heavier.
-export function getPrefs(): Prefs {
-  let vot = DEFAULT_VOT;
-  let avoidWalk = false;
-  try {
-    const v = Number(localStorage.getItem("vot"));
-    if (v >= VOT_RANGE[0] && v <= VOT_RANGE[1]) vot = v;
-    avoidWalk = localStorage.getItem("avoidWalk") === "1";
-  } catch {}
-  return { vot, walkWeight: avoidWalk ? 3 : 1.5 };
-}
-export function savePrefs(p: Prefs) {
-  try {
-    localStorage.setItem("vot", p.vot.toFixed(4));
-    localStorage.setItem("avoidWalk", p.walkWeight > 2 ? "1" : "0");
-  } catch {}
-}
-export const toSlider = (vot: number) => Math.round((100 * Math.log(vot / VOT_RANGE[0])) / Math.log(VOT_RANGE[1] / VOT_RANGE[0]));
-export const fromSlider = (v: number) => VOT_RANGE[0] * (VOT_RANGE[1] / VOT_RANGE[0]) ** (v / 100);
 export let showAllOptions = false;
-export let prefsOpen = false;
-export function compareBlock() {
+export function compareBlock(extraNote: Node | null = null) {
   if (!state.from || !state.to) return null;
   // Arrive by: the night note and the clock work from when the trip would leave, about an hour before.
   const w = state.when;
@@ -120,15 +102,13 @@ export function compareBlock() {
   const hidden = options.length - front.length;
   const win = winners(options);
   const list = h("div", { class: "options" });
-  const worth = h("small", { class: "muted pref-worth" });
-  const summary = h("span", { class: "pref-summary" });
+  // Notes (late night, a long walk to the first stop) go under the first trip, not above all of them.
+  const notes = [extraNote, night ? h("p", { class: "tip tip-night" }, icon.clock(), h("small", null, t("nightNote"))) : null].filter(Boolean) as Node[];
   const draw = () => {
     const ranked = recommend(showAllOptions ? options : front, prefs);
     const longest = Math.max(...ranked.map((o) => o.range[1]), 1);
-    worth.textContent = t("votLabel", Math.round(prefs.vot * 60));
-    summary.textContent = t("prefSummary", prefs.vot < 0.07 ? t("prefSave") : prefs.vot > 0.35 ? t("prefTime") : t("prefBalanced"), Math.round(prefs.vot * 60));
     list.replaceChildren(
-      ...ranked.map((o, i) =>
+      ...ranked.flatMap((o, i) => [
         optionRow(
           o,
           i === 0,
@@ -143,74 +123,16 @@ export function compareBlock() {
             savePrefs(next);
           },
         ),
-      ),
+        ...(i === 0 ? notes : []),
+      ]),
     );
     const top = ranked[0];
     if (top?.journey !== undefined) previewTrip(top.journey);
   };
-  const slider = h("input", {
-    type: "range",
-    min: 0,
-    max: 100,
-    value: toSlider(prefs.vot),
-    class: "pref-slider",
-    "aria-label": t("prefTitle"),
-    oninput: (e: Event) => {
-      prefs.vot = fromSlider(Number((e.target as HTMLInputElement).value));
-      savePrefs(prefs);
-      draw();
-    },
-  });
-  const walkToggle = h(
-    "button",
-    {
-      class: `chip-toggle${prefs.walkWeight > 2 ? " on" : ""}`,
-      "aria-pressed": prefs.walkWeight > 2 ? "true" : "false",
-      onclick: () => {
-        prefs.walkWeight = prefs.walkWeight > 2 ? 1.5 : 3;
-        savePrefs(prefs);
-        walkToggle.classList.toggle("on", prefs.walkWeight > 2);
-        walkToggle.setAttribute("aria-pressed", prefs.walkWeight > 2 ? "true" : "false");
-        draw();
-      },
-    },
-    h("span", { class: "tick" }, icon.check()),
-    icon.walk(),
-    t("avoidWalk"),
-  );
   draw();
-  // Folded by default: the options come first, the knob is one tap away.
-  const panel = h("div", { class: "pref-panel", hidden: !prefsOpen }, h("div", { class: "pref-row" }, h("span", { class: "pref-end" }, t("prefSave")), slider, h("span", { class: "pref-end" }, t("prefTime"))), worth);
-  const opener = h(
-    "button",
-    {
-      class: "pref-open",
-      "aria-label": t("prefTitle"),
-      "aria-expanded": prefsOpen ? "true" : "false",
-      onclick: () => {
-        prefsOpen = !prefsOpen;
-        panel.hidden = !prefsOpen;
-        opener.setAttribute("aria-expanded", prefsOpen ? "true" : "false");
-      },
-    },
-    summary,
-    icon.chevron(),
-  );
   return h(
     "div",
     { class: "compare" },
-    h("div", { class: "prefs" }, h("div", { class: "pref-row pref-row-2" }, opener, walkToggle), panel),
-    night ? h("p", { class: "tip tip-night" }, icon.clock(), h("small", null, t("nightNote"))) : null,
-    h(
-      "p",
-      { class: "bar-legend", "aria-hidden": "true" },
-      h("span", { class: "key key-ride" }),
-      t("legendRide"),
-      h("span", { class: "key key-walk" }),
-      t("legendWalk"),
-      h("span", { class: "key key-wait" }),
-      t("legendWait"),
-    ),
     list,
     hidden > 0
       ? h(
@@ -308,7 +230,7 @@ export function optionRow(o: Option, first: boolean, tags: string[], longest: nu
         "div",
         { class: "ticket-stub" },
         h("span", { class: "ticket-time" }, String(Math.max(1, Math.round(o.seconds / 60))), h("small", null, t("min"))),
-        hi > lo ? h("span", { class: "ticket-range" }, `⁦${lo}–${hi}⁩ ${t("min")}`) : null,
+        hi > lo ? h("span", { class: "ticket-range", title: t("rangeTitle") }, t("upTo", `\u2066${hi}\u2069 ${t("min")}`)) : null,
         h("span", { class: "ticket-fare" }, price),
         cardDue(j) ? h("span", { class: "ticket-card" }, t("cardPlus", fmtDH(cardDue(j)!))) : null,
       ),

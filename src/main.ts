@@ -90,6 +90,7 @@ function render() {
   offlineBanner.lastElementChild!.textContent = t("offlineNow");
   handle.setAttribute("aria-label", t("sheetResize"));
   locateBtn.setAttribute("aria-label", t("myLocation"));
+  mapEl.setAttribute("aria-label", t("mapLabel"));
   sheetBody.replaceChildren();
   sheet.className = `sheet view-${v.name}`;
   ride?.stop();

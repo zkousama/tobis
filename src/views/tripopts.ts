@@ -4,9 +4,11 @@
 import { fmtMinutes, getLang, t } from "../i18n.ts";
 import { DETOUR, WALK_SPEED } from "../router.ts";
 import { h, icon, lineBadge } from "../ui/dom.ts";
-import { net, nm, router, state } from "../app/state.ts";
+import { net, nm, render, router, state } from "../app/state.ts";
 import { avoidedLines, plan, setAvoided, setMode, skipBrt, skipBus } from "../app/plan.ts";
-import { header, linesAt, segmented, settingToggle, stopLine } from "./common.ts";
+import { header, linesAt, segmented, settingToggle } from "./common.ts";
+import { fromSlider, getPrefs, prefsChanged, savePrefs, toSlider } from "../app/prefs.ts";
+import { DEFAULT_VOT } from "../compare.ts";
 
 /** "07:30", 24-hour in every language, as timetables in Morocco are written. */
 export const clock = (d: Date) => `⁦${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}⁩`;
@@ -27,7 +29,7 @@ export function whenSummary() {
 }
 /** How many options the rider changed: shown on the "Options" chip. */
 export function optionsCount() {
-  return avoidedLines().filter((r) => net.lines.some((l) => l.ref === r)).length + (skipBrt() ? 1 : 0) + (skipBus() ? 1 : 0);
+  return avoidedLines().filter((r) => net.lines.some((l) => l.ref === r)).length + (skipBrt() ? 1 : 0) + (skipBus() ? 1 : 0) + (prefsChanged(getPrefs()) ? 1 : 0);
 }
 
 let openPanel: "when" | "options" | null = null;
@@ -195,9 +197,40 @@ function optionsBody() {
         avoided.has(l.ref) ? h("span", { class: "avoid-x", "aria-hidden": "true" }, icon.close()) : null,
       ),
     );
+  // Time against money: the rider's own trade, and walking counted double if they'd rather not.
+  const prefs = getPrefs();
+  const worth = h("small", { class: "muted pref-worth" }, t("votLabel", Math.round(prefs.vot * 60)));
+  const slider = h("input", {
+    type: "range",
+    min: 0,
+    max: 100,
+    value: toSlider(prefs.vot),
+    class: "pref-slider",
+    "aria-label": t("prefTitle"),
+    // The label follows the finger; the trips re-rank when the finger lifts.
+    oninput: () => (worth.textContent = t("votLabel", Math.round(fromSlider(Number(slider.value)) * 60))),
+    onchange: () => {
+      savePrefs({ ...getPrefs(), vot: fromSlider(Number(slider.value)) });
+      openPanel = "options";
+      render();
+    },
+  });
   return h(
     "div",
     null,
+    h("h3", { class: "section-title label" }, t("howYouLike")),
+    h("div", { class: "pref-row" }, h("span", { class: "pref-end" }, t("prefSave")), slider, h("span", { class: "pref-end" }, t("prefTime"))),
+    worth,
+    h(
+      "div",
+      { class: "setting-list" },
+      settingToggle(t("avoidWalk"), () => getPrefs().walkWeight > 2, () => {
+        const p = getPrefs();
+        savePrefs({ ...p, walkWeight: p.walkWeight > 2 ? 1.5 : 3 });
+        openPanel = "options";
+        render();
+      }),
+    ),
     h("h3", { class: "section-title label" }, t("modes")),
     h(
       "div",
@@ -217,6 +250,7 @@ function optionsBody() {
               setAvoided([]);
               setMode("skipBrt", false);
               setMode("skipBus", false);
+              savePrefs({ vot: DEFAULT_VOT, walkWeight: 1.5 });
               replanSoon();
             },
           },
@@ -273,7 +307,7 @@ export function pickStopBody(which: "board" | "alight") {
             "button",
             { class: "row", "aria-current": chosen === x.stop ? "true" : undefined, onclick: () => pick(x.stop) },
             h("span", { class: "row-icon" }, icon.stop()),
-            h("span", { class: "row-main" }, h("span", null, nm(net.stops[x.stop].n)), stopLine(x.stop)),
+            h("span", { class: "row-main" }, h("span", null, nm(net.stops[x.stop].n))),
             h("span", { class: "walk-min" }, icon.walk(), fmtMinutes((x.crow * DETOUR) / WALK_SPEED)),
             linesAt(x.stop, 3),
           ),

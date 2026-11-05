@@ -1271,7 +1271,7 @@ button:active,
   padding: 0 8px;
   border-radius: 6px;
   background: var(--c);
-  color: #fff;
+  color: var(--on, #fff);
   font: 600 12.5px var(--font);
   white-space: nowrap;
   position: relative;
@@ -1879,4 +1879,19 @@ button.option:hover {
   flex: none;
   width: 18px;
   height: 18px;
+}
+/* The map credit's (i) button: at least 24px to hit (WCAG 2.2 target size); MapLibre's is 24 on phones, smaller on desktop. */
+.maplibregl-ctrl-attrib-button {
+  min-width: 28px;
+  min-height: 28px;
+}
+/* Opened, the credit's links must not run under the (i) button. */
+#app .maplibregl-ctrl-bottom-right > .maplibregl-ctrl-attrib.maplibregl-compact-show {
+  padding-right: 36px;
+}
+/* Desktop too: the credit sits left of the locate button, which otherwise covers its (i). */
+@media (min-width: 900px) {
+  [dir="ltr"] #app:has(.sheet[data-size]) .maplibregl-ctrl-bottom-right {
+    right: 62px;
+  }
 }
