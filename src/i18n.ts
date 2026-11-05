@@ -121,7 +121,7 @@ const S = {
   updated: { fr: "Nouvelle version prête · Recharger", ar: "كاينة نسخة جديدة · عاود شارجي", en: "New version ready · Reload" },
   settings: { fr: "Réglages", ar: "الباراميترات", en: "Settings" },
   appearance: { fr: "Apparence", ar: "الشكل", en: "Appearance" },
-  themeAuto: { fr: "Comme le téléphone", ar: "بحال التيليفون", en: "Like the phone" },
+  themeAuto: { fr: "Automatique", ar: "أوتوماتيك", en: "Automatic" },
   themeLight: { fr: "Clair", ar: "فاتح", en: "Light" },
   themeDark: { fr: "Sombre", ar: "غامق", en: "Dark" },
   help: { fr: "Mode d'emploi", ar: "كيفاش تخدم", en: "How it works" },
