@@ -83,7 +83,8 @@ export function parseMapsUrl(raw: string): Parsed {
     return {};
   }
   const host = url.hostname.replace(/^www\./, "");
-  if (/^(maps\.app\.goo\.gl|goo\.gl|g\.co)$/.test(host)) return { shortUrl: url.href };
+  // Short links, including share.google, which Google's share button gives out since 2025.
+  if (/^(maps\.app\.goo\.gl|goo\.gl|g\.co|share\.google)$/.test(host)) return { shortUrl: url.href };
   const s = decodeURIComponent(url.href);
   const name = /\/place\/([^/@]+)/.exec(url.pathname)?.[1];
   const label = name ? decodeURIComponent(name).replace(/\+/g, " ").trim() : undefined;

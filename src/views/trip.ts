@@ -46,6 +46,9 @@ export function tripBody(index: number) {
     const v = variantOf(leg);
     const c = `--c:${visible(line.colour)}`;
     const boardStop = v.stops[leg.board];
+    const rideIdx = j.legs.filter((l) => l.kind === "ride");
+    const firstRide = rideIdx[0] === leg;
+    const lastRide = rideIdx.at(-1) === leg;
     const alightStop = v.stops[leg.alight];
     const between = v.stops.slice(leg.board + 1, leg.alight);
     const before = leg.alight - 1 > leg.board ? v.stops[leg.alight - 1] : undefined;
@@ -75,6 +78,7 @@ export function tripBody(index: number) {
           { class: "tl-main" },
           h("strong", { class: "tl-stop-name" }, nm(net.stops[boardStop].n)),
           stopLine(boardStop),
+          firstRide ? h("button", { class: "link tl-other", onclick: () => go({ name: "pickStop", which: "board" }) }, t("otherStop")) : null,
           h("div", { class: "tl-board" }, `${line.taxi ? t("takeTaxi") : t("stepTake")} `, lineBadge(line.ref, line.colour), ` ${t("towards")} `, h("strong", null, v.to)),
           note(icon.clock(), waitNote),
         ),
@@ -103,6 +107,7 @@ export function tripBody(index: number) {
           h("small", { class: "tl-off-label" }, t("stepGetOff")),
           h("strong", { class: "tl-stop-name" }, nm(net.stops[alightStop].n)),
           stopLine(alightStop),
+          lastRide ? h("button", { class: "link tl-other", onclick: () => go({ name: "pickStop", which: "alight" }) }, t("otherStop")) : null,
           before !== undefined ? note(icon.bell(), t("noteGetReady", nm(net.stops[before].n))) : null,
         ),
       ),

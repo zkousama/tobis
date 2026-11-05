@@ -15,6 +15,7 @@ import { previewTrip } from "./views/common.ts";
 import { planner, searchBody } from "./views/search.ts";
 import { homeBody } from "./views/home.ts";
 import { resultsBody } from "./views/results.ts";
+import { pickStopBody } from "./views/tripopts.ts";
 import { tripBody } from "./views/trip.ts";
 import { rideBody } from "./views/ride.ts";
 import { lineBody, linesBody, pointBody, stopBody } from "./views/lines.ts";
@@ -150,6 +151,10 @@ function render() {
     case "help":
       setSheet("full");
       sheetBody.append(helpBody(v.section));
+      break;
+    case "pickStop":
+      setSheet("full");
+      sheetBody.append(pickStopBody(v.which));
       break;
   }
 }

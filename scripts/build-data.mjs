@@ -695,7 +695,7 @@ if (cfg.brt) {
     // The Trambus has its own two-way lane down the middle of the avenues.
     const tr = trace(rel, seqIdx, "anyDrive");
     const ends = forward ? [stations[0].name, stations.at(-1).name] : [stations.at(-1).name, stations[0].name];
-    entries.push({ rel, t: { from: ends[0], to: ends[1], name: cfg.brt.name }, ref: "BHNS", isBrt: true, seqIdx, tr, alsa: true, fare: cfg.brt.fare, headway: cfg.brt.headwayMin });
+    entries.push({ rel, t: { from: ends[0], to: ends[1], name: cfg.brt.name }, ref: "BHNS", isBrt: true, seqIdx, tr, alsa: true, fare: cfg.brt.fare, headway: cfg.brt.headwayMin, hours: cfg.brt.firstBus || cfg.brt.lastBus ? { first: cfg.brt.firstBus, last: cfg.brt.lastBus } : undefined });
     // For the OSM draft: platforms in order and the ways between them.
     report.brtDraft = [...(report.brtDraft ?? []), { from: ends[0], to: ends[1], platforms: seqIdx.map((si) => stops[si].id), ways: tr?.wayIds ?? [] }];
     if (tr) report.sides.push({ rel: rel.id, ref: "BHNS", clean: tr.share <= SCRAMBLED, ...rightSide(tr) });
@@ -844,7 +844,7 @@ for (const e of entries) {
     if (z) variant.zones = z;
     else report.zoneless = [...(report.zoneless ?? []), `${ref}:${t.to}`];
   }
-  if (!byRef.has(ref)) byRef.set(ref, { ref, brt: isBrt, name: t.name, variants: [], ...(e.fare ? { fare: e.fare } : {}), ...(e.colour ? { colour: e.colour } : {}), ...(e.headway ? { headway: e.headway } : {}), ...(e.taxi ? { taxi: true } : {}) });
+  if (!byRef.has(ref)) byRef.set(ref, { ref, brt: isBrt, name: t.name, variants: [], ...(e.fare ? { fare: e.fare } : {}), ...(e.colour ? { colour: e.colour } : {}), ...(e.headway ? { headway: e.headway } : {}), ...(e.hours ? { hours: e.hours } : {}), ...(e.taxi ? { taxi: true } : {}) });
   byRef.get(ref).variants.push(variant);
 }
 

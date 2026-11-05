@@ -97,3 +97,41 @@ test("search: 'farmacie' finds pharmacies (ph sounds like f)", { skip: !have }, 
   const hits = new SearchIndex(net).search("farmacie", PLACES.talborjt, 12);
   assert.ok(hits.some((h) => /pharmacie/i.test(h.label.d ?? "")), "no pharmacy for 'farmacie'");
 });
+
+test("trip options: an avoided line is never used", { skip: !have }, () => {
+  const to: LngLat = [-9.53, 30.395];
+  const five = net.lines.findIndex((l) => l.ref === "5");
+  assert.ok(router.plan(PLACES.talborjt, to).some((j) => refs(j).includes("5")), "line 5 is an option on this trip");
+  const without = router.plan(PLACES.talborjt, to, { avoid: new Set([five]) });
+  assert.ok(without.length > 0);
+  for (const j of without) assert.ok(!refs(j).includes("5"));
+});
+
+test("trip options: buses off leaves only the Trambus (or walking)", { skip: !have }, () => {
+  for (const j of router.plan(PLACES.talborjt, [-9.53, 30.395], { skipBus: true })) for (const r of refs(j)) assert.equal(r, "BHNS");
+});
+
+test("trip options: no Trambus before its first departure at 6:00", { skip: !have }, () => {
+  const to: LngLat = [-9.53, 30.395];
+  const early = new Date(2026, 10, 5, 5, 0);
+  const late = new Date(2026, 10, 5, 8, 0);
+  assert.ok(!router.plan(PLACES.talborjt, to, { at: early }).some((j) => refs(j).includes("BHNS")), "Trambus at 5:00");
+  assert.ok(router.plan(PLACES.talborjt, to, { at: late }).some((j) => refs(j).includes("BHNS")), "no Trambus at 8:00");
+});
+
+test("trip options: the rider can walk to a stop of their choice", { skip: !have }, () => {
+  const to: LngLat = [-9.53, 30.395];
+  const usual = router.plan(PLACES.talborjt, to);
+  const firstBoard = (j: { legs: { kind: string }[] }) => {
+    const r = j.legs.find((l): l is RideLeg => l.kind === "ride")!;
+    return net.lines[r.line].variants[r.variant].stops[r.board];
+  };
+  const usualStops = new Set(usual.filter((j) => j.rides).map(firstBoard));
+  // A stop about 1 km away that the planner doesn't pick by itself.
+  const other = router.stopsNear(PLACES.talborjt, 1500).find((x) => x.crow > 700 && !usualStops.has(x.stop))!;
+  assert.ok(other, "a farther stop exists");
+  const picked = router.plan(PLACES.talborjt, to, { boardStop: other.stop });
+  const rides = picked.filter((j) => j.rides);
+  assert.ok(rides.length > 0, "trips from the picked stop");
+  for (const j of rides) assert.equal(firstBoard(j), other.stop);
+});

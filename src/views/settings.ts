@@ -2,11 +2,11 @@ import { getLang, LANGS, setLang, t, type Lang } from "../i18n.ts";
 import { h, icon } from "../ui/dom.ts";
 import { getTheme, setTheme, type Theme } from "../theme.ts";
 import { fmtDH, hasCard, setHasCard } from "../fares.ts";
-import { appVersion, bmap, net, offlineMB, render, router, state } from "../app/state.ts";
+import { appVersion, bmap, net, offlineMB, render } from "../app/state.ts";
 import { offline } from "../app/chrome.ts";
 import { install, installEvent, isIos, standalone } from "../app/install.ts";
 import { go } from "../app/nav.ts";
-import { skipBrt } from "../app/plan.ts";
+import { replan, skipBrt } from "../app/plan.ts";
 import { dataNote, header, segmented, settingToggle } from "./common.ts";
 
 export function installBlock() {
@@ -36,7 +36,7 @@ export function trambusSettings(): Node[] {
           try {
             localStorage.setItem("skipBrt", skipBrt() ? "0" : "1");
           } catch {}
-          if (state.from && state.to) state.journeys = router.plan(state.from.ll, state.to.ll, { skipBrt: skipBrt() });
+          replan();
         },
       ),
     ),

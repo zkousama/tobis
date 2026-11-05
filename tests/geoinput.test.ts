@@ -34,6 +34,8 @@ test("query and @ links", () => {
 
 test("short links are flagged for expanding", () => {
   assert.equal(parseMapsUrl("https://maps.app.goo.gl/AbCdEf123").shortUrl, "https://maps.app.goo.gl/AbCdEf123");
+  // Google's share button gives these out since 2025.
+  assert.equal(parseMapsUrl("https://share.google/AbCdEf123").shortUrl, "https://share.google/AbCdEf123");
 });
 
 test("shared text keeps the place name before the link", () => {

@@ -4,7 +4,7 @@ import { h, icon, lineBadge } from "../ui/dom.ts";
 import { fmtDH } from "../fares.ts";
 import { net, nm, render, router, state, type Endpoint } from "../app/state.ts";
 import { go } from "../app/nav.ts";
-import { setEndpoint } from "../app/plan.ts";
+import { plan, setEndpoint } from "../app/plan.ts";
 import { header, linesAt, stopLine } from "./common.ts";
 
 export function linesBody() {
@@ -86,6 +86,14 @@ export function stopBody(si: number) {
     { class: "stop" },
     header(nm(s.n) || t("stop"), stopLine(si)),
     endpointButtons({ ll: s.ll, label: s.n, kind: "stop" }),
+    state.from && state.to
+      ? h(
+          "div",
+          { class: "actions two" },
+          h("button", { class: "btn", onclick: () => ((state.boardStop = si), plan()) }, t("getOnHere")),
+          h("button", { class: "btn", onclick: () => ((state.alightStop = si), plan()) }, t("getOffHere")),
+        )
+      : null,
     h("h3", { class: "section-title label" }, t("linesHere")),
     h(
       "ul",

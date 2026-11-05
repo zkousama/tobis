@@ -47,6 +47,18 @@ listeners.push((m) => {
   if (m.method === "Log.entryAdded" && m.params.entry.level === "error" && !/favicon/.test(m.params.entry.url ?? "")) problems.push(`log: ${m.params.entry.text} ${m.params.entry.url ?? ""}`);
 });
 for (const d of ["Page", "Runtime", "Log", "Network"]) await send(`${d}.enable`, {}, s);
+// The same clock every run: 10:00 today, so the Trambus (from 6:00) runs whatever time the check runs at.
+await send(
+  "Page.addScriptToEvaluateOnNewDocument",
+  {
+    source: `(() => {
+      const R = Date, d = new R(), shift = new R(d.getFullYear(), d.getMonth(), d.getDate(), 10, 0).getTime() - R.now();
+      class F extends R { constructor(...a) { a.length ? super(...a) : super(R.now() + shift); } static now() { return R.now() + shift; } }
+      globalThis.Date = F;
+    })();`,
+  },
+  s,
+);
 const phone = async (scheme = "light") => {
   await send("Emulation.setDeviceMetricsOverride", { width: 393, height: 852, deviceScaleFactor: 2, mobile: true }, s);
   await send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 5 }, s);
@@ -212,7 +224,7 @@ await step("leaving the Trambus out removes it from the options", async () => {
   await until("trip options", () => document.querySelector(".option"));
   const brt = await run(() => [...document.querySelectorAll(".option")].some((o) => /Trambus/.test(o.innerText)));
   ok(!brt, "a Trambus option is still shown");
-  ok(await run(() => !!document.querySelector(".brt-off")), "no 'Trambus left out' line");
+  ok(/Options · 1/.test(await run(() => [...document.querySelectorAll(".trip-chip")].map((c) => c.textContent).join(" "))), "the Options chip doesn't count the Trambus left out");
   // This trip ends at a stop near the screen's edge with a long name: its label must stay on screen.
   await until("the stop labels", () => document.querySelectorAll(".stop-badge span").length >= 2);
   await sleep(1500);
@@ -225,6 +237,71 @@ await step("leaving the Trambus out removes it from the options", async () => {
   });
   ok(!out.length, `stop label off the map: ${out.join(", ")}`);
   await run(() => (localStorage.removeItem("skipBrt"), true));
+});
+
+await step("the empty field's hint doesn't look like typed text", async () => {
+  await open(SITE + "?ph");
+  const r = await run(() => {
+    const i = document.querySelector(".sheet-body input");
+    const ph = getComputedStyle(i, "::placeholder");
+    const v = getComputedStyle(i);
+    return { phColor: ph.color, phWeight: ph.fontWeight, color: v.color, weight: v.fontWeight };
+  });
+  ok(r.phColor !== r.color, `placeholder colour ${r.phColor} = text colour`);
+  ok(Number(r.phWeight) < Number(r.weight), `placeholder weight ${r.phWeight} not lighter than text ${r.weight}`);
+});
+
+await step("arrive by: each option says when to leave", async () => {
+  await open(SITE + "?arrive" + TRIP);
+  await until("trip options", () => document.querySelector(".option"));
+  await run(() => (document.querySelector(".trip-chip")?.click(), true));
+  await run(() => ([...document.querySelectorAll(".trip-panel .segmented button")][2]?.click(), true));
+  await run(() => {
+    // Tomorrow 08:00, so it's never already too late.
+    [...document.querySelectorAll(".day-chips button")][1]?.click();
+    const t = document.querySelector(".time-input");
+    t.value = "08:00";
+    [...document.querySelectorAll(".when-time button")][0]?.click();
+    return true;
+  });
+  const clocks = await until("leave-before times", () => {
+    const c = [...document.querySelectorAll(".opt-clock")].map((e) => e.textContent);
+    return c.length && c.every((x) => /Partez avant/.test(x)) ? c : null;
+  });
+  ok(/Arrivée avant/.test(await run(() => document.querySelector(".trip-chip").textContent)), "the chip doesn't say 'Arrivée avant'");
+  ok(clocks.length > 0, "no clock on the options");
+});
+
+await step("options: an avoided line disappears from the trips", async () => {
+  await open(SITE + "?avoid" + TRIP);
+  await until("trip options", () => document.querySelector(".option"));
+  const before = await run(() => [...document.querySelectorAll(".option .badge")].map((b) => b.textContent));
+  const target = before.find((r) => r && r !== "Trambus");
+  ok(target, "no bus line in the options to avoid");
+  await run(() => ([...document.querySelectorAll(".trip-chip")][1]?.click(), true));
+  await run((ref) => ([...document.querySelectorAll(".avoid-line")].find((b) => b.textContent.trim() === ref)?.click(), true), target);
+  await until("replanned", () => document.querySelector(".trip-chip.on"));
+  const after = await run(() => [...document.querySelectorAll(".option .badge")].map((b) => b.textContent));
+  ok(!after.includes(target), `line ${target} still offered`);
+  await run(() => (localStorage.removeItem("avoidLines"), true));
+});
+
+await step("another stop: pick where to get on", async () => {
+  await open(SITE + "?pick" + TRIP);
+  await until("trip options", () => document.querySelector(".option"));
+  await run(() => (document.querySelector(".option")?.click(), true));
+  await until("the trip", () => document.querySelector(".tl-other"));
+  await run(() => (document.querySelector(".tl-other").click(), true));
+  await until("the stop list", () => document.querySelectorAll(".pick-stop .row").length > 3);
+  const name = await run(() => {
+    const row = document.querySelectorAll(".pick-stop .row")[3];
+    const n = row.querySelector(".row-main span").textContent;
+    row.click();
+    return n;
+  });
+  await until("results with the picked stop", () => document.querySelector(".sheet.view-results .trip-chip.on"));
+  const chip = await run(() => [...document.querySelectorAll(".trip-chip")].map((c) => c.textContent).join(" | "));
+  ok(chip.includes(name), `no 'Montée : ${name}' chip (${chip})`);
 });
 
 await step("help opens", async () => {

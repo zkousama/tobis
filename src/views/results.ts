@@ -7,7 +7,8 @@ import { buildOptions, DEFAULT_VOT, learnVot, nearTie, paretoFront, recommend, t
 import { walkPace } from "../pace.ts";
 import { net, nm, render, router, state } from "../app/state.ts";
 import { go } from "../app/nav.ts";
-import { skipBrt } from "../app/plan.ts";
+import { startTime } from "../app/plan.ts";
+import { clock, tripControls } from "./tripopts.ts";
 import { cardDue, dataNote, legChips, linesAt, previewTrip, stopLine, variantOf } from "./common.ts";
 
 export function resultsBody() {
@@ -58,6 +59,7 @@ export function resultsBody() {
     return h(
       "div",
       null,
+      tripControls(),
       h(
         "div",
         { class: "empty-state" },
@@ -68,8 +70,7 @@ export function resultsBody() {
       nearBlock,
       dataNote(),
     );
-  const brtOff = skipBrt() ? h("p", { class: "fine brt-off" }, t("brtLeftOut"), " ", h("button", { class: "link", onclick: () => go({ name: "about" }) }, t("settings"))) : null;
-  return h("div", { class: "results" }, to?.sub ? h("p", { class: "muted", style: "margin:2px 0 4px" }, nm(to.sub)) : null, brtOff, compareBlock(), nearBlock, dataNote());
+  return h("div", { class: "results" }, to?.sub ? h("p", { class: "muted", style: "margin:2px 0 4px" }, nm(to.sub)) : null, tripControls(), compareBlock(), nearBlock, dataNote());
 }
 
 // ---------- comparing every way to get there ----------
@@ -97,7 +98,19 @@ export let showAllOptions = false;
 export let prefsOpen = false;
 export function compareBlock() {
   if (!state.from || !state.to) return null;
-  const { options, note, night } = buildOptions(net, state.journeys, state.from.ll, state.to.ll, new Date(), walkPace());
+  // Arrive by: the night note and the clock work from when the trip would leave, about an hour before.
+  const w = state.when;
+  const at = w.mode === "arrive" ? new Date(w.at - 3600_000) : startTime();
+  const { options, note, night } = buildOptions(net, state.journeys, state.from.ll, state.to.ll, at, walkPace());
+  // Clock times on each option: "07:30 → 08:16", or for arrive by, the latest time to leave.
+  const clockText = (o: Option) => {
+    if (w.mode === "arrive") {
+      const leave = new Date(w.at - o.range[1] * 1000);
+      return leave.getTime() < Date.now() ? t("tooLate") : t("leaveBefore", clock(leave));
+    }
+    const t0 = startTime();
+    return `${clock(t0)} → ${clock(new Date(t0.getTime() + o.seconds * 1000))}`;
+  };
   const prefs = getPrefs();
   // Drop options that are worse than another on time, price and walking at once.
   const front = paretoFront(options);
@@ -120,6 +133,7 @@ export function compareBlock() {
           (i === 0 ? [t("recommended")] : [nearTie(ranked[0], o, prefs) && t("nearTie"), win.fast === o && t("prioFast"), win.cheap === o && t("prioCheap"), win.walk === o && t("prioWalk")]).filter(Boolean) as string[],
           longest,
           i === 0 ? null : tradeText(ranked[0], o),
+          clockText(o),
           () => {
             // Picking something other than the top option teaches the app a little.
             const next = { ...prefs, vot: learnVot(o, options, prefs) };
@@ -252,7 +266,7 @@ export function breakdown(o: Option) {
     .join(" · ");
 }
 
-export function optionRow(o: Option, first: boolean, tags: string[], longest: number, trade: string | null, onChoose: () => void) {
+export function optionRow(o: Option, first: boolean, tags: string[], longest: number, trade: string | null, clockLine: string | null, onChoose: () => void) {
   const j = o.journey !== undefined ? state.journeys[o.journey] : undefined;
   let head: Node;
   let sub: string;
@@ -279,7 +293,14 @@ export function optionRow(o: Option, first: boolean, tags: string[], longest: nu
     h(
       "div",
       { class: "opt-top" },
-      h("div", { class: "opt-main" }, tags.length ? h("div", { class: "opt-tags" }, tags.map((x) => h("span", { class: "opt-tag" }, x))) : null, head, h("span", { class: "journey-sub" }, sub)),
+      h(
+        "div",
+        { class: "opt-main" },
+        tags.length ? h("div", { class: "opt-tags" }, tags.map((x) => h("span", { class: "opt-tag" }, x))) : null,
+        head,
+        h("span", { class: "journey-sub" }, sub),
+        clockLine ? h("span", { class: "opt-clock" }, clockLine) : null,
+      ),
       h(
         "div",
         { class: "ticket-stub" },

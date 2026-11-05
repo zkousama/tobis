@@ -1,7 +1,7 @@
 import { dist, type LngLat } from "../geo.ts";
 import { t } from "../i18n.ts";
 import { expandShortUrl, parseInput, type Parsed } from "../geoinput.ts";
-import { meEndpoint, net, nm, render, router, state, type Endpoint } from "./state.ts";
+import { meEndpoint, net, nm, render, router, search, state, type Endpoint } from "./state.ts";
 import { flash, toast } from "./chrome.ts";
 import { go, setStack } from "./nav.ts";
 import { locate } from "./location.ts";
@@ -9,6 +9,9 @@ import { locate } from "./location.ts";
 // ---------- endpoints and planning ----------
 export async function setEndpoint(field: "from" | "to", ep: Endpoint) {
   state[field] = ep;
+  // A stop picked for the old start or end means nothing for the new one.
+  if (field === "from") state.boardStop = undefined;
+  else state.alightStop = undefined;
   if (field === "to" && ep.kind !== "me") remember(ep);
   // Like a maps app: once you say where you're going, start from where you are.
   if (field === "to" && !state.from) {
@@ -25,9 +28,30 @@ export async function setEndpoint(field: "from" | "to", ep: Endpoint) {
   render();
 }
 
+/** The moment the trip starts: now, the chosen departure, or (arrive by) worked out from the trips found. */
+export function startTime(): Date {
+  const w = state.when;
+  return new Date(w.mode === "now" ? Date.now() : w.at);
+}
+function planOptions(at: Date) {
+  const avoid = new Set<number>();
+  const refs = avoidedLines();
+  net.lines.forEach((l, i) => refs.includes(l.ref) && avoid.add(i));
+  return { skipBrt: skipBrt(), skipBus: skipBus(), avoid, at, boardStop: state.boardStop, alightStop: state.alightStop };
+}
+export function replan() {
+  if (!state.from || !state.to) return;
+  const w = state.when;
+  if (w.mode === "arrive") {
+    // Arrive by: plan from an hour before, then again from when the slowest likely trip would have to leave.
+    const first = router.plan(state.from.ll, state.to.ll, planOptions(new Date(w.at - 3600_000)));
+    const longest = Math.max(1200, ...first.map((j) => j.seconds));
+    state.journeys = router.plan(state.from.ll, state.to.ll, planOptions(new Date(w.at - longest * 1000 * 1.5)));
+  } else state.journeys = router.plan(state.from.ll, state.to.ll, planOptions(startTime()));
+}
 export function plan() {
   if (!state.from || !state.to) return;
-  state.journeys = router.plan(state.from.ll, state.to.ll, { skipBrt: skipBrt() });
+  replan();
   setStack([{ name: "results" }]);
   writeHash();
   render();
@@ -35,6 +59,7 @@ export function plan() {
 
 export function swap() {
   [state.from, state.to] = [state.to, state.from];
+  state.boardStop = state.alightStop = undefined;
   if (state.from && state.to) plan();
   else render();
 }
@@ -71,8 +96,18 @@ export async function resolveParsed(p: Parsed): Promise<Endpoint | undefined> {
       return;
     }
   }
+  if (!r.ll && r.name) {
+    // Some Google links carry only a name (a place card, a search). Our own places may know it.
+    const hit = search().search(r.name, net.center, 1)[0];
+    if (hit?.ll && hit.score >= 0.8) {
+      toast.classList.remove("show");
+      return { ll: hit.ll, label: { d: r.name }, kind: "link", sub: t("fromGoogle") };
+    }
+    flash(t("linkNoPlace"), 9000);
+    return;
+  }
   if (!r.ll) {
-    flash(t("linkFailed"));
+    flash(t("linkFailed"), 9000);
     return;
   }
   toast.classList.remove("show");
@@ -98,7 +133,8 @@ export async function pasteFromClipboard(field: "from" | "to") {
     return flash(t("pasteBlocked"), 5000);
   }
   const p = parseInput(text, state.me?.ll ?? net.center);
-  if (!p.ll && !p.shortUrl) return flash(t("pasteNothing"), 5000);
+  // A link with only a place name still goes on: the name may be one of our places.
+  if (!p.ll && !p.shortUrl && !(p.name && /https?:\/\//.test(text))) return flash(t("pasteNothing"), 5000);
   const ep = await resolveParsed(p);
   if (ep) setEndpoint(field, ep);
 }
@@ -110,6 +146,33 @@ export function skipBrt() {
   } catch {
     return false;
   }
+}
+// Only the Trambus: the rider turned buses off in the trip options.
+export function skipBus() {
+  try {
+    return localStorage.getItem("skipBus") === "1";
+  } catch {
+    return false;
+  }
+}
+export function setMode(key: "skipBrt" | "skipBus", off: boolean) {
+  try {
+    localStorage.setItem(key, off ? "1" : "0");
+  } catch {}
+}
+/** Line refs the rider never wants suggested, kept between launches. */
+export function avoidedLines(): string[] {
+  try {
+    const v = JSON.parse(localStorage.getItem("avoidLines") ?? "[]");
+    return Array.isArray(v) ? v.map(String) : [];
+  } catch {
+    return [];
+  }
+}
+export function setAvoided(refs: string[]) {
+  try {
+    localStorage.setItem("avoidLines", JSON.stringify(refs));
+  } catch {}
 }
 
 // ---------- shareable links: #from=lon,lat&to=lon,lat ----------

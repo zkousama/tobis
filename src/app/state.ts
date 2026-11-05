@@ -26,6 +26,7 @@ export type View =
   | { name: "line"; line: number; variant: number }
   | { name: "stop"; stop: number }
   | { name: "point"; ll: LngLat }
+  | { name: "pickStop"; which: "board" | "alight" }
   | { name: "about" }
   | { name: "help"; section?: string };
 
@@ -41,6 +42,11 @@ export const state = {
   pickOnMap: undefined as "from" | "to" | undefined,
   sheet: "half" as "peek" | "half" | "full",
   locPerm: "prompt" as PermissionState | "unsupported",
+  // When: now, leave at a time, or arrive by a time (epoch ms). Not kept between launches.
+  when: { mode: "now" } as { mode: "now" } | { mode: "depart" | "arrive"; at: number },
+  // Stops the rider chose to walk to or get off at, for this trip only.
+  boardStop: undefined as number | undefined,
+  alightStop: undefined as number | undefined,
 };
 
 export let net: Network;

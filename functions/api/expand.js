@@ -2,8 +2,9 @@
 // Follows a Google Maps short link's redirects and returns where it lands,
 // plus the coordinates when they can be read. Browsers can't do this
 // themselves (cross-origin redirects), so the app asks here, online only.
-const SHORT_HOSTS = /^(maps\.app\.goo\.gl|goo\.gl|g\.co)$/;
-const GOOGLE_HOSTS = /^((www|maps)\.)?google\.[a-z.]+$|^(maps\.app\.goo\.gl|goo\.gl|g\.co|consent\.google\.com)$/;
+// share.google is what Google's share button gives out since 2025.
+const SHORT_HOSTS = /^(maps\.app\.goo\.gl|goo\.gl|g\.co|share\.google)$/;
+const GOOGLE_HOSTS = /^((www|maps)\.)?google\.[a-z.]+$|^(maps\.app\.goo\.gl|goo\.gl|g\.co|share\.google|consent\.google\.com)$/;
 
 const json = (body, status = 200) =>
   new Response(JSON.stringify(body), {
