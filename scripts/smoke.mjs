@@ -337,24 +337,16 @@ async function runProfile(P) {
     ok(/\d\d:\d\d\D{0,3} – \D{0,3}\d\d:\d\d/.test(await text(".opt-clock")), `no clock times on the options ("${await text(".opt-clock")}")`);
     await shot("results");
     await audit("results");
-    // How you like to travel: in Options now, with the lines and modes.
+    // The route preference, in Options with the lines and modes.
     await run(() => ([...document.querySelectorAll(".trip-chip")][1].click(), true));
-    const before = await text(".pref-worth");
-    await run(() => {
-      const r = document.querySelector(".pref-slider");
-      r.value = "95";
-      r.dispatchEvent(new Event("input", { bubbles: true }));
-      r.dispatchEvent(new Event("change", { bubbles: true }));
-      return true;
-    });
-    await until("re-ranked", () => /Options · 1/.test(document.querySelector(".trip-chips").textContent));
-    ok((await text(".pref-worth")) !== before, "the slider doesn't change what a saved hour is worth");
+    ok(!(await run(() => !!document.querySelector(".pref-slider"))), "the time-vs-money slider is back");
     await shot("results-prefs");
     await audit("results, Options open");
     await click(".trip-panel .segmented button", "Moins de marche");
     await until("'Moins de marche' chosen", () => [...document.querySelectorAll(".trip-panel .segmented button")].some((b) => /Moins de marche/.test(b.textContent) && b.getAttribute("aria-pressed") === "true"));
     await click(".trip-panel .segmented button", "Moins de changements");
     await until("'Moins de changements' chosen", () => [...document.querySelectorAll(".trip-panel .segmented button")].some((b) => /Moins de changements/.test(b.textContent) && b.getAttribute("aria-pressed") === "true"));
+    await until("counted in Options", () => /Options · 1/.test(document.querySelector(".trip-chips").textContent));
     await run(() => ([...document.querySelectorAll(".trip-chip")][1].click(), true));
     const [a, b] = await run(() => [document.querySelector(".field-from input").value, document.querySelector(".field-to input").value]);
     await click(".swap");

@@ -1590,64 +1590,7 @@ button.option:hover {
   margin: 2px 0 6px;
 }
 
-/* ---------- what the rider prefers ---------- */
-.prefs {
-  display: grid;
-  gap: 6px;
-  margin: 6px 0 8px;
-}
-.pref-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-.pref-end {
-  font-size: 0.7812rem;
-  font-weight: 500;
-  color: var(--ink-2);
-  white-space: normal;
-}
-.pref-slider {
-  min-width: 0;
-  accent-color: var(--accent);
-  height: 28px;
-  flex: 1 1 8rem;
-}
-.pref-row-2 {
-  justify-content: space-between;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-/* Folded preferences: one line, the slider one tap away. */
-.pref-open {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 44px;
-  padding: 0 12px;
-  border-radius: 10px;
-  background: var(--surface-2);
-}
-.pref-row-2 .pref-open {
-  flex: 1 1 12em;
-}
-.pref-open[aria-expanded="true"] .icon {
-  transform: rotate(90deg);
-}
-.pref-summary {
-  font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.pref-panel {
-  display: grid;
-  gap: 4px;
-  padding: 6px 2px 2px;
-}
+/* ---------- chips ---------- */
 .chip-toggle {
   display: inline-flex;
   align-items: center;
@@ -1683,13 +1626,6 @@ button.option:hover {
 
 /* ---------- adjustments that must come last ---------- */
 /* Each of these overrides a rule above with the same specificity, so it has to stay below it. */
-.pref-open .icon {
-  width: 16px;
-  height: 16px;
-  color: var(--muted);
-  margin-inline-start: auto;
-  transition: transform 0.2s;
-}
 /* Controls grow with their text instead of clipping it. */
 .badge,
 .badge-sm,
@@ -1896,21 +1832,6 @@ button.option:hover {
 }
 .stop-passes {
   font-weight: 600;
-  color: var(--ink-2);
-}
-.pref-scale {
-  display: grid;
-  gap: 2px;
-}
-.pref-scale .pref-slider {
-  width: 100%;
-}
-.pref-ends {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  font-size: 0.7812rem;
-  font-weight: 500;
   color: var(--ink-2);
 }
 /* In a filled button the pin takes the button's text colour (red on blue didn't read). */

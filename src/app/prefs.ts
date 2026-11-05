@@ -25,7 +25,6 @@ export function savePrefs(p: Prefs) {
   } catch {}
 }
 export const routePrefs = (r: RoutePref) => ({ walkWeight: r === "walk" ? 3 : 1.5, changeMinutes: r === "changes" ? 20 : 5 });
-export const toSlider = (vot: number) => Math.round((100 * Math.log(vot / VOT_RANGE[0])) / Math.log(VOT_RANGE[1] / VOT_RANGE[0]));
-export const fromSlider = (v: number) => VOT_RANGE[0] * (VOT_RANGE[1] / VOT_RANGE[0]) ** (v / 100);
-/** Moved off the middle setting by more than a nudge: counts as a changed option. */
-export const prefsChanged = (p: Prefs) => routeOf(p) !== "best" || Math.abs(toSlider(p.vot) - toSlider(DEFAULT_VOT)) > 8;
+/** A route preference other than "best" counts as a changed option. (The value of time is no longer
+ * set by hand: bus fares in Agadir differ by a dirham or so; it only drifts a little with the trips picked.) */
+export const prefsChanged = (p: Prefs) => routeOf(p) !== "best";

@@ -7,7 +7,7 @@ import { h, icon, lineBadge } from "../ui/dom.ts";
 import { net, nm, render, router, state } from "../app/state.ts";
 import { avoidedLines, plan, setAvoided, setMode, skipBrt, skipBus } from "../app/plan.ts";
 import { header, linesAt, segmented, settingToggle } from "./common.ts";
-import { fromSlider, getPrefs, prefsChanged, routeOf, routePrefs, savePrefs, toSlider, type RoutePref } from "../app/prefs.ts";
+import { getPrefs, prefsChanged, routeOf, routePrefs, savePrefs, type RoutePref } from "../app/prefs.ts";
 import { DEFAULT_VOT } from "../compare.ts";
 
 /** "07:30", 24-hour in every language, as timetables in Morocco are written. */
@@ -184,31 +184,9 @@ function optionsBody() {
         avoided.has(l.ref) ? h("span", { class: "avoid-x", "aria-hidden": "true" }, icon.close()) : null,
       ),
     );
-  // Time against money: the rider's own trade, and walking counted double if they'd rather not.
-  const prefs = getPrefs();
-  const worth = h("small", { class: "muted pref-worth" }, t("votLabel", Math.round(prefs.vot * 60)));
-  const slider = h("input", {
-    type: "range",
-    min: 0,
-    max: 100,
-    value: toSlider(prefs.vot),
-    class: "pref-slider",
-    "aria-label": t("prefTitle"),
-    // The label follows the finger; the trips re-rank when the finger lifts.
-    oninput: () => (worth.textContent = t("votLabel", Math.round(fromSlider(Number(slider.value)) * 60))),
-    onchange: () => {
-      savePrefs({ ...getPrefs(), vot: fromSlider(Number(slider.value)) });
-      openPanel = "options";
-      render();
-    },
-  });
   return h(
     "div",
     null,
-    h("h3", { class: "section-title label" }, t("howYouLike")),
-    // The slider across, its two ends named underneath, so long labels never squeeze it.
-    h("div", { class: "pref-scale" }, slider, h("div", { class: "pref-ends" }, h("span", null, t("prefSave")), h("span", null, t("prefTime")))),
-    worth,
     h("h3", { class: "section-title label" }, t("routeTitle")),
     segmented<RoutePref>(
       [
