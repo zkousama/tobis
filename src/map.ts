@@ -81,6 +81,7 @@ export class BusMap {
       this.map.once("load", () => {
         try {
           this.addOverlays(handlers);
+          this.drawKept();
           this.foldCredit();
           // A stop label near the edge slides back inside the map; its pointer stays on the stop.
           this.map.on("move", () => this.keepLabelsInside());
@@ -130,9 +131,13 @@ export class BusMap {
     this.map.once("style.load", () => {
       if (!this.handlers) return;
       this.addOverlays(this.handlers, false);
-      if (this.lastTrip) (this.map.getSource("trip") as GeoJSONSource).setData(this.lastTrip);
-      if (this.lastFocus) (this.map.getSource("focus") as GeoJSONSource).setData(this.lastFocus);
+      this.drawKept();
     });
+  }
+  /** Draw the trip or line asked for before the layers existed. */
+  private drawKept() {
+    if (this.lastTrip) (this.map.getSource("trip") as GeoJSONSource | undefined)?.setData(this.lastTrip);
+    if (this.lastFocus) (this.map.getSource("focus") as GeoJSONSource | undefined)?.setData(this.lastFocus);
   }
 
   private addOverlays(h: MapHandlers, bind = true) {
@@ -311,11 +316,13 @@ export class BusMap {
   }
 
   showTrip(j: Journey | null, origin?: LngLat, dest?: LngLat, labels?: { board: string; alight: string; origin: string; dest: string }) {
-    const src = this.map.getSource("trip") as GeoJSONSource;
+    // Before the map has loaded (or while a new style loads) the layers don't exist yet:
+    // what to draw is kept in lastTrip and drawn once they do.
+    const src = this.map.getSource("trip") as GeoJSONSource | undefined;
     this.setPins(origin, dest, labels);
     if (!j) {
       this.lastTrip = undefined;
-      return src.setData(empty());
+      return src?.setData(empty());
     }
     const features: GeoJSON.Feature[] = [];
     const bounds = new maplibregl.LngLatBounds();
@@ -339,21 +346,21 @@ export class BusMap {
       this.marker(off.ll, badge(off.n.d ?? labels?.alight ?? "", colour, "alight"), "bottom");
     }
     this.lastTrip = { type: "FeatureCollection", features };
-    src.setData(this.lastTrip);
+    src?.setData(this.lastTrip);
     if (!bounds.isEmpty()) this.fit(bounds);
   }
 
   showLine(li: number, vi: number) {
     const line = this.net.lines[li];
     const v = line.variants[vi];
-    const src = this.map.getSource("focus") as GeoJSONSource;
+    const src = this.map.getSource("focus") as GeoJSONSource | undefined; // see showTrip
     const colour = visible(line.colour, this.dark ? "#111417" : "#ffffff");
     const features: GeoJSON.Feature[] = [
       { type: "Feature", properties: { colour }, geometry: { type: "LineString", coordinates: v.shape } },
       ...v.stops.map((s) => ({ type: "Feature" as const, properties: { colour, stop: s }, geometry: { type: "Point" as const, coordinates: this.net.stops[s].ll } })),
     ];
     this.lastFocus = { type: "FeatureCollection", features };
-    src.setData(this.lastFocus);
+    src?.setData(this.lastFocus);
     const b = new maplibregl.LngLatBounds();
     v.shape.forEach((c) => b.extend(c));
     if (!b.isEmpty()) this.fit(b);

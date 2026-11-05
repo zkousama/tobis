@@ -1,7 +1,7 @@
 import { dist, type LngLat } from "../geo.ts";
 import { t } from "../i18n.ts";
 import { expandShortUrl, parseInput, type Parsed } from "../geoinput.ts";
-import { meEndpoint, net, nm, render, router, search, state, type Endpoint } from "./state.ts";
+import { current, meEndpoint, net, nm, render, router, search, state, type Endpoint } from "./state.ts";
 import { flash, toast } from "./chrome.ts";
 import { go, setStack } from "./nav.ts";
 import { locate } from "./location.ts";
@@ -205,6 +205,9 @@ export function restoreFromHash() {
   };
   const from = dec(p.get("from"));
   const to = dec(p.get("to"));
+  // This runs once the map has loaded; if the rider has already started something
+  // (a search, a line), don't pull them away from it.
+  if (current().name !== "home") return;
   if (from && to) {
     state.from = from;
     state.to = to;

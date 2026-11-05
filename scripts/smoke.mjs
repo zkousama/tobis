@@ -1,17 +1,29 @@
-// Drives a real Chrome through the main screens of a built Tobis and fails on
-// any page error. Talks to Chrome over its debugging port, in a fresh profile
-// each run (no cache, no storage, no service worker from before).
+// Drives a real Chrome through every scenario of a built Tobis, as a phone and
+// as a desktop browser, and fails on any page error. Talks to Chrome over its
+// debugging port, in a fresh profile per run (no cache, storage or service
+// worker from before). The page's clock is pinned to 10:00, so results don't
+// depend on when the check runs (the Trambus starts at 6:00).
 //
-//   node scripts/smoke.mjs [site] [--cdp=http://127.0.0.1:9222] [--styles=out.json]
+//   node scripts/smoke.mjs [site] [--cdp=http://127.0.0.1:9222] [--only=phone|desktop] [--styles=out.json]
 //
-// --styles also records the computed style and box of every element in the
-// sheet and the map buttons on each screen: two such files from builds that
-// should look the same can be compared with scripts/style-diff.mjs.
+// --styles records the computed style and box of every element in the sheet and
+// the map buttons on the phone's main screens; scripts/style-diff.mjs compares two.
 const args = process.argv.slice(2);
 const opt = (k, d) => args.find((a) => a.startsWith(`--${k}=`))?.slice(k.length + 3) ?? d;
 const SITE = args.find((a) => !a.startsWith("--")) ?? "http://127.0.0.1:4173/";
 const CDP = opt("cdp", "http://127.0.0.1:9222");
 const STYLES = opt("styles");
+const ONLY = opt("only");
+
+const PROFILES = [
+  { name: "phone", width: 393, height: 852, mobile: true, touch: true },
+  { name: "desktop", width: 1366, height: 768, mobile: false, touch: false },
+].filter((p) => !ONLY || p.name === ONLY);
+
+// Places used by the scenarios (lng, lat).
+const TALBORJT = [-9.5981, 30.4202];
+const DCHEIRA = [-9.53, 30.395];
+const TRIP = `#from=${TALBORJT.join(",")},Talborjt&to=${DCHEIRA.join(",")},Dcheira`;
 
 // ---------- a minimal debugging-protocol client ----------
 const version = await (await fetch(`${CDP}/json/version`)).json();
@@ -35,83 +47,581 @@ ws.onmessage = (e) => {
   } else if (m.method) for (const l of listeners) l(m);
 };
 await new Promise((r, j) => ((ws.onopen = r), (ws.onerror = j)));
-
-const { browserContextId } = await send("Target.createBrowserContext", { disposeOnDetach: true });
-const { targetId } = await send("Target.createTarget", { url: "about:blank", browserContextId });
-const { sessionId: s } = await send("Target.attachToTarget", { targetId, flatten: true });
-const problems = [];
-listeners.push((m) => {
-  if (m.sessionId !== s) return;
-  if (m.method === "Runtime.exceptionThrown") problems.push(`exception: ${m.params.exceptionDetails.exception?.description ?? m.params.exceptionDetails.text}`);
-  if (m.method === "Runtime.consoleAPICalled" && m.params.type === "error") problems.push(`console.error: ${m.params.args.map((a) => a.value ?? a.description).join(" ")}`);
-  if (m.method === "Log.entryAdded" && m.params.entry.level === "error" && !/favicon/.test(m.params.entry.url ?? "")) problems.push(`log: ${m.params.entry.text} ${m.params.entry.url ?? ""}`);
-});
-for (const d of ["Page", "Runtime", "Log", "Network"]) await send(`${d}.enable`, {}, s);
-// The same clock every run: 10:00 today, so the Trambus (from 6:00) runs whatever time the check runs at.
-await send(
-  "Page.addScriptToEvaluateOnNewDocument",
-  {
-    source: `(() => {
-      const R = Date, d = new R(), shift = new R(d.getFullYear(), d.getMonth(), d.getDate(), 10, 0).getTime() - R.now();
-      class F extends R { constructor(...a) { a.length ? super(...a) : super(R.now() + shift); } static now() { return R.now() + shift; } }
-      globalThis.Date = F;
-    })();`,
-  },
-  s,
-);
-const phone = async (scheme = "light") => {
-  await send("Emulation.setDeviceMetricsOverride", { width: 393, height: 852, deviceScaleFactor: 2, mobile: true }, s);
-  await send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 5 }, s);
-  await send("Emulation.setFocusEmulationEnabled", { enabled: true }, s); // focus events fire in a background tab too
-  await send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-color-scheme", value: scheme }, { name: "prefers-reduced-motion", value: "reduce" }] }, s);
-};
-await phone();
-
-/** Runs `fn` (a function's source) in the page and returns its result. */
-async function run(fn, ...a) {
-  const r = await send("Runtime.evaluate", { expression: `(${fn})(...${JSON.stringify(a)})`, awaitPromise: true, returnByValue: true }, s);
-  if (r.exceptionDetails) throw new Error(r.exceptionDetails.exception?.description ?? r.exceptionDetails.text);
-  return r.result.value;
-}
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-async function until(what, fn, ms = 20000, ...a) {
-  const end = Date.now() + ms;
-  for (;;) {
-    const v = await run(fn, ...a).catch(() => undefined);
-    if (v) return v;
-    if (Date.now() > end) throw new Error(`timed out waiting for ${what}`);
-    await sleep(200);
-  }
-}
-async function open(url) {
-  // Mark the current document, so the wait below can't be answered by it.
-  await run(() => ((window.__smokeOld = true), true)).catch(() => {});
-  await send("Page.navigate", { url }, s);
-  await until("the planner", () => !window.__smokeOld && document.querySelector(".sheet-body .planner, .sheet-body .view-head") && document.readyState === "complete");
-  await run(() => document.fonts.ready.then(() => true));
-}
 
-// ---------- the walk through ----------
 const results = [];
 const styles = {};
 let failed = false;
-async function step(name, fn) {
-  const before = problems.length;
-  try {
-    await fn();
-    if (problems.length > before) throw new Error(problems.slice(before).join("\n      "));
-    results.push(`ok    ${name}`);
-  } catch (err) {
-    failed = true;
-    results.push(`FAIL  ${name}\n      ${String(err.message ?? err).split("\n").join("\n      ")}`);
-  }
+
+for (const P of PROFILES) await runProfile(P);
+
+ws.close();
+if (STYLES) {
+  const { writeFileSync } = await import("node:fs");
+  writeFileSync(STYLES, JSON.stringify(styles));
 }
-const ok = (cond, msg) => {
-  if (!cond) throw new Error(msg);
-};
+console.log(results.join("\n"));
+console.log(failed ? "\nsmoke: FAILED" : "\nsmoke: all passed");
+process.exit(failed ? 1 : 0);
+
+async function runProfile(P) {
+  const { browserContextId } = await send("Target.createBrowserContext", { disposeOnDetach: true });
+  const { targetId } = await send("Target.createTarget", { url: "about:blank", browserContextId });
+  const { sessionId: s } = await send("Target.attachToTarget", { targetId, flatten: true });
+  const problems = [];
+  const onEvent = (m) => {
+    if (m.sessionId !== s) return;
+    if (m.method === "Runtime.exceptionThrown") problems.push(`exception: ${m.params.exceptionDetails.exception?.description ?? m.params.exceptionDetails.text}`);
+    if (m.method === "Runtime.consoleAPICalled" && m.params.type === "error") problems.push(`console.error: ${m.params.args.map((a) => a.value ?? a.description).join(" ")}`);
+    if (m.method === "Log.entryAdded" && m.params.entry.level === "error" && !/favicon|api\/expand/.test(m.params.entry.url ?? "")) problems.push(`log: ${m.params.entry.text} ${m.params.entry.url ?? ""}`);
+  };
+  listeners.push(onEvent);
+  for (const d of ["Page", "Runtime", "Log", "Network"]) await send(`${d}.enable`, {}, s);
+  await send(
+    "Page.addScriptToEvaluateOnNewDocument",
+    {
+      source: `(() => {
+        const R = Date, d = new R(), shift = new R(d.getFullYear(), d.getMonth(), d.getDate(), 10, 0).getTime() - R.now();
+        class F extends R { constructor(...a) { a.length ? super(...a) : super(R.now() + shift); } static now() { return R.now() + shift; } }
+        globalThis.Date = F;
+      })();`,
+    },
+    s,
+  );
+  const origin = new URL(SITE).origin;
+  await send("Browser.grantPermissions", { origin, browserContextId, permissions: ["geolocation"] });
+  const where = (lng, lat, accuracy = 10) => send("Emulation.setGeolocationOverride", { latitude: lat, longitude: lng, accuracy }, s);
+  await where(...TALBORJT);
+  const look = async (scheme = "light") => {
+    await send("Emulation.setDeviceMetricsOverride", { width: P.width, height: P.height, deviceScaleFactor: P.mobile ? 2 : 1, mobile: P.mobile }, s);
+    await send("Emulation.setTouchEmulationEnabled", P.touch ? { enabled: true, maxTouchPoints: 5 } : { enabled: false }, s);
+    await send("Emulation.setFocusEmulationEnabled", { enabled: true }, s); // focus events fire in a background tab too
+    await send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-color-scheme", value: scheme }, { name: "prefers-reduced-motion", value: "reduce" }] }, s);
+  };
+  await look();
+
+  /** Runs `fn` (a function's source) in the page and returns its result. */
+  async function run(fn, ...a) {
+    const r = await send("Runtime.evaluate", { expression: `(${fn})(...${JSON.stringify(a)})`, awaitPromise: true, returnByValue: true, userGesture: true }, s);
+    if (r.exceptionDetails) throw new Error(r.exceptionDetails.exception?.description ?? r.exceptionDetails.text);
+    return r.result.value;
+  }
+  async function until(what, fn, ms = 20000, ...a) {
+    const end = Date.now() + ms;
+    for (;;) {
+      const v = await run(fn, ...a).catch(() => undefined);
+      if (v) return v;
+      if (Date.now() > end) throw new Error(`timed out waiting for ${what}`);
+      await sleep(200);
+    }
+  }
+  async function open(url) {
+    // Mark the current document, so the wait below can't be answered by it.
+    await run(() => ((window.__smokeOld = true), true)).catch(() => {});
+    await send("Page.navigate", { url }, s);
+    await until("the app", () => !window.__smokeOld && document.querySelector(".sheet-body .planner, .sheet-body .view-head, .sheet-body .empty-state") && document.readyState === "complete");
+    await run(() => document.fonts.ready.then(() => true));
+  }
+  const key = (k, code = k) => send("Input.dispatchKeyEvent", { type: "keyDown", key: k, code, windowsVirtualKeyCode: k === "Enter" ? 13 : k === "Escape" ? 27 : 0 }, s).then(() => send("Input.dispatchKeyEvent", { type: "keyUp", key: k, code }, s));
+  const click = (sel, text) => run((sel, text) => {
+    // Only what's on screen: a hidden element can carry the same text.
+    const el = [...document.querySelectorAll(sel)].find((e) => (!text || e.textContent.includes(text)) && e.getClientRects().length > 0);
+    if (!el) throw new Error(`nothing to click: ${sel}${text ? ` "${text}"` : ""}`);
+    el.click();
+    return true;
+  }, sel, text);
+  const text = (sel) => run((sel) => [...document.querySelectorAll(sel)].map((e) => e.textContent.trim()).join(" | "), sel);
+  const ok = (cond, msg) => {
+    if (!cond) throw new Error(msg);
+  };
+  async function step(name, fn) {
+    const before = problems.length;
+    try {
+      await fn();
+      if (problems.length > before) throw new Error(problems.slice(before).join("\n      "));
+      results.push(`ok    ${P.name.padEnd(7)} ${name}`);
+    } catch (err) {
+      failed = true;
+      results.push(`FAIL  ${P.name.padEnd(7)} ${name}\n      ${String(err.message ?? err).split("\n").join("\n      ")}`);
+    }
+  }
+  const noSideways = async (where) => {
+    const r = await run(() => ({ page: document.documentElement.scrollWidth - innerWidth, sheet: (() => { const b = document.querySelector(".sheet-body"); return b ? b.scrollWidth - b.clientWidth : 0; })() }));
+    ok(r.page <= 1 && r.sheet <= 1, `${where}: scrolls sideways (page ${r.page}px, sheet ${r.sheet}px)`);
+  };
+  const shot = async (name) => {
+    if (!STYLES || P.name !== "phone") return;
+    await run(() => {
+      document.getAnimations().forEach((a) => a.finish());
+      document.querySelectorAll(".toast").forEach((t) => t.remove());
+      const b = document.querySelector(".sheet-body");
+      if (b) b.scrollTop = 0;
+      return true;
+    });
+    await sleep(150);
+    styles[name] = await run(snapshot);
+  };
+  const setLang = (l) => run((l) => (localStorage.setItem("lang", l), true), l);
+  const clearPrefs = () => run(() => (["skipBrt", "skipBus", "avoidLines", "card:BHNS", "avoidWalk", "vot"].forEach((k) => localStorage.removeItem(k)), true));
+  const tripOptions = () => until("trip options", () => document.querySelectorAll(".option").length);
+  const optionLines = () => run(() => [...document.querySelectorAll(".option")].map((o) => [...o.querySelectorAll(".badge")].map((b) => b.textContent.trim())));
+
+  // ---------- the scenarios ----------
+  await step("home: map, rows, no sideways scroll", async () => {
+    // A fresh profile follows the browser's language: pin French, the default the checks read.
+    await open(SITE);
+    await setLang("fr");
+    await open(SITE);
+    await until("the map canvas", () => document.querySelector(".maplibregl-canvas")?.width > 0);
+    const ph = await run(() => [...document.querySelectorAll(".sheet-body input")].map((i) => i.placeholder).join(" "));
+    ok(/Où allez-vous/.test(ph), "no 'Où allez-vous' field");
+    const t = await text(".sheet-body");
+    ok(/Lignes/.test(t) && /Toutes les lignes/.test(t) && /Comment ça marche/.test(t), "a home row is missing");
+    await noSideways("home");
+    if (P.name === "desktop") {
+      const r = await run(() => document.querySelector(".sheet").getBoundingClientRect().toJSON());
+      ok(r.width < 520 && r.height > 600, `the panel isn't a side panel on desktop (${Math.round(r.width)}×${Math.round(r.height)})`);
+    }
+    await shot("home");
+  });
+
+  await step("first visit doesn't reload by itself when the offline copy is saved", async () => {
+    await run(() => ((window.__firstVisit = true), true));
+    await until("the offline copy", async () => {
+      const list = await (await fetch("precache.json")).json();
+      const k = await caches.keys();
+      return k.length === 1 && (await (await caches.open(k[0])).keys()).length >= list.files.length + 1 && navigator.serviceWorker.controller;
+    }, 120000);
+    await sleep(1500);
+    ok(await run(() => window.__firstVisit === true), "the page reloaded");
+  });
+
+  await step("empty-field hints don't look like typed text", async () => {
+    const r = await run(() => {
+      const i = document.querySelector(".sheet-body input");
+      const ph = getComputedStyle(i, "::placeholder");
+      const v = getComputedStyle(i);
+      return { phColor: ph.color, phWeight: ph.fontWeight, color: v.color, weight: v.fontWeight };
+    });
+    ok(r.phColor !== r.color, `hint colour ${r.phColor} = text colour`);
+    ok(Number(r.phWeight) < Number(r.weight), `hint weight ${r.phWeight} not lighter than text ${r.weight}`);
+  });
+
+  await step("my location: 'Partir d'où je suis' uses the GPS", async () => {
+    // The row only shows while location hasn't been allowed; this profile allows it, so it may already be gone.
+    const shown = await run(() => [...document.querySelectorAll(".sheet-body .row")].some((r) => /Partir d'où je suis/.test(r.textContent)));
+    if (shown) await click(".sheet-body .row", "Partir d'où je suis");
+    await until("the location row to go", () => ![...document.querySelectorAll(".sheet-body .row")].some((r) => /Partir d'où je suis/.test(r.textContent)));
+    await until("my position on the map", () => document.querySelector(".me-dot, .maplibregl-marker.me, .me"), 10000).catch(() => {
+      throw new Error("no position marker on the map");
+    });
+  });
+
+  const typeSearch = async (q) => {
+    await run((q) => {
+      const i = document.querySelector(".sheet.view-search .sheet-body input");
+      i.value = q;
+      i.dispatchEvent(new Event("input", { bubbles: true }));
+      return true;
+    }, q);
+  };
+  const openSearch = async () => {
+    await run(() => (document.querySelector(".sheet-body input")?.focus(), true));
+    await until("the search screen", () => document.querySelector(".sheet.view-search .sheet-body input"));
+  };
+
+  await step("search: misspelt, Arabic, a line number", async () => {
+    await openSearch();
+    for (const [q, want] of [["farmacie", /pharmacie/i], ["talbrojt", /talborjt/i], ["انزكان", /inezgane/i]]) {
+      await typeSearch(q);
+      // Wait for this query's results, not the previous one's still on screen.
+      await until(`'${q}' to find ${want}`, (src) => new RegExp(src, "i").test(document.querySelector(".results-list")?.textContent ?? ""), 8000, want.source);
+    }
+    await typeSearch("32");
+    await until("line 32", () => [...document.querySelectorAll(".results-list .badge")].some((b) => b.textContent.trim() === "32"));
+    await shot("search");
+  });
+
+  await step("search: Enter picks the first place and plans from my location", async () => {
+    await typeSearch("dcheira");
+    await until("results for dcheira", () => /dche[iï]ra/i.test(document.querySelector(".results-list .row")?.textContent ?? ""));
+    await run(() => (document.querySelector(".sheet.view-search .sheet-body input").focus(), true));
+    await key("Enter");
+    await tripOptions();
+    const from = await run(() => document.querySelector(".field-from input")?.value ?? "");
+    ok(/position|Ma position|location/i.test(from), `start isn't my location ("${from}")`);
+  });
+
+  await step("search: recent places, then clear history", async () => {
+    await open(SITE + "?recent");
+    await openSearch();
+    await until("recents", () => document.querySelector(".clear-history"));
+    await click(".clear-history");
+    await until("an empty list", () => !document.querySelectorAll(".results-list .row").length);
+    ok(await run(() => localStorage.getItem("recent") === null), "recents still stored");
+  });
+
+  await step("search: a Google Maps link with coordinates", async () => {
+    await typeSearch("Pharmacie test https://www.google.com/maps/place/Pharmacie/@30.4167,-9.5745,17z");
+    await until("the 'Aller à ce point' row", () => [...document.querySelectorAll(".sheet-body .row")].some((r) => /Aller à ce point/.test(r.textContent) && /Pharmacie/.test(r.textContent)));
+    await click(".sheet-body .row", "Aller à ce point");
+    await tripOptions();
+    const to = await run(() => document.querySelector(".field-to input")?.value ?? "");
+    ok(/Pharmacie/.test(to), `destination is "${to}"`);
+  });
+
+  await step("shared to the app (?text=…) sets the destination", async () => {
+    await open(SITE + "?text=" + encodeURIComponent("Pharmacie partagée\nhttps://www.google.com/maps/@30.4167,-9.5745,17z"));
+    await tripOptions();
+    ok(/Pharmacie partagée/.test(await run(() => document.querySelector(".field-to input")?.value ?? "")), "destination not set from the share");
+  });
+
+  await step("results: options, recommended, preferences, avoid walking, swap", async () => {
+    await clearPrefs();
+    await open(SITE + "?results" + TRIP);
+    const n = await tripOptions();
+    ok(n >= 2, `only ${n} option(s)`);
+    ok(/Recommandé/.test(await text(".option:first-child .opt-tags")), "first option isn't 'Recommandé'");
+    ok(/carte/.test(await text(".ticket-card")), "no card cost on the Trambus option");
+    ok(/→/.test(await text(".opt-clock")), "no clock times on the options");
+    await shot("results");
+    await click(".pref-open");
+    const before = await text(".pref-summary");
+    await run(() => {
+      const r = document.querySelector(".pref-slider");
+      r.value = "95";
+      r.dispatchEvent(new Event("input", { bubbles: true }));
+      return true;
+    });
+    ok((await text(".pref-summary")) !== before, "the slider doesn't change the preference");
+    await shot("results-prefs");
+    await click(".prefs .chip-toggle");
+    ok(await run(() => document.querySelector(".prefs .chip-toggle").getAttribute("aria-pressed") === "true"), "'Éviter la marche' didn't switch on");
+    const [a, b] = await run(() => [document.querySelector(".field-from input").value, document.querySelector(".field-to input").value]);
+    await click(".swap");
+    await until("swapped", (a) => document.querySelector(".field-to input")?.value === a, 5000, a);
+    ok((await run(() => document.querySelector(".field-from input").value)) === b, "swap didn't swap");
+    await noSideways("results");
+    await clearPrefs();
+  });
+
+  await step("same start and end says so", async () => {
+    await open(SITE + "?same#from=-9.59810,30.42020,Ici&to=-9.59812,30.42022,Ici");
+    await until("the message", () => /même endroit/.test(document.querySelector(".sheet-body").textContent));
+  });
+
+  const setWhen = async (seg, time) => {
+    await click(".trip-chip", "");
+    await run((seg) => ([...document.querySelectorAll(".trip-panel .segmented button")][seg].click(), true), seg);
+    await run((time) => {
+      [...document.querySelectorAll(".day-chips button")][1].click();
+      const t = document.querySelector(".time-input");
+      t.value = time;
+      t.dispatchEvent(new Event("input", { bubbles: true }));
+      document.querySelector(".when-time button").click();
+      return true;
+    }, time);
+  };
+
+  await step("when: leave at tomorrow 07:30, then arrive by 08:00, then now", async () => {
+    await open(SITE + "?when" + TRIP);
+    await tripOptions();
+    await setWhen(1, "07:30");
+    await until("07:30 departures", () => document.querySelector(".opt-clock") && [...document.querySelectorAll(".opt-clock")].every((e) => e.textContent.includes("07:30")));
+    ok(/Départ.*07:30.*Demain/.test(await text(".trip-chip")), `chip says "${await text(".trip-chip")}"`);
+    await setWhen(2, "08:00");
+    await until("leave-before times", () => document.querySelector(".opt-clock") && [...document.querySelectorAll(".opt-clock")].every((e) => /Partez avant/.test(e.textContent)));
+    await click(".trip-chip", "");
+    await run(() => ([...document.querySelectorAll(".trip-panel .segmented button")][0].click(), true));
+    await until("back to now", () => /Partir maintenant/.test(document.querySelector(".trip-chip").textContent));
+  });
+
+  await step("when: no Trambus at 05:00", async () => {
+    await setWhen(1, "05:00");
+    await until("05:00 departures", () => document.querySelector(".opt-clock")?.textContent.includes("05:00"));
+    ok(!(await optionLines()).flat().includes("Trambus"), "a Trambus option at 05:00");
+  });
+
+  await step("options: buses off, Trambus off, a line avoided, reset", async () => {
+    await clearPrefs();
+    await open(SITE + "?opts" + TRIP);
+    await tripOptions();
+    await run(() => ([...document.querySelectorAll(".trip-chip")][1].click(), true));
+    await click(".trip-panel .setting-row", "Bus");
+    await until("replanned", () => /Options · 1/.test(document.querySelector(".trip-chips").textContent));
+    for (const lines of await optionLines()) for (const l of lines) ok(l === "Trambus", `a bus (${l}) with buses off`);
+    await click(".trip-panel .setting-row", "Bus");
+    await until("buses back", () => !/Options · /.test(document.querySelector(".trip-chips").textContent));
+    await click(".trip-panel .setting-row", "Trambus");
+    await until("replanned", () => /Options · 1/.test(document.querySelector(".trip-chips").textContent));
+    ok(!(await optionLines()).flat().includes("Trambus"), "Trambus still offered");
+    const bus = (await optionLines()).flat().find((l) => l !== "Trambus");
+    ok(bus, "no bus line to avoid");
+    await run((bus) => ([...document.querySelectorAll(".avoid-line")].find((b) => b.textContent.trim() === bus).click(), true), bus);
+    await until("replanned", () => /Options · 2/.test(document.querySelector(".trip-chips").textContent));
+    ok(!(await optionLines()).flat().includes(bus), `line ${bus} still offered`);
+    await click(".trip-panel .link", "initialiser");
+    await until("options reset", () => !/Options · /.test(document.querySelector(".trip-chips").textContent));
+  });
+
+  await step("trip: steps, card note, 'I have the card', stops list", async () => {
+    await clearPrefs();
+    await open(SITE + "?trip" + TRIP);
+    await tripOptions();
+    // The Trambus option, whichever rank it has.
+    await run(() => ([...document.querySelectorAll(".option")].find((o) => /Trambus/.test(o.textContent)).click(), true));
+    await until("the trip steps", () => document.querySelector(".tl-stop"));
+    ok(await run(() => !!document.querySelector(".card-note")), "no card note");
+    await shot("trip");
+    await click(".card-note .chip-toggle");
+    await until("the note to go", () => !document.querySelector(".card-note"));
+    await click(".tl-ride .link", "arrêts");
+    ok(await run(() => !document.querySelector(".mini-stops").hidden), "the stops list didn't open");
+    await run(() => (history.back(), true));
+    await tripOptions();
+    ok(!(await text(".ticket-card")), "card cost still shown after 'I have the card'");
+    await clearPrefs();
+  });
+
+  await step("another stop: get on and get off where I choose, then undo", async () => {
+    await open(SITE + "?pick" + TRIP);
+    await tripOptions();
+    await click(".option");
+    await until("the trip", () => document.querySelector(".tl-other"));
+    await click(".tl-other");
+    await until("the stop list", () => document.querySelectorAll(".pick-stop .row").length > 4);
+    const on = await run(() => {
+      const row = document.querySelectorAll(".pick-stop .row")[4];
+      const n = row.querySelector(".row-main span").textContent;
+      row.click();
+      return n;
+    });
+    await until("'Montée' chip", (n) => [...document.querySelectorAll(".trip-chip")].some((c) => c.textContent.includes(n)), 20000, on);
+    await click(".option");
+    await until("the trip", () => document.querySelectorAll(".tl-other").length);
+    ok((await text(".tl-stop-name")).includes(on), `the trip doesn't get on at ${on}`);
+    await run(() => ([...document.querySelectorAll(".tl-other")].at(-1).click(), true));
+    await until("the stop list", () => document.querySelectorAll(".pick-stop .row").length > 2);
+    await run(() => (document.querySelectorAll(".pick-stop .row")[2].click(), true));
+    await until("two chips", () => document.querySelectorAll(".trip-chip.on").length >= 2);
+    await run(() => ([...document.querySelectorAll(".trip-chip")].find((c) => /Montée/.test(c.textContent)).click(), true));
+    await until("'Montée' gone", () => ![...document.querySelectorAll(".trip-chip")].some((c) => /Montée/.test(c.textContent)));
+  });
+
+  await step("a stop near the destination: 'Descendre ici'", async () => {
+    await open(SITE + "?near" + TRIP);
+    await tripOptions();
+    await click(".stop-near .row");
+    await until("the stop screen", () => document.querySelector(".stop"));
+    await click(".stop .btn", "Descendre ici");
+    await until("'Descente' chip", () => [...document.querySelectorAll(".trip-chip")].some((c) => /Descente/.test(c.textContent)));
+  });
+
+  await step("ride mode: GPS along the line, stops left, get off, arrived", async () => {
+    await clearPrefs();
+    await open(SITE + "?ride" + TRIP);
+    await tripOptions();
+    await click(".option");
+    await until("the trip", () => document.querySelector(".tl-board .badge"));
+    const leg = await run(() => ({
+      line: document.querySelector(".tl-board .badge").textContent.trim(),
+      board: document.querySelector(".tl-stop .tl-stop-name").textContent.trim(),
+      alight: document.querySelector(".tl-off .tl-stop-name").textContent.trim(),
+    }));
+    // The same line and stops in the app's own data, to drive the GPS along them.
+    const net = await (await fetch(new URL("data/agadir.json", SITE))).json();
+    const line = net.lines.find((l) => (l.brt ? "Trambus" : l.ref) === leg.line);
+    let path;
+    for (const v of line?.variants ?? []) {
+      const names = v.stops.map((i) => net.stops[i].n.d);
+      const a = names.indexOf(leg.board);
+      const b = names.indexOf(leg.alight, a + 1);
+      if (a >= 0 && b > a) path = v.stops.slice(a, b + 1).map((i) => net.stops[i].ll);
+    }
+    ok(path, `can't find ${leg.line} from ${leg.board} to ${leg.alight} in the data`);
+    await click(".trip .btn-primary");
+    await until("the ride screen", () => document.querySelector(".ride"));
+    await where(...path[0]);
+    await until("walking or waiting at the stop", () => document.querySelector(".ride-body")?.textContent.length > 0);
+    const lefts = [];
+    for (const ll of path.slice(1)) {
+      await where(...ll);
+      await sleep(400);
+      const n = await run(() => Number(document.querySelector(".ride-big .num")?.textContent ?? -1));
+      if (n >= 0) lefts.push(n);
+    }
+    ok(lefts.length >= 2, `stops-left count never showed (${lefts.join(",")})`);
+    ok(lefts.every((n, i) => i === 0 || n <= lefts[i - 1]), `stops left went up: ${lefts.join(",")}`);
+    await until("'Descendez ici'", () => /Descendez ici/.test(document.querySelector(".ride-body").textContent), 8000);
+    await where(...DCHEIRA);
+    await until("arrived", () => /Arriv/.test(document.querySelector(".ride-body").textContent), 8000);
+    await where(...TALBORJT);
+  });
+
+  await step("lines: list, a line, its other direction, a stop, back steps back", async () => {
+    await open(SITE + "?lines");
+    await click(".sheet-body .row", "Toutes les lignes");
+    await until("the lines list", () => document.querySelectorAll(".sheet-body .row").length > 30);
+    await run(() => ([...document.querySelectorAll(".sheet-body .row")].find((r) => r.querySelector(".badge")?.textContent.trim() === "32").click(), true));
+    await until("line 32", () => document.querySelector(".line"));
+    const dirs = await run(() => document.querySelectorAll(".line .segmented button").length);
+    if (dirs > 1) {
+      await run(() => ([...document.querySelectorAll(".line .segmented button")][1].click(), true));
+      await until("the other direction", () => document.querySelector(".line .segmented button.on") === [...document.querySelectorAll(".line .segmented button")][1]);
+    }
+    await click(".line .row");
+    await until("a stop", () => document.querySelector(".stop"));
+    await run(() => (history.back(), true));
+    await until("back on the line", () => document.querySelector(".line"));
+    if (P.name === "desktop") {
+      await key("Escape");
+      await until("Escape goes back", () => !document.querySelector(".line") && document.querySelectorAll(".sheet-body .row").length > 30);
+    }
+  });
+
+  await step("a slow phone: typing in search before the map has loaded is kept", async () => {
+    await send("Emulation.setCPUThrottlingRate", { rate: 6 }, s);
+    try {
+      await open(SITE + "?slowtype");
+      await openSearch();
+      await typeSearch("pharmacie");
+      await until("the map", () => document.querySelector(".maplibregl-canvas")?.width > 0, 30000);
+      await sleep(1500);
+      ok((await run(() => document.querySelector(".sheet.view-search .sheet-body input")?.value)) === "pharmacie", "the typed search was erased when the map loaded");
+    } finally {
+      await send("Emulation.setCPUThrottlingRate", { rate: 1 }, s);
+    }
+  });
+
+  await step("a slow phone: a line opened before the map has loaded", async () => {
+    await send("Emulation.setCPUThrottlingRate", { rate: 6 }, s);
+    try {
+      await open(SITE + "?slow");
+      await click(".sheet-body .row", "Toutes les lignes");
+      await until("the lines list", () => document.querySelectorAll(".sheet-body .row").length > 30);
+      await run(() => ([...document.querySelectorAll(".sheet-body .row")].find((r) => r.querySelector(".badge")?.textContent.trim() === "32").click(), true));
+      await until("line 32", () => document.querySelector(".line"));
+      await until("the map", () => document.querySelector(".maplibregl-canvas")?.width > 0, 30000);
+      await sleep(1500);
+    } finally {
+      await send("Emulation.setCPUThrottlingRate", { rate: 1 }, s);
+    }
+  });
+
+  await step("settings: languages, themes, Trambus switches, version", async () => {
+    await open(SITE + "?settings");
+    await click(".map-btn");
+    await until("settings", () => document.querySelector(".setting-list"));
+    ok(/Version [0-9a-f]{7}/.test(await text(".sheet-body .fine")), "no version line");
+    await shot("settings");
+    await click(".about .segmented button", "English");
+    await until("English", () => /Settings/.test(document.querySelector(".view-title").textContent) && /Menu/.test(document.querySelector(".map-btn").textContent));
+    await click(".about .segmented button", "الدارجة");
+    await until("Darija, right to left", () => document.documentElement.dir === "rtl");
+    await click(".about .segmented button", "Français");
+    await until("French", () => document.documentElement.dir === "ltr" && /Réglages/.test(document.querySelector(".view-title").textContent));
+    await run(() => ([...document.querySelectorAll(".about .segmented")][1].querySelectorAll("button")[2].click(), true));
+    const dark = await run(() => getComputedStyle(document.body).backgroundColor);
+    await run(() => ([...document.querySelectorAll(".about .segmented")][1].querySelectorAll("button")[1].click(), true));
+    const light = await run(() => getComputedStyle(document.body).backgroundColor);
+    ok(dark !== light, `dark and light look the same (${dark})`);
+    await run(() => ([...document.querySelectorAll(".about .segmented")][1].querySelectorAll("button")[0].click(), true));
+    for (const label of ["J'ai la carte", "Ne pas proposer"]) {
+      await click(".setting-row", label);
+      ok(await run((l) => [...document.querySelectorAll(".setting-row")].find((r) => r.textContent.includes(l)).getAttribute("aria-checked") === "true", label), `${label}: switch didn't turn on`);
+      await click(".setting-row", label);
+    }
+  });
+
+  await step("help: every section", async () => {
+    await open(SITE + "?help");
+    await click(".sheet-body button, .sheet-body a", "Comment ça marche");
+    await until("help", () => document.querySelector(".help"));
+    const ids = await run(() => [...document.querySelectorAll(".help-section")].map((s) => s.id).join(","));
+    for (const id of ["what", "cant", "find", "install", "offline", "location"]) ok(ids.includes(`help-${id}`), `no '${id}' section (${ids})`);
+    await shot("help");
+  });
+
+  await step("Darija, right to left, dark: results", async () => {
+    await look("dark");
+    await setLang("ar");
+    await open(SITE + "?ar" + TRIP);
+    await tripOptions();
+    ok((await run(() => document.documentElement.dir)) === "rtl", "page isn't right to left");
+    await noSideways("Darija results");
+    await shot("results-ar-dark");
+    await setLang("fr");
+    await look("light");
+  });
+
+  await step("200 % text: nothing runs off the side", async () => {
+    for (const [name, url] of [["home", SITE + "?big1"], ["results", SITE + "?big2" + TRIP]]) {
+      await open(url);
+      if (name === "results") await tripOptions();
+      await run(() => ((document.documentElement.style.fontSize = "200%"), true));
+      await noSideways(`${name} at 200 %`);
+    }
+  });
+
+  await step("map: credit folds, stop labels stay on the map", async () => {
+    await run(() => (localStorage.setItem("skipBrt", "1"), true));
+    await open(SITE + "?map" + TRIP);
+    await tripOptions();
+    await until("the stop labels", () => document.querySelectorAll(".stop-badge span").length >= 2);
+    await sleep(1500);
+    const out = await run(() => {
+      const box = document.querySelector(".maplibregl-map").getBoundingClientRect();
+      return [...document.querySelectorAll(".stop-badge span")]
+        .map((s) => ({ t: s.textContent, r: s.getBoundingClientRect() }))
+        .filter(({ r }) => r.right > box.right + 1 || r.left < box.left - 1)
+        .map(({ t, r }) => `${t} (${Math.round(r.left)}–${Math.round(r.right)} of ${Math.round(box.width)})`);
+    });
+    ok(!out.length, `stop label off the map: ${out.join(", ")}`);
+    await until("the credit folded", () => !document.querySelector(".maplibregl-ctrl-attrib.maplibregl-compact-show"), 9000);
+    await clearPrefs();
+  });
+
+  await step("reopening brings back the last trip", async () => {
+    await open(SITE + "?last" + TRIP);
+    await tripOptions();
+    await open(SITE);
+    await until("the trip again", () => document.querySelector(".sheet.view-results") && document.querySelector(".option"));
+  });
+
+  await step("offline: opens, plans, shows the banner, explains short links", async () => {
+    await send("Network.emulateNetworkConditions", { offline: true, latency: 0, downloadThroughput: -1, uploadThroughput: -1 }, s);
+    problems.length = 0;
+    await open(SITE + "?offline" + TRIP);
+    await tripOptions();
+    await until("the map offline", () => document.querySelector(".maplibregl-canvas")?.width > 0);
+    ok(await run(() => !document.querySelector(".offline-banner").hidden), "no offline banner");
+    await open(SITE + "?offline2");
+    await openSearch();
+    await typeSearch("https://maps.app.goo.gl/AbCdEf123");
+    await until("the 'Aller à ce point' row", () => [...document.querySelectorAll(".sheet-body .row")].some((r) => /Aller à ce point/.test(r.textContent) && r.getClientRects().length), 8000).catch(async () => {
+      throw new Error(`no visible link row: ${await run(() => JSON.stringify({ view: document.querySelector(".sheet").className, input: document.querySelector(".sheet-body input")?.value, inputs: document.querySelectorAll(".sheet-body input").length, rows: [...document.querySelectorAll(".sheet-body .row")].map((r) => `${r.getClientRects().length ? "" : "(hidden) "}${r.textContent.slice(0, 50)}`) }))}`);
+    });
+    await run(() => {
+      window.__flashes = [];
+      new MutationObserver(() => window.__flashes.push(document.querySelector(".toast").textContent)).observe(document.querySelector(".toast"), { childList: true, characterData: true, subtree: true });
+      window.__onLineAtClick = navigator.onLine; // reported if the check fails
+      return true;
+    });
+    await click(".sheet-body .row", "Aller à ce point");
+    // Every message shown since the tap (a later one can replace it before we look).
+    await until("the 'needs internet' message", () => window.__flashes.some((f) => /internet/i.test(f)), 5000).catch(async () => {
+      throw new Error(`no 'needs internet' message; shown: ${await run(() => JSON.stringify({ onLineAtTap: window.__onLineAtClick, messages: window.__flashes }))}`);
+    });
+    await send("Network.emulateNetworkConditions", { offline: false, latency: 0, downloadThroughput: -1, uploadThroughput: -1 }, s);
+  });
+
+  listeners.splice(listeners.indexOf(onEvent), 1);
+  await send("Target.closeTarget", { targetId }).catch(() => {});
+  await send("Target.disposeBrowserContext", { browserContextId }).catch(() => {});
+}
 
 // The sheet and the map buttons, element by element: what a style change would move.
-const snapshot = () => {
+function snapshot() {
   const PROPS = ["display", "position", "width", "height", "margin", "padding", "font-family", "font-size", "font-weight", "line-height", "letter-spacing", "color", "background-color", "background-image", "border", "border-radius", "box-shadow", "opacity", "gap", "flex", "grid-template-columns", "align-items", "justify-content", "text-align", "white-space", "overflow", "z-index", "transform", "visibility", "text-overflow", "inset-inline-start", "inset-inline-end", "top", "bottom", "outline", "text-decoration", "cursor"];
   const out = {};
   const path = (el) => {
@@ -136,227 +646,4 @@ const snapshot = () => {
     }
   }
   return out;
-};
-const shot = async (name) => {
-  if (!STYLES) return;
-  await run(() => {
-    document.getAnimations().forEach((a) => a.finish());
-    document.querySelectorAll(".toast").forEach((t) => t.remove()); // timed messages come and go
-    const b = document.querySelector(".sheet-body");
-    if (b) b.scrollTop = 0;
-    return true;
-  });
-  await sleep(150);
-  styles[name] = await run(snapshot);
-};
-
-const TRIP = "#from=-9.59810,30.42020,Talborjt&to=-9.53000,30.39500,Dcheira";
-
-await step("home opens, with the map", async () => {
-  // A fresh profile follows the browser's language: pin French, the default the checks read.
-  await open(SITE);
-  await run(() => (localStorage.setItem("lang", "fr"), true));
-  await open(SITE);
-  await until("the map canvas", () => document.querySelector(".maplibregl-canvas")?.width > 0);
-  const t = await run(() => [...document.querySelectorAll(".sheet-body input")].map((i) => i.placeholder).join(" "));
-  ok(/Où allez-vous/.test(t), "no 'Où allez-vous' field on home");
-  await shot("home");
-});
-
-await step("the first visit doesn't reload by itself when the offline copy is saved", async () => {
-  await run(() => ((window.__firstVisit = true), true));
-  await until("the offline copy", async () => {
-    const list = await (await fetch("precache.json")).json();
-    const k = await caches.keys();
-    return k.length === 1 && (await (await caches.open(k[0])).keys()).length >= list.files.length + 1 && navigator.serviceWorker.controller;
-  }, 120000);
-  await sleep(1500);
-  ok(await run(() => window.__firstVisit === true), "the page reloaded");
-});
-
-await step("search finds a place by a misspelt name", async () => {
-  await run(() => (document.querySelector(".sheet-body input")?.focus(), true));
-  await until("the search screen", () => document.querySelector(".sheet.view-search .sheet-body input"));
-  await run(() => {
-    const i = document.querySelector(".sheet-body input");
-    i.value = "farmacie";
-    i.dispatchEvent(new Event("input", { bubbles: true }));
-    return true;
-  });
-  const n = await until("search results", () => document.querySelectorAll(".sheet-body li .row").length).catch(async (e) => {
-    throw new Error(`${e.message}; screen: ${await run(() => document.querySelector(".sheet").className + " | " + document.querySelector(".sheet-body").innerText.slice(0, 160))}`);
-  });
-  ok(n > 0, "no results for 'farmacie'");
-  await shot("search");
-});
-
-await step("a trip: options compared, the Trambus with its card", async () => {
-  await open(SITE + "?trip" + TRIP);
-  const n = await until("trip options", () => document.querySelectorAll(".option").length);
-  ok(n >= 2, `only ${n} option(s)`);
-  const card = await run(() => document.querySelector(".ticket-card")?.innerText ?? "");
-  ok(/carte/.test(card), "no card cost on the Trambus option");
-  await shot("results");
-  await run(() => (document.querySelector(".pref-open")?.click(), true));
-  await shot("results-prefs");
-});
-
-await step("trip view: steps, the card note, back to the list", async () => {
-  await run(() => (document.querySelector(".option")?.click(), true));
-  await until("the trip steps", () => document.querySelector(".tl-stop"));
-  ok(await run(() => !!document.querySelector(".card-note")), "no card note in the trip");
-  await shot("trip");
-  await run(() => (history.back(), true));
-  await until("the options again", () => document.querySelector(".option"));
-});
-
-await step("settings: language, appearance, Trambus, version", async () => {
-  await run(() => (document.querySelector(".map-btn")?.click(), true));
-  await until("settings", () => document.querySelector(".setting-list"));
-  const t = await run(() => document.querySelector(".sheet-body").innerText);
-  ok(/Langue/.test(t) && /Apparence/.test(t) && /Trambus/.test(t), "a settings section is missing");
-  await shot("settings");
-});
-
-await step("leaving the Trambus out removes it from the options", async () => {
-  await run(() => ([...document.querySelectorAll(".setting-list button")].find((b) => /proposer/.test(b.innerText))?.click(), true));
-  await open(SITE + "?skip" + TRIP);
-  await until("trip options", () => document.querySelector(".option"));
-  const brt = await run(() => [...document.querySelectorAll(".option")].some((o) => /Trambus/.test(o.innerText)));
-  ok(!brt, "a Trambus option is still shown");
-  ok(/Options · 1/.test(await run(() => [...document.querySelectorAll(".trip-chip")].map((c) => c.textContent).join(" "))), "the Options chip doesn't count the Trambus left out");
-  // This trip ends at a stop near the screen's edge with a long name: its label must stay on screen.
-  await until("the stop labels", () => document.querySelectorAll(".stop-badge span").length >= 2);
-  await sleep(1500);
-  const out = await run(() => {
-    const box = document.querySelector(".maplibregl-map").getBoundingClientRect();
-    return [...document.querySelectorAll(".stop-badge span")]
-      .map((s) => ({ t: s.textContent, r: s.getBoundingClientRect() }))
-      .filter(({ r }) => r.right > box.right + 1 || r.left < box.left - 1)
-      .map(({ t, r }) => `${t} (${Math.round(r.left)}–${Math.round(r.right)} of ${Math.round(box.width)})`);
-  });
-  ok(!out.length, `stop label off the map: ${out.join(", ")}`);
-  await run(() => (localStorage.removeItem("skipBrt"), true));
-});
-
-await step("the empty field's hint doesn't look like typed text", async () => {
-  await open(SITE + "?ph");
-  const r = await run(() => {
-    const i = document.querySelector(".sheet-body input");
-    const ph = getComputedStyle(i, "::placeholder");
-    const v = getComputedStyle(i);
-    return { phColor: ph.color, phWeight: ph.fontWeight, color: v.color, weight: v.fontWeight };
-  });
-  ok(r.phColor !== r.color, `placeholder colour ${r.phColor} = text colour`);
-  ok(Number(r.phWeight) < Number(r.weight), `placeholder weight ${r.phWeight} not lighter than text ${r.weight}`);
-});
-
-await step("arrive by: each option says when to leave", async () => {
-  await open(SITE + "?arrive" + TRIP);
-  await until("trip options", () => document.querySelector(".option"));
-  await run(() => (document.querySelector(".trip-chip")?.click(), true));
-  await run(() => ([...document.querySelectorAll(".trip-panel .segmented button")][2]?.click(), true));
-  await run(() => {
-    // Tomorrow 08:00, so it's never already too late.
-    [...document.querySelectorAll(".day-chips button")][1]?.click();
-    const t = document.querySelector(".time-input");
-    t.value = "08:00";
-    [...document.querySelectorAll(".when-time button")][0]?.click();
-    return true;
-  });
-  const clocks = await until("leave-before times", () => {
-    const c = [...document.querySelectorAll(".opt-clock")].map((e) => e.textContent);
-    return c.length && c.every((x) => /Partez avant/.test(x)) ? c : null;
-  });
-  ok(/Arrivée avant/.test(await run(() => document.querySelector(".trip-chip").textContent)), "the chip doesn't say 'Arrivée avant'");
-  ok(clocks.length > 0, "no clock on the options");
-});
-
-await step("options: an avoided line disappears from the trips", async () => {
-  await open(SITE + "?avoid" + TRIP);
-  await until("trip options", () => document.querySelector(".option"));
-  const before = await run(() => [...document.querySelectorAll(".option .badge")].map((b) => b.textContent));
-  const target = before.find((r) => r && r !== "Trambus");
-  ok(target, "no bus line in the options to avoid");
-  await run(() => ([...document.querySelectorAll(".trip-chip")][1]?.click(), true));
-  await run((ref) => ([...document.querySelectorAll(".avoid-line")].find((b) => b.textContent.trim() === ref)?.click(), true), target);
-  await until("replanned", () => document.querySelector(".trip-chip.on"));
-  const after = await run(() => [...document.querySelectorAll(".option .badge")].map((b) => b.textContent));
-  ok(!after.includes(target), `line ${target} still offered`);
-  await run(() => (localStorage.removeItem("avoidLines"), true));
-});
-
-await step("another stop: pick where to get on", async () => {
-  await open(SITE + "?pick" + TRIP);
-  await until("trip options", () => document.querySelector(".option"));
-  await run(() => (document.querySelector(".option")?.click(), true));
-  await until("the trip", () => document.querySelector(".tl-other"));
-  await run(() => (document.querySelector(".tl-other").click(), true));
-  await until("the stop list", () => document.querySelectorAll(".pick-stop .row").length > 3);
-  const name = await run(() => {
-    const row = document.querySelectorAll(".pick-stop .row")[3];
-    const n = row.querySelector(".row-main span").textContent;
-    row.click();
-    return n;
-  });
-  await until("results with the picked stop", () => document.querySelector(".sheet.view-results .trip-chip.on"));
-  const chip = await run(() => [...document.querySelectorAll(".trip-chip")].map((c) => c.textContent).join(" | "));
-  ok(chip.includes(name), `no 'Montée : ${name}' chip (${chip})`);
-});
-
-await step("help opens", async () => {
-  await open(SITE + "?help");
-  await run(() => ([...document.querySelectorAll(".sheet-body button, .sheet-body a")].find((b) => /Comment ça marche/.test(b.innerText))?.click(), true));
-  await until("help", () => document.querySelector(".help"));
-  await shot("help");
-});
-
-await step("Darija, right to left, dark", async () => {
-  await phone("dark");
-  await run(() => (localStorage.setItem("lang", "ar"), true));
-  await open(SITE + "?ar" + TRIP);
-  await until("trip options", () => document.querySelector(".option"));
-  ok((await run(() => document.documentElement.dir)) === "rtl", "page isn't right to left");
-  await shot("results-ar-dark");
-  await run(() => (localStorage.setItem("lang", "fr"), true));
-  await phone("light");
-});
-
-await step("200 % text: nothing runs off the side", async () => {
-  await open(SITE + "?big" + TRIP);
-  await until("trip options", () => document.querySelector(".option"));
-  const wide = await run(() => {
-    document.documentElement.style.fontSize = "200%";
-    const b = document.querySelector(".sheet-body");
-    return b.scrollWidth - b.clientWidth;
-  });
-  ok(wide <= 1, `the sheet scrolls sideways by ${wide}px`);
-});
-
-await step("works offline once saved", async () => {
-  await open(SITE);
-  await until("the offline copy", async () => {
-    const list = await (await fetch("precache.json")).json();
-    const k = await caches.keys();
-    return k.length === 1 && (await (await caches.open(k[0])).keys()).length >= list.files.length + 1;
-  }, 120000);
-  await send("Network.emulateNetworkConditions", { offline: true, latency: 0, downloadThroughput: -1, uploadThroughput: -1 }, s);
-  // The planner, the data and the map must all come from the phone.
-  problems.length = 0;
-  await open(SITE + "?offline" + TRIP);
-  await until("trip options offline", () => document.querySelector(".option"));
-  await until("the map offline", () => document.querySelector(".maplibregl-canvas")?.width > 0);
-  ok(await run(() => !document.querySelector(".offline-banner").hidden), "no offline banner");
-  await send("Network.emulateNetworkConditions", { offline: false, latency: 0, downloadThroughput: -1, uploadThroughput: -1 }, s);
-});
-
-await send("Target.closeTarget", { targetId }).catch(() => {});
-await send("Target.disposeBrowserContext", { browserContextId }).catch(() => {});
-ws.close();
-if (STYLES) {
-  const { writeFileSync } = await import("node:fs");
-  writeFileSync(STYLES, JSON.stringify(styles));
 }
-console.log(results.join("\n"));
-console.log(failed ? "\nsmoke: FAILED" : "\nsmoke: all passed");
-process.exit(failed ? 1 : 0);

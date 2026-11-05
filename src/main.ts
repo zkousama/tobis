@@ -66,7 +66,8 @@ async function boot() {
   }));
   await bmap!.ready;
   if (state.me) bmap?.setMe(state.me.ll, state.me.acc);
-  render();
+  // Redraw so the screen's map layers appear, except mid-search: that would erase what the rider is typing.
+  if (current().name !== "search") render();
   // Switching versions reloads the page: fine while the app is just opening, not mid-search or mid-ride.
   registerOffline(onOfflineProgress, t, () => performance.now() < 15000 && ["home", "results"].includes(current().name));
   // Street walking: swap it in once loaded, and redo an open plan with it.
