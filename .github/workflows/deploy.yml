@@ -51,8 +51,16 @@ jobs:
       - name: smoke
         run: |
           python3 scripts/serve-like-pages.py dist 4173 2>/dev/null &
-          google-chrome --headless=new --no-first-run --remote-debugging-port=9222 --user-data-dir="$RUNNER_TEMP/chrome" about:blank >/dev/null 2>&1 &
-          for i in $(seq 1 30); do curl -sf http://127.0.0.1:9222/json/version >/dev/null && curl -sf http://127.0.0.1:4173/ >/dev/null && break; sleep 1; done
+          start_chrome() { google-chrome --headless=new --no-first-run --no-default-browser-check --disable-gpu --remote-debugging-port=9222 --user-data-dir="$RUNNER_TEMP/chrome" about:blank >"$RUNNER_TEMP/chrome.log" 2>&1 & }
+          start_chrome
+          # Chrome can take a while to come up on a busy runner: wait up to 90 s, start it again if it died,
+          # and fail with its log rather than a bare "connection refused".
+          for i in $(seq 1 90); do
+            curl -sf http://127.0.0.1:9222/json/version >/dev/null && curl -sf http://127.0.0.1:4173/ >/dev/null && break
+            if [ "$i" = 30 ] && ! pgrep -f "remote-debugging-port=9222" >/dev/null; then echo "Chrome exited; starting it again"; start_chrome; fi
+            sleep 1
+          done
+          if ! curl -sf http://127.0.0.1:9222/json/version >/dev/null; then echo "Chrome never came up:"; tail -40 "$RUNNER_TEMP/chrome.log"; exit 1; fi
           node scripts/smoke.mjs http://127.0.0.1:4173/
 
       - name: deploy

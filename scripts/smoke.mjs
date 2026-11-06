@@ -31,7 +31,18 @@ const DCHEIRA = [-9.53, 30.395];
 const TRIP = `#from=${TALBORJT.join(",")},Talborjt&to=${DCHEIRA.join(",")},Dcheira`;
 
 // ---------- a minimal debugging-protocol client ----------
-const version = await (await fetch(`${CDP}/json/version`)).json();
+// Chrome may still be starting (on a busy runner): keep asking for 30 s before giving up.
+async function chromeVersion() {
+  for (let i = 0; ; i++) {
+    try {
+      return await (await fetch(`${CDP}/json/version`)).json();
+    } catch (err) {
+      if (i >= 30) throw new Error(`no Chrome on ${CDP} after 30 s (${err.cause?.code ?? err.message})`);
+      await new Promise((r) => setTimeout(r, 1000));
+    }
+  }
+}
+const version = await chromeVersion();
 const ws = new WebSocket(version.webSocketDebuggerUrl);
 let seq = 0;
 const pending = new Map();
