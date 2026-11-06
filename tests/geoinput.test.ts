@@ -68,3 +68,10 @@ test("a Google Maps share link that lands on a plus code and a name (no coordina
   // Without a nearby reference a short plus code means nothing.
   assert.equal(parseMapsUrl("https://maps.google.com/maps?q=CC65+5MW+Cabinet").ll, undefined);
 });
+
+test("shared place names lose the country and the postcode", async () => {
+  const { tidyName } = await import("../src/geoinput.ts");
+  assert.equal(tidyName("The Corniche Agadir, Morocco"), "The Corniche Agadir");
+  assert.equal(tidyName("Cabinet Dr X, Agadir 80000"), "Cabinet Dr X");
+  assert.equal(tidyName("Pharmacie Al Amal"), "Pharmacie Al Amal");
+});

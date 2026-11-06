@@ -6,7 +6,10 @@ import { mkdirSync, writeFileSync } from "node:fs";
 const args = process.argv.slice(2);
 const SITE = args.find((a) => !a.startsWith("--")) ?? "http://127.0.0.1:4173/";
 const CDP = args.find((a) => a.startsWith("--cdp="))?.slice(6) ?? "http://127.0.0.1:9222";
-const OUT = new URL("../docs/screenshots/", import.meta.url);
+// --at=01:28 pins the page clock to another time; --out=dir writes elsewhere (for reviews).
+const AT = args.find((a) => a.startsWith("--at="))?.slice(5) ?? "10:00";
+const OUT_ARG = args.find((a) => a.startsWith("--out="))?.slice(6);
+const OUT = OUT_ARG ? new URL(`file://${OUT_ARG.replace(/\/?$/, "/")}`) : new URL("../docs/screenshots/", import.meta.url);
 mkdirSync(OUT, { recursive: true });
 
 const TALBORJT = [-9.5981, 30.4202];
@@ -45,7 +48,7 @@ await send(
   "Page.addScriptToEvaluateOnNewDocument",
   {
     source: `(() => {
-      const R = Date, d = new R(), shift = new R(d.getFullYear(), d.getMonth(), d.getDate(), 10, 0).getTime() - R.now();
+      const R = Date, d = new R(), shift = new R(d.getFullYear(), d.getMonth(), d.getDate(), ${Number(AT.split(":")[0])}, ${Number(AT.split(":")[1])}).getTime() - R.now();
       class F extends R { constructor(...a) { a.length ? super(...a) : super(R.now() + shift); } static now() { return R.now() + shift; } }
       globalThis.Date = F;
     })();`,
@@ -91,7 +94,7 @@ async function settle() {
 async function shot(name) {
   const { data } = await send("Page.captureScreenshot", { format: "png" }, s);
   writeFileSync(new URL(`${name}.png`, OUT), Buffer.from(data, "base64"));
-  console.log(`docs/screenshots/${name}.png`);
+  console.log(new URL(`${name}.png`, OUT).pathname);
 }
 
 await phone("light");

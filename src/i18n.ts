@@ -129,6 +129,8 @@ const S = {
   takeBusHere: { fr: "Prendre un bus ici", ar: "نشد الطوبيس من هنا", en: "Catch a bus here" },
   takeBusHereSub: { fr: "à pied depuis ma position", ar: "على رجلي من فين أنا", en: "walking from where I am" },
   takeBusWhereTo: { fr: "Où allez-vous depuis cet arrêt ?", ar: "فين غادي من هاد لاري؟", en: "Where to from this stop?" },
+  arriveAround: { fr: "arrivée vers {x}", ar: "توصل حوالي {x}", en: "arrive around {x}" },
+  nightUnsure: { fr: "Peut-être pas de bus à cette heure", ar: "يمكن ما كاينش طوبيس فهاد الساعة", en: "May not run at this hour" },
   version: { fr: "Version {x}", ar: "النسخة {x}", en: "Version {x}" },
   updated: { fr: "Nouvelle version prête · Recharger", ar: "كاينة نسخة جديدة · عاود شارجي", en: "New version ready · Reload" },
   settings: { fr: "Réglages", ar: "الباراميترات", en: "Settings" },

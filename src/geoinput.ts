@@ -75,6 +75,15 @@ const num = (s: string) => Number(s);
 const valid = (lat: number, lng: number) => Number.isFinite(lat) && Number.isFinite(lng) && Math.abs(lat) <= 90 && Math.abs(lng) <= 180;
 
 /** Coordinates and place name inside a Google Maps URL, if any. */
+/** A place name from Google, without the parts that add nothing here: ", Morocco", ", Agadir 80000". */
+export function tidyName(n: string): string {
+  return n
+    .replace(/,?\s*(Morocco|Maroc|المغرب)\s*$/i, "")
+    .replace(/,?\s*\b\d{5}\b\s*$/, "")
+    .replace(/,\s*(Agadir|Inezgane|Aït Melloul|Ait Melloul|Dcheira|Taghazout)\s*$/i, "")
+    .trim();
+}
+
 export function parseMapsUrl(raw: string, ref?: LngLat): Parsed {
   let url: URL;
   try {
@@ -128,6 +137,7 @@ export function parseInput(text: string, ref: LngLat): Parsed {
     // Google's share text puts the place name before the link.
     const before = t.slice(0, urlMatch.index).trim().replace(/[\s,:-]+$/, "");
     if (!parsed.name && before) parsed.name = before.split("\n")[0];
+    if (parsed.name) parsed.name = tidyName(parsed.name);
     return parsed;
   }
   const geo = /^geo:(-?\d+\.?\d*),(-?\d+\.?\d*)(?:\?q=([^&]+))?/i.exec(t);

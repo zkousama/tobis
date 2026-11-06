@@ -185,3 +185,15 @@ test("each line's two directions head to different places (ALSA copies the outbo
     assert.equal(new Set(tos).size, tos.length, `line ${l.ref}: ${tos.join(" / ")}`);
   }
 });
+
+test("ALSA hours: only line 26's look real (06:30-21:00, every 30 min), so it's off the table at 01:30", { skip: !have }, async () => {
+  const { runsAt } = await import("../src/router.ts");
+  const withHours = net.lines.filter((l) => !l.brt && l.hours).map((l) => l.ref);
+  assert.deepEqual(withHours, ["26"]);
+  const l26 = net.lines.find((l) => l.ref === "26")!;
+  assert.deepEqual(l26.hours, { first: "06:30", last: "21:00" });
+  assert.equal(l26.headway, 30);
+  assert.ok(runsAt(l26.hours, 10 * 60), "runs at 10:00");
+  assert.ok(!runsAt(l26.hours, 90), "runs at 01:30");
+  assert.ok(!runsAt(l26.hours, 21 * 60 + 30), "runs at 21:30");
+});

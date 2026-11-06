@@ -6,6 +6,8 @@ import { visible } from "../ui/colour.ts";
 import { fareFor, fmtDH, hasCard } from "../fares.ts";
 import { net, nm, render, state } from "../app/state.ts";
 import { go } from "../app/nav.ts";
+import { startTime } from "../app/plan.ts";
+import { clock } from "./tripopts.ts";
 import { cardNote, header, journeyFare, legChips, stopLine, variantOf } from "./common.ts";
 
 export const DIRS = {
@@ -21,6 +23,13 @@ export function heading(a: LngLat, b: LngLat) {
 
 // A trip as a vertical route: dotted line for walking, the line's colour for
 // riding, a dot at each place you change what you're doing.
+// When you'd be there: from now, or from the chosen departure; for "arrive by", by when.
+function arrival(seconds: number) {
+  const w = state.when;
+  if (w.mode === "arrive") return t("whenSummaryArrive", clock(new Date(w.at)));
+  return t("arriveAround", clock(new Date(startTime().getTime() + seconds * 1000)));
+}
+
 export function tripBody(index: number) {
   const j = state.journeys[index];
   const steps: Node[] = [];
@@ -123,7 +132,7 @@ export function tripBody(index: number) {
       "div",
       { class: "trip-summary" },
       h("span", { class: "journey-time" }, `≈ ${fmtMinutes(j.seconds)}`),
-      h("span", { class: "muted" }, `${fmtDistance(j.walkMetres)} ${t("walkMin")}${fare ? ` · ≈ ${fmtDH(fare)}` : ""}`),
+      h("span", { class: "muted" }, `${arrival(j.seconds)} · ${fmtDistance(j.walkMetres)} ${t("walkMin")}${fare ? ` · ≈ ${fmtDH(fare)}` : ""}`),
     ),
     // Start sits under the summary, as in a maps app: seen at once, and never floating over the steps.
     h("div", { class: "trip-start" }, h("button", { class: "btn btn-primary", onclick: () => go({ name: "ride", index }) }, icon.arrow(), t("startTrip"))),

@@ -82,6 +82,10 @@ export class BusMap {
         try {
           this.addOverlays(handlers);
           this.drawKept();
+          this.refit();
+          // A pan or zoom by the rider (not by us) ends the automatic framing.
+          for (const ev of ["dragstart", "zoomstart", "rotatestart"] as const) this.map.on(ev, (e) => e.originalEvent && (this.riderMoved = true));
+          this.map.on("resize", () => this.refit());
           this.foldCredit();
           // A stop label near the edge slides back inside the map; its pointer stays on the stop.
           this.map.on("move", () => this.keepLabelsInside());
@@ -372,6 +376,7 @@ export class BusMap {
   }
   clearTrip() {
     this.lastTrip = undefined;
+    this.framed = undefined;
     (this.map.getSource("trip") as GeoJSONSource | undefined)?.setData(empty());
     this.clearMarkers();
   }
@@ -406,8 +411,17 @@ export class BusMap {
     this.map.flyTo({ center: ll, zoom, padding: this.padding(), duration: motion(600) });
   }
 
+  // The trip or line to keep in frame: re-fitted once the map has loaded and when the screen size
+  // settles (an iPhone's does, just after opening), until the rider pans or zooms themselves.
+  private framed?: maplibregl.LngLatBounds;
+  private riderMoved = false;
   fit(b: maplibregl.LngLatBounds) {
+    this.framed = b;
+    this.riderMoved = false;
     this.map.fitBounds(b, { padding: this.padding(), maxZoom: 16.5, duration: motion(600) });
+  }
+  private refit() {
+    if (this.framed && !this.riderMoved) this.map.fitBounds(this.framed, { padding: this.padding(), maxZoom: 16.5, duration: 0 });
   }
 
   /** Keep content clear of the panel: bottom sheet on phones, side panel on wide screens. */

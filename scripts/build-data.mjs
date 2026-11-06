@@ -599,10 +599,27 @@ function zonesFor(seqIdx, fare, cityEnd) {
   return seqIdx.map((si) => anchors.reduce((best, a, i) => (dist(stops[si].ll, a) < dist(stops[si].ll, anchors[best]) ? i : best), 0));
 }
 
+// ALSA's published hours: [first, last, first, last, every N min] per day type. Most lines carry the
+// same filler (6:25 to 10:30), so only hours that span a real day (8 hours or more) are kept.
+function parseHours(raw) {
+  const winter = raw?.horarios?.find((h) => h.invierno)?.invierno ?? (raw?.horarios?.[0] && Object.values(raw.horarios[0])[0]);
+  const weekday = winter?.find?.((d) => d.lunesViernes)?.lunesViernes;
+  const vals = (weekday ?? []).map((x) => Object.values(x)[0]);
+  const mins = (t) => (/^\d{1,2}:\d{2}$/.test(t ?? "") ? Number(t.split(":")[0]) * 60 + Number(t.split(":")[1]) : undefined);
+  const times = vals.slice(0, 4).map(mins).filter((m) => m !== undefined);
+  if (times.length < 2) return undefined;
+  const first = Math.min(...times), last = Math.max(...times);
+  if (last - first < 8 * 60) return undefined;
+  const hhmm = (m) => `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`;
+  const every = Number(vals[4]);
+  return { hours: { first: hhmm(first), last: hhmm(last) }, headway: every > 0 && every <= 120 ? every : undefined };
+}
+
 if (alsa) {
   for (const l of alsa.lines) {
     const ref = l.id.replace(/^L-?/, "");
     const fare = parseFare(alsaDetails[l.id]?.tarifa);
+    const published = parseHours(alsaDetails[l.id]?.horario);
     for (const dirKey of ["outgoing", "return"]) {
       const dir = l[dirKey];
       const seqIdx = [];
@@ -624,7 +641,7 @@ if (alsa) {
         to: cleanName(copied ? dir.lineHeader : dir.lineEnd),
         name: cleanName(l.surname.replace(/^[^A-Z]*:\s*/, "")),
       };
-      entries.push({ rel, t, ref, isBrt: false, seqIdx, tr, alsa: true, fare, colour: `#${String(l.color).replace("#", "")}` });
+      entries.push({ rel, t, ref, isBrt: false, seqIdx, tr, alsa: true, fare, colour: `#${String(l.color).replace("#", "")}`, ...(published?.hours ? { hours: published.hours } : {}), ...(published?.headway ? { headway: published.headway } : {}) });
       if (tr) report.sides.push({ rel: rel.id, ref, clean: tr.share <= SCRAMBLED, ...rightSide(tr) });
     }
   }

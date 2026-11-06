@@ -1,6 +1,6 @@
 import { dist, type LngLat } from "../geo.ts";
 import { t } from "../i18n.ts";
-import { expandShortUrl, parseInput, type Parsed } from "../geoinput.ts";
+import { expandShortUrl, parseInput, tidyName, type Parsed } from "../geoinput.ts";
 import { current, meEndpoint, net, nm, render, router, search, state, type Endpoint } from "./state.ts";
 import { flash, toast } from "./chrome.ts";
 import { go, setStack } from "./nav.ts";
@@ -201,7 +201,7 @@ export async function resolveParsed(p: Parsed): Promise<Endpoint | undefined> {
     return;
   }
   toast.classList.remove("show");
-  return { ll: r.ll, label: { d: r.name || t("sharedPlace") }, kind: "link", sub: t("fromGoogle") };
+  return { ll: r.ll, label: { d: (r.name && tidyName(r.name)) || t("sharedPlace") }, kind: "link", sub: t("fromGoogle") };
 }
 
 /** Opened from the share menu (Web Share Target): ?title=&text=&url= */

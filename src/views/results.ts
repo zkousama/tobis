@@ -74,7 +74,7 @@ export function resultsBody() {
   // No bus within the usual walk: say how far the first stop is, before the options.
   const firstWalk = state.journeys.find((j) => j.rides > 0)?.legs[0];
   const longWalk = state.widened && firstWalk?.kind === "walk" ? h("p", { class: "tip tip-walk" }, icon.walk(), h("small", null, t("longWalk", fmtMinutes(firstWalk.seconds)))) : null;
-  return h("div", { class: "results" }, to?.sub ? h("p", { class: "muted", style: "margin:2px 0 4px" }, nm(to.sub)) : null, tripControls(), compareBlock(longWalk), nearBlock, dataNote());
+  return h("div", { class: "results" }, tripControls(), compareBlock(longWalk), nearBlock, dataNote());
 }
 
 // ---------- comparing every way to get there ----------
@@ -94,7 +94,8 @@ export function compareBlock(extraNote: Node | null = null) {
       return leave.getTime() < Date.now() ? t("tooLate") : t("leaveBefore", clock(leave));
     }
     const t0 = startTime();
-    return `${clock(t0)} – ${clock(new Date(t0.getTime() + o.seconds * 1000))}`;
+    const end = new Date(t0.getTime() + o.seconds * 1000);
+    return w.mode === "now" ? t("arriveAround", clock(end)) : `${clock(t0)} – ${clock(end)}`;
   };
   const prefs = getPrefs();
   // Drop options that are worse than another on time, price and walking at once.
@@ -102,8 +103,15 @@ export function compareBlock(extraNote: Node | null = null) {
   const hidden = options.length - front.length;
   const win = winners(options);
   const list = h("div", { class: "options" });
-  // Notes (late night, a long walk to the first stop) go under the first trip, not above all of them.
-  const notes = [extraNote, night ? h("p", { class: "tip tip-night" }, icon.clock(), h("small", null, t("nightNote"))) : null].filter(Boolean) as Node[];
+  // A long walk to the first stop is told under the first trip. Late at night the warning comes first:
+  // it changes what every trip below can promise.
+  const notes = [extraNote].filter(Boolean) as Node[];
+  const nightWarning = night ? h("p", { class: "tip tip-night", role: "note" }, icon.clock(), h("span", null, t("nightNote"))) : null;
+  // Late at night, a bus whose line publishes no hours may well not come.
+  const unsure = (o: Option) => {
+    if (!night || o.journey === undefined) return false;
+    return state.journeys[o.journey].legs.some((l) => l.kind === "ride" && !net.lines[l.line].hours);
+  };
   const draw = () => {
     const ranked = recommend(showAllOptions ? options : front, prefs);
     const longest = Math.max(...ranked.map((o) => o.range[1]), 1);
@@ -113,7 +121,7 @@ export function compareBlock(extraNote: Node | null = null) {
           o,
           i === 0,
           // The top option just says so; the others say what they're best at.
-          (i === 0 ? [t("recommended")] : [nearTie(ranked[0], o, prefs) && t("nearTie"), win.fast === o && t("prioFast"), win.cheap === o && t("prioCheap"), win.walk === o && t("prioWalk")]).filter(Boolean) as string[],
+          [...(unsure(o) ? [t("nightUnsure")] : []), ...(i === 0 ? [t("recommended")] : [nearTie(ranked[0], o, prefs) && t("nearTie"), win.fast === o && t("prioFast"), win.cheap === o && t("prioCheap"), win.walk === o && t("prioWalk")])].filter(Boolean) as string[],
           longest,
           i === 0 ? null : tradeText(ranked[0], o),
           clockText(o),
@@ -133,6 +141,7 @@ export function compareBlock(extraNote: Node | null = null) {
   return h(
     "div",
     { class: "compare" },
+    nightWarning,
     list,
     hidden > 0
       ? h(
@@ -221,7 +230,7 @@ export function optionRow(o: Option, first: boolean, tags: string[], longest: nu
       h(
         "div",
         { class: "opt-main" },
-        tags.length ? h("div", { class: "opt-tags" }, tags.map((x) => h("span", { class: "opt-tag" }, x))) : null,
+        tags.length ? h("div", { class: "opt-tags" }, tags.map((x) => h("span", { class: `opt-tag${x === t("nightUnsure") ? " opt-tag-warn" : ""}` }, x))) : null,
         head,
         h("span", { class: "journey-sub" }, sub),
         clockLine ? h("span", { class: "opt-clock" }, clockLine) : null,

@@ -50,8 +50,8 @@ export interface Line {
   variants: Variant[];
   fare?: LineFare;
   headway?: number; // minutes between buses, when the operator publishes it
-  // Service hours ("06:00"), only when the operator publishes them and they look real.
-  // ALSA's own hours are left out: 5 of the 6 lines that list any carry the same filler values.
+  // Service hours ("06:00"), only when the operator publishes them and they look real: the Trambus,
+  // and ALSA lines whose hours span a real day (most ALSA lines carry the same 6:25-10:30 filler).
   hours?: { first?: string; last?: string };
   taxi?: boolean; // a grand taxi route: leaves its stand when full
 }

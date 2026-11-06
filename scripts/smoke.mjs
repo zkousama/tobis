@@ -334,7 +334,7 @@ async function runProfile(P) {
     const tall = await run(() => Math.max(...[...document.querySelectorAll(".option .badge")].map((b) => b.getBoundingClientRect().height)));
     ok(tall <= 40, `a line badge is ${Math.round(tall)}px tall`);
     // Times sit in direction marks (they read right inside Darija text): "⁦10:00⁩ – ⁦10:46⁩".
-    ok(/\d\d:\d\d\D{0,3} – \D{0,3}\d\d:\d\d/.test(await text(".opt-clock")), `no clock times on the options ("${await text(".opt-clock")}")`);
+    ok(/arrivée vers \D{0,3}\d\d:\d\d/.test(await text(".opt-clock")), `no arrival time on the options ("${await text(".opt-clock")}")`);
     await shot("results");
     await audit("results");
     // The route preference, in Options with the lines and modes.
@@ -395,6 +395,17 @@ async function runProfile(P) {
     await setWhen(1, "05:00");
     await until("05:00 departures", () => document.querySelector(".opt-clock")?.textContent.includes("05:00"));
     ok(!(await optionLines()).flat().includes("Trambus"), "a Trambus option at 05:00");
+  });
+
+  await step("late at night: the warning comes first, buses say they may not run, no line 26", async () => {
+    await open(SITE + "?night" + TRIP);
+    await tripOptions();
+    await setWhen(1, "01:28");
+    await until("night results", () => document.querySelector(".compare > .tip-night"));
+    const first = await run(() => document.querySelector(".compare").firstElementChild.className);
+    ok(/tip-night/.test(first), `the first thing in the results is "${first}", not the night warning`);
+    ok(/Peut-être pas de bus/.test(await text(".opt-tag-warn")), "no 'may not run' tag on the buses");
+    ok(!(await optionLines()).flat().includes("26"), "line 26 offered at 01:28 (it runs 06:30-21:00)");
   });
 
   await step("options: buses off, Trambus off, a line avoided, reset", async () => {

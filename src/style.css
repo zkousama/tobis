@@ -16,6 +16,8 @@
   --rule: #e2e5e8;
   --accent: #1f56a8;
   --dest: #c8392b; /* the destination pin: 5.5:1 on white */
+  --warn-bg: #fdf3dc;
+  --warn-ink: #5c4400;
   --origin: #39424b; /* the start mark */
   --accent-2: #17468d;
   --on-accent: #ffffff;
@@ -45,6 +47,8 @@
     --rule: #2b3137;
     --accent: #7aa7f0;
   --dest: #ff7b6b;
+  --warn-bg: #3a2f12;
+  --warn-ink: #f5d78a;
   --origin: #dbe2e8;
     --accent-2: #9bbcf5;
     --on-accent: #0c1726;
@@ -66,6 +70,8 @@
   --rule: #2b3137;
   --accent: #7aa7f0;
   --dest: #ff7b6b;
+  --warn-bg: #3a2f12;
+  --warn-ink: #f5d78a;
   --origin: #dbe2e8;
   --accent-2: #9bbcf5;
   --on-accent: #0c1726;
@@ -1883,4 +1889,35 @@ button.option:hover {
 .trip-start {
   display: grid;
   margin: 2px 0 14px;
+}
+/* A long place name ends in "…" in its field rather than being cut mid-word. */
+.field-input {
+  text-overflow: ellipsis;
+}
+/* Late at night: the warning above the trips, so it's read first. */
+.tip-night {
+  align-items: flex-start;
+  margin: 0 0 10px;
+  background: var(--warn-bg, #fdf3dc);
+  color: var(--warn-ink, #5c4400);
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+/* A warning tag (late night) reads as a warning, not as praise. */
+.opt-tag-warn {
+  background: var(--warn-bg);
+  color: var(--warn-ink);
+}
+/* Results: one line per field, as in a maps app; the ring and the pin say which is which.
+   The word stays for screen readers. */
+.planner-results .field-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.planner-results .field {
+  min-height: 46px;
 }
