@@ -1,4 +1,4 @@
-import { ride, state, current, render, type View } from "./state.ts";
+import { bmap, ride, state, current, render, type View } from "./state.ts";
 import { handle, sheet } from "./chrome.ts";
 
 // ---------- navigation ----------
@@ -41,6 +41,8 @@ export function setSheet(size: "peek" | "half" | "full") {
   state.sheet = size;
   sheet.dataset.size = size;
   handle.setAttribute("aria-expanded", size === "full" ? "true" : "false");
+  // Wait for the panel's height change to finish, then place the map callouts in the space left.
+  setTimeout(() => bmap?.relayoutCallouts(), 320);
 }
 // A sheet the rider pulled open is a step Back can undo, like a screen.
 export let sheetEntry = false;

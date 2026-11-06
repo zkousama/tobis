@@ -177,7 +177,9 @@ async function runProfile(P) {
         exclude: [[".maplibregl-canvas-container"]],
         resultTypes: ["violations"],
       });
-      return r.violations.map((v) => ({ id: v.id, impact: v.impact, help: v.help, where: v.nodes.slice(0, 3).map((n) => n.target.join(" ")) }));
+      // Each failing element, with what axe says it collides with (named in the log if it fails on GitHub).
+      const near = (n) => [...(n.any ?? []), ...(n.none ?? [])].flatMap((c) => (c.relatedNodes ?? []).map((x) => x.target.join(" "))).slice(0, 3);
+      return r.violations.map((v) => ({ id: v.id, impact: v.impact, help: v.help, where: v.nodes.slice(0, 3).map((n) => n.target.join(" ") + (near(n).length ? ` (next to: ${near(n).join(", ")})` : "")) }));
     });
     const bad = found.filter((v) => v.impact === "serious" || v.impact === "critical");
     for (const v of found.filter((v) => !bad.includes(v))) notes.push(`${P.name} ${screen}: ${v.impact} ${v.id} (${v.help}) at ${v.where.join(", ")}`);

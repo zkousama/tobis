@@ -366,9 +366,18 @@ export class BusMap {
     else requestAnimationFrame(run);
   }
   private layoutPending = false;
+  /** Place the callouts again: the panel changed size, so the free part of the map did too. */
+  relayoutCallouts() {
+    if (this.callouts.length) this.layoutSoon();
+  }
   private layoutCallouts() {
-    // Keep clear of the stop labels and the start and end pins too, so no callout ends up half hidden.
-    const placed: DOMRect[] = [...this.map.getContainer().querySelectorAll(".stop-badge span, .pin")].map((e) => e.getBoundingClientRect());
+    // Keep clear of everything else on the map: stop labels, the start and end pins, the panel, the
+    // buttons and the credit. A callout half hidden is one a finger can't tap.
+    const obstacles = [
+      ...this.map.getContainer().querySelectorAll(".stop-badge span, .pin, .maplibregl-ctrl"),
+      ...document.querySelectorAll("#app > .sheet, #app > .topbar, #app > .fab"),
+    ];
+    const placed: DOMRect[] = obstacles.map((e) => e.getBoundingClientRect()).filter((r) => r.width && r.height);
     const box = this.map.getContainer().getBoundingClientRect();
     const order = [...this.callouts].sort((a, b) => Number(b.on) - Number(a.on));
     for (const c of order) {
@@ -379,7 +388,8 @@ export class BusMap {
         c.mk.setLngLat(c.path[Math.min(c.path.length - 1, Math.floor(c.path.length * f))]);
         const r = el.getBoundingClientRect();
         const inside = r.left >= box.left && r.right <= box.right && r.top >= box.top && r.bottom <= box.bottom;
-        if (inside && placed.every((p) => r.right + 4 < p.left || p.right + 4 < r.left || r.bottom + 4 < p.top || p.bottom + 4 < r.top)) {
+        const gap = 8;
+        if (inside && placed.every((p) => r.right + gap < p.left || p.right + gap < r.left || r.bottom + gap < p.top || p.bottom + gap < r.top)) {
           placed.push(r);
           ok = true;
           break;
