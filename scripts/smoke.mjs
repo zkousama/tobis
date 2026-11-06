@@ -677,6 +677,30 @@ async function runProfile(P) {
     }
   });
 
+  await step("a slow phone: route callouts never show stacked, even before they're placed", async () => {
+    await send("Emulation.setCPUThrottlingRate", { rate: 6 }, s);
+    try {
+      await open(SITE + "?slowcallouts" + TRIP);
+      // From the moment the trips appear, look every 100 ms: no two visible callouts may overlap.
+      const end = Date.now() + 4000;
+      let worst = 0;
+      while (Date.now() < end) {
+        const n = await run(() => {
+          const rs = [...document.querySelectorAll(".route-callout")].filter((x) => getComputedStyle(x).visibility !== "hidden").map((x) => x.getBoundingClientRect());
+          let o = 0;
+          for (let i = 0; i < rs.length; i++) for (let k = i + 1; k < rs.length; k++) if (rs[i].left < rs[k].right && rs[k].left < rs[i].right && rs[i].top < rs[k].bottom && rs[k].top < rs[i].bottom) o++;
+          return o;
+        });
+        worst = Math.max(worst, n);
+        await sleep(100);
+      }
+      ok(worst === 0, `${worst} pair(s) of visible callouts overlapped at some moment`);
+      await until("callouts placed", () => [...document.querySelectorAll(".route-callout")].some((x) => getComputedStyle(x).visibility !== "hidden"), 20000);
+    } finally {
+      await send("Emulation.setCPUThrottlingRate", { rate: 1 }, s);
+    }
+  });
+
   await step("a slow phone: a line opened before the map has loaded", async () => {
     await send("Emulation.setCPUThrottlingRate", { rate: 6 }, s);
     try {

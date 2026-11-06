@@ -334,6 +334,8 @@ export class BusMap {
     const el = document.createElement("button");
     el.type = "button";
     el.className = `route-callout${on ? " on" : ""}`;
+    // Invisible until placed: never seen stacked where it was first put, on a slow phone or anywhere.
+    el.style.visibility = "hidden";
     el.setAttribute("aria-label", `${title}, ${sub}`);
     el.setAttribute("aria-pressed", on ? "true" : "false");
     const strong = document.createElement("strong");
@@ -362,8 +364,11 @@ export class BusMap {
       this.layoutPending = false;
       this.layoutCallouts();
     };
-    if (this.map.isMoving()) this.map.once("moveend", run);
-    else requestAnimationFrame(run);
+    if (this.map.isMoving()) {
+      this.map.once("moveend", run);
+      // If the map never reports it has stopped, place them anyway.
+      setTimeout(() => this.layoutPending && run(), 1500);
+    } else requestAnimationFrame(run);
   }
   private layoutPending = false;
   /** Place the callouts again: the panel changed size, so the free part of the map did too. */
@@ -382,7 +387,6 @@ export class BusMap {
     const order = [...this.callouts].sort((a, b) => Number(b.on) - Number(a.on));
     for (const c of order) {
       const el = c.mk.getElement();
-      el.style.visibility = "";
       let ok = false;
       for (const f of [0.5, 0.35, 0.65, 0.2, 0.8, 0.1, 0.9]) {
         c.mk.setLngLat(c.path[Math.min(c.path.length - 1, Math.floor(c.path.length * f))]);
@@ -395,7 +399,7 @@ export class BusMap {
           break;
         }
       }
-      if (!ok && !c.on) el.style.visibility = "hidden";
+      el.style.visibility = ok || c.on ? "" : "hidden";
       if (!ok && c.on) placed.push(el.getBoundingClientRect());
       el.style.zIndex = c.on ? "2" : "1";
     }
