@@ -339,6 +339,19 @@ async function runProfile(P) {
     ok(/Trambus à \D{0,3}\d\d:\d\d\D{0,3} de /.test(await text(".opt-catch")), `no "Trambus à HH:MM de <stop>" ("${await text(".opt-catch")}")`);
     ok(/De /.test(await text(".opt-catch")), "a bus card doesn't say which stop it leaves from");
     ok(/à pied/.test(await text(".opt-meta")), "no walk on the cards");
+    // Route callouts on the map, as in a maps app: shown without overlapping, and a tap chooses that trip.
+    await until("route callouts", () => document.querySelectorAll(".route-callout").length >= 2);
+    await sleep(800);
+    const lay = await run(() => {
+      const cs = [...document.querySelectorAll(".route-callout")].filter((x) => x.style.visibility !== "hidden");
+      const rs = cs.map((x) => x.getBoundingClientRect());
+      let overlaps = 0;
+      for (let i = 0; i < rs.length; i++) for (let k = i + 1; k < rs.length; k++) if (rs[i].left < rs[k].right && rs[k].left < rs[i].right && rs[i].top < rs[k].bottom && rs[k].top < rs[i].bottom) overlaps++;
+      return { shown: cs.length, overlaps };
+    });
+    ok(lay.shown >= 2 && lay.overlaps === 0, `callouts: ${JSON.stringify(lay)}`);
+    await run(() => ([...document.querySelectorAll(".route-callout")].find((x) => !x.classList.contains("on") && x.style.visibility !== "hidden").click(), true));
+    await until("the tapped trip chosen", () => document.querySelector(".option.chosen") && document.querySelectorAll(".route-callout.on").length === 1);
     await shot("results");
     await audit("results");
     // The route preference, in Options with the lines and modes.
@@ -754,7 +767,10 @@ async function runProfile(P) {
     await open(SITE + "?offline" + TRIP);
     await tripOptions();
     await until("the map offline", () => document.querySelector(".maplibregl-canvas")?.width > 0);
-    ok(await run(() => !document.querySelector(".offline-banner").hidden), "no offline banner");
+    // The banner follows the network state once the app has read it: wait for it rather than check at once.
+    await until("the offline banner", () => !document.querySelector(".offline-banner").hidden, 8000).catch(() => {
+      throw new Error("no offline banner");
+    });
     await audit("offline");
     await open(SITE + "?offline2");
     await openSearch();

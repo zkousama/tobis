@@ -5,6 +5,8 @@ import { h, icon, lineBadge } from "../ui/dom.ts";
 import { fareFor, fmtDH, hasCard, setHasCard } from "../fares.ts";
 import { bmap, current, net, nm, state } from "../app/state.ts";
 import { back } from "../app/nav.ts";
+import { startTime } from "../app/plan.ts";
+import { departFor } from "../depart.ts";
 
 // Pieces several screens share.
 export function header(title: Node | string, sub?: Node | string | null) {
@@ -112,6 +114,24 @@ export function previewTrip(i: number) {
   // The other bus trips on offer go on the map too, faint, as a maps app shows them.
   const alts = current().name === "results" ? state.journeys.filter((x, k) => k !== i && x.rides > 0) : [];
   bmap?.showTrip(j, state.from?.ll, state.to?.ll, { board: "", alight: t("getOff"), origin: nm(state.from?.label), dest: nm(state.to?.label) }, alts);
+  if (current().name !== "results") return;
+  // Each bus trip labelled on the map with its time and lines; tapping one chooses it, as in a maps app.
+  state.journeys.forEach((x, k) => {
+    if (!x.rides) return;
+    const d = departFor(net, x, startTime());
+    const minutes = Math.max(1, Math.round((d.arrive.getTime() - d.leave.getTime()) / 60000));
+    const lines = x.legs.filter((l): l is RideLeg => l.kind === "ride").map((l) => (net.lines[l.line].brt ? t("brt") : net.lines[l.line].ref)).join(" › ");
+    bmap?.callout(x, `${minutes} ${t("min")}`, lines, k === i, () => chooseTrip(k));
+  });
+  markChosen(i);
+}
+/** Choose a trip from its callout on the map: show it, and bring its card into view. */
+function chooseTrip(k: number) {
+  previewTrip(k);
+  document.querySelector<HTMLElement>(`.option[data-j="${k}"]`)?.scrollIntoView({ block: "nearest", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+}
+function markChosen(k: number) {
+  document.querySelectorAll<HTMLElement>(".option[data-j]").forEach((el) => el.classList.toggle("chosen", el.dataset.j === String(k)));
 }
 
 export function stopLine(stop: number) {

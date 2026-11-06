@@ -216,6 +216,7 @@ export function optionRow(o: Option, first: boolean, tags: string[], _longest: n
     "button",
     {
       class: `option${first ? " best" : ""}`,
+      "data-j": ji,
       onmouseenter: () => previewTrip(ji),
       onfocus: () => previewTrip(ji),
       onclick: () => {

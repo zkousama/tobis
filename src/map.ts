@@ -86,6 +86,7 @@ export class BusMap {
           // A pan or zoom by the rider (not by us) ends the automatic framing.
           for (const ev of ["dragstart", "zoomstart", "rotatestart"] as const) this.map.on(ev, (e) => e.originalEvent && (this.riderMoved = true));
           this.map.on("resize", () => this.refit());
+          this.map.on("moveend", () => this.callouts.length && this.layoutCallouts());
           this.foldCredit();
           // A stop label near the edge slides back inside the map; its pointer stays on the stop.
           this.map.on("move", () => this.keepLabelsInside());
@@ -318,9 +319,82 @@ export class BusMap {
     }
   }
 
+  /**
+   * A route callout, as a maps app labels each trip on the map: its time and lines, halfway along its
+   * first ride. The chosen trip's is filled; tapping another chooses that trip. Cleared with the trip.
+   */
+  callout(j: Journey, title: string, sub: string, on: boolean, pick: () => void) {
+    const path: LngLat[] = [];
+    for (const l of j.legs) {
+      if (l.kind !== "ride") continue;
+      const v = this.net.lines[l.line].variants[l.variant];
+      path.push(...(sliceLine(v.shape, v.along[l.board], v.along[l.alight]) as LngLat[]));
+    }
+    if (!path.length) return;
+    const el = document.createElement("button");
+    el.type = "button";
+    el.className = `route-callout${on ? " on" : ""}`;
+    el.setAttribute("aria-label", `${title}, ${sub}`);
+    el.setAttribute("aria-pressed", on ? "true" : "false");
+    const strong = document.createElement("strong");
+    strong.textContent = title;
+    const small = document.createElement("small");
+    small.textContent = sub;
+    el.append(strong, small);
+    el.addEventListener("click", (e) => {
+      e.stopPropagation();
+      pick();
+    });
+    const mk = this.marker(path[Math.floor(path.length / 2)], el, "bottom");
+    this.callouts.push({ mk, path, on });
+    this.layoutSoon();
+  }
+
+  /**
+   * Put each callout where it overlaps nothing, in screen space once the map has stopped moving: the
+   * chosen trip's first (always shown), then the others, each trying points along its route. One that
+   * finds no room is hidden, as a maps app drops a label rather than pile it on another.
+   */
+  private layoutSoon() {
+    if (this.layoutPending) return;
+    this.layoutPending = true;
+    const run = () => {
+      this.layoutPending = false;
+      this.layoutCallouts();
+    };
+    if (this.map.isMoving()) this.map.once("moveend", run);
+    else requestAnimationFrame(run);
+  }
+  private layoutPending = false;
+  private layoutCallouts() {
+    const placed: DOMRect[] = [];
+    const box = this.map.getContainer().getBoundingClientRect();
+    const order = [...this.callouts].sort((a, b) => Number(b.on) - Number(a.on));
+    for (const c of order) {
+      const el = c.mk.getElement();
+      el.style.visibility = "";
+      let ok = false;
+      for (const f of [0.5, 0.35, 0.65, 0.2, 0.8, 0.1, 0.9]) {
+        c.mk.setLngLat(c.path[Math.min(c.path.length - 1, Math.floor(c.path.length * f))]);
+        const r = el.getBoundingClientRect();
+        const inside = r.left >= box.left && r.right <= box.right && r.top >= box.top && r.bottom <= box.bottom;
+        if (inside && placed.every((p) => r.right + 4 < p.left || p.right + 4 < r.left || r.bottom + 4 < p.top || p.bottom + 4 < r.top)) {
+          placed.push(r);
+          ok = true;
+          break;
+        }
+      }
+      if (!ok && !c.on) el.style.visibility = "hidden";
+      if (!ok && c.on) placed.push(el.getBoundingClientRect());
+      el.style.zIndex = c.on ? "2" : "1";
+    }
+  }
+
+  private callouts: { mk: maplibregl.Marker; path: LngLat[]; on: boolean }[] = [];
   private clearMarkers() {
     this.markers.forEach((mk) => mk.remove());
     this.markers = [];
+    this.callouts = [];
   }
 
   private marker(ll: LngLat, el: HTMLElement, anchor: maplibregl.PositionAnchor = "bottom") {

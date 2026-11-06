@@ -1970,3 +1970,36 @@ button.option:hover {
   width: 16px;
   height: 16px;
 }
+/* Route callouts on the map: each trip's time and lines; the chosen one filled, as in a maps app. */
+.route-callout {
+  display: grid;
+  gap: 1px;
+  padding: 4px 9px 5px;
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  text-align: start;
+  line-height: 1.2;
+  transform: translateY(-6px);
+}
+.route-callout strong {
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+.route-callout small {
+  font-size: 0.75rem;
+  color: var(--ink-2);
+}
+.route-callout.on {
+  background: var(--accent);
+  color: var(--on-accent, #fff);
+}
+.route-callout.on small {
+  color: inherit;
+  opacity: 0.85;
+}
+/* The trip chosen on the map is outlined in the list. */
+.option.chosen {
+  box-shadow: 0 0 0 2px var(--accent);
+}
