@@ -367,7 +367,8 @@ export class BusMap {
   }
   private layoutPending = false;
   private layoutCallouts() {
-    const placed: DOMRect[] = [];
+    // Keep clear of the stop labels and the start and end pins too, so no callout ends up half hidden.
+    const placed: DOMRect[] = [...this.map.getContainer().querySelectorAll(".stop-badge span, .pin")].map((e) => e.getBoundingClientRect());
     const box = this.map.getContainer().getBoundingClientRect();
     const order = [...this.callouts].sort((a, b) => Number(b.on) - Number(a.on));
     for (const c of order) {
