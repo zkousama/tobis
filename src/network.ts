@@ -6,6 +6,7 @@ export interface Names {
   ar?: string;
   en?: string;
   zgh?: string; // Tifinagh
+  k?: string; // an app phrase ("my location"): shown in the current language, not frozen in the one it was made in
 }
 
 export interface Stop {

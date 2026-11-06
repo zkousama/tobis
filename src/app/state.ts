@@ -3,7 +3,7 @@ import type { Router, Journey } from "../router.ts";
 import { SearchIndex } from "../search.ts";
 import { nameOf, type Names, type Network } from "../network.ts";
 import type { LngLat } from "../geo.ts";
-import { getLang, t } from "../i18n.ts";
+import { getLang, t, type Key } from "../i18n.ts";
 import type { RideTracker } from "../ride.ts";
 
 // Shared state and the pieces every screen reads. Bindings that other
@@ -61,8 +61,11 @@ export let bmap: BusMap | undefined;
 export const search = () => (searchIndex ??= new SearchIndex(net));
 export let ride: RideTracker | undefined;
 
-export const nm = (n: Names | string | undefined) => (typeof n === "string" ? n : n ? nameOf(n, getLang()) : "");
-export const meEndpoint = (ll: LngLat): Endpoint => ({ ll, label: { d: t("myLocation") }, kind: "me" });
+// A label made from an app phrase is translated each time it's shown, so switching language updates it.
+export const nm = (n: Names | string | undefined) => (typeof n === "string" ? n : n?.k ? t(n.k as Key) : n ? nameOf(n, getLang()) : "");
+/** A label for an app phrase, e.g. "my location". */
+export const phrase = (k: Key): Names => ({ d: t(k), k });
+export const meEndpoint = (ll: LngLat): Endpoint => ({ ll, label: phrase("myLocation"), kind: "me" });
 export const setNet = (n: Network) => (net = n);
 export const setRouter = (r: Router) => (router = r);
 export const setBmap = (m: BusMap) => (bmap = m);

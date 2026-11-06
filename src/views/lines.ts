@@ -2,7 +2,7 @@ import type { LngLat } from "../geo.ts";
 import { fmtDistance, fmtMinutes, fmtStops, t } from "../i18n.ts";
 import { h, icon, lineBadge } from "../ui/dom.ts";
 import { fmtDH } from "../fares.ts";
-import { net, nm, render, router, state, type Endpoint } from "../app/state.ts";
+import { net, nm, phrase, render, router, state, type Endpoint } from "../app/state.ts";
 import { go } from "../app/nav.ts";
 import { catchBusHere, plan, setEndpoint } from "../app/plan.ts";
 import { nextPasses } from "../passes.ts";
@@ -158,7 +158,7 @@ export function pointBody(ll: LngLat) {
     "div",
     { class: "point" },
     header(t("pointOnMap"), list[0] ? `${t("near")} ${nm(net.stops[list[0].stop].n)}` : null),
-    endpointButtons({ ll, label: { d: t("pointOnMap") }, kind: "map" }),
+    endpointButtons({ ll, label: phrase("pointOnMap"), kind: "map" }),
     list.length
       ? h(
           "ul",

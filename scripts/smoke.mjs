@@ -276,6 +276,20 @@ async function runProfile(P) {
     ok(/position|Ma position|location/i.test(from), `start isn't my location ("${from}")`);
   });
 
+  await step("'my location' follows a language switch (French, Darija, English)", async () => {
+    // The start is "my location" from the step before; switch language in Settings and come back.
+    const want = { fr: "Ma position", ar: "فين أنا", en: "My location" };
+    for (const [lang, label] of [["Français", "fr"], ["الدارجة", "ar"], ["English", "en"], ["Français", "fr"]]) {
+      await click(".map-btn");
+      await until("settings", () => document.querySelector(".about .segmented"));
+      await click(".about .segmented button", lang);
+      await run(() => (history.back(), true));
+      await until("the trip again", () => document.querySelector(".sheet.view-results .field-from input"));
+      const shown = await run(() => document.querySelector(".field-from input").value);
+      ok(shown.includes(want[label]), `in ${label} the start says "${shown}", not "${want[label]}"`);
+    }
+  });
+
   await step("search: recent places, then clear history", async () => {
     await open(SITE + "?recent");
     await openSearch();

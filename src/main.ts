@@ -6,7 +6,7 @@ import { h } from "./ui/dom.ts";
 import { loadWalkGraph } from "./walk.ts";
 import { registerOffline } from "./offline.ts";
 import { walkPace } from "./pace.ts";
-import { base, bmap, CITY, current, net, ride, router, search, setAppVersion, setBmap, setNet, setOfflineMB, setRender, setRide, setRouter, state } from "./app/state.ts";
+import { base, bmap, CITY, current, net, ride, router, search, setAppVersion, setBmap, setNet, setOfflineMB, setRender, setRide, setRouter, state, phrase } from "./app/state.ts";
 import { handle, locateBtn, mapEl, offlineBanner, onOfflineProgress, settingsBtn, sheet, sheetBody } from "./app/chrome.ts";
 import { go, setSheet } from "./app/nav.ts";
 import { watchLocationPermission } from "./app/location.ts";
@@ -58,7 +58,7 @@ async function boot() {
       if (state.pickOnMap) {
         const field = state.pickOnMap;
         state.pickOnMap = undefined;
-        setEndpoint(field, { ll, label: { d: t("pointOnMap") }, kind: "map" });
+        setEndpoint(field, { ll, label: phrase("pointOnMap"), kind: "map" });
         return;
       }
       go({ name: "point", ll });

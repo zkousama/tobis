@@ -2003,3 +2003,18 @@ button.option:hover {
 .option.chosen {
   box-shadow: 0 0 0 2px var(--accent);
 }
+/* Header: the title's first line is exactly as tall as the back button beside it (40px, 44px on touch
+   screens), with the text centred in it, so chevron and title line up on every screen. */
+.view-title {
+  padding-top: 0;
+}
+.view-title h2 {
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+}
+@media (pointer: coarse) {
+  .view-title h2 {
+    min-height: 44px;
+  }
+}

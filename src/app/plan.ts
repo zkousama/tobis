@@ -1,7 +1,7 @@
 import { dist, type LngLat } from "../geo.ts";
 import { t } from "../i18n.ts";
 import { expandShortUrl, parseInput, tidyName, type Parsed } from "../geoinput.ts";
-import { current, meEndpoint, net, nm, render, router, search, state, type Endpoint } from "./state.ts";
+import { current, meEndpoint, net, nm, phrase, render, router, search, state, type Endpoint } from "./state.ts";
 import { flash, toast } from "./chrome.ts";
 import { go, setStack } from "./nav.ts";
 import { locate } from "./location.ts";
@@ -191,7 +191,7 @@ export async function resolveParsed(p: Parsed): Promise<Endpoint | undefined> {
     const hit = search().search(r.name, net.center, 1)[0];
     if (hit?.ll && hit.score >= 0.8) {
       toast.classList.remove("show");
-      return { ll: hit.ll, label: { d: r.name }, kind: "link", sub: t("fromGoogle") };
+      return { ll: hit.ll, label: { d: r.name }, kind: "link", sub: phrase("fromGoogle") };
     }
     flash(t("linkNoPlace"), 9000);
     return;
@@ -201,7 +201,7 @@ export async function resolveParsed(p: Parsed): Promise<Endpoint | undefined> {
     return;
   }
   toast.classList.remove("show");
-  return { ll: r.ll, label: { d: (r.name && tidyName(r.name)) || t("sharedPlace") }, kind: "link", sub: t("fromGoogle") };
+  return { ll: r.ll, label: r.name && tidyName(r.name) ? { d: tidyName(r.name) } : phrase("sharedPlace"), kind: "link", sub: phrase("fromGoogle") };
 }
 
 /** Opened from the share menu (Web Share Target): ?title=&text=&url= */
@@ -290,8 +290,7 @@ export function restoreFromHash() {
     const [x, y, ...rest] = s.split(",");
     const ll: LngLat = [Number(x), Number(y)];
     if (!Number.isFinite(ll[0]) || !Number.isFinite(ll[1])) return;
-    const label = rest.length ? decodeURIComponent(rest.join(",")) : t("pointOnMap");
-    return { ll, label: { d: label }, kind: rest.length ? "place" : "map" };
+    return { ll, label: rest.length ? { d: decodeURIComponent(rest.join(",")) } : phrase("pointOnMap"), kind: rest.length ? "place" : "map" };
   };
   const from = dec(p.get("from"));
   const to = dec(p.get("to"));
