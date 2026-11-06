@@ -131,6 +131,12 @@ const S = {
   takeBusWhereTo: { fr: "Où allez-vous depuis cet arrêt ?", ar: "فين غادي من هاد لاري؟", en: "Where to from this stop?" },
   arriveAround: { fr: "arrivée vers {x}", ar: "توصل حوالي {x}", en: "arrive around {x}" },
   nightUnsure: { fr: "Peut-être pas de bus à cette heure", ar: "يمكن ما كاينش طوبيس فهاد الساعة", en: "May not run at this hour" },
+  catchAt: { fr: "{x} à {y} de {z}", ar: "{x} مع {y} من {z}", en: "{x} at {y} from {z}" },
+  fromStop: { fr: "De {x}", ar: "من {x}", en: "From {x}" },
+  lineWord: { fr: "Ligne", ar: "الخط", en: "Line" },
+  everyN: { fr: "toutes les {x} min", ar: "كل {x} دقيقة", en: "every {x} min" },
+  everyAbout: { fr: "un bus toutes les ~{x} min", ar: "طوبيس كل ~{x} دقيقة", en: "a bus every ~{x} min" },
+  catchNote: { fr: "Prochain passage vers {x} (estimé) · partez à {y}", ar: "أقرب دوزة حوالي {x} (تقريبا) · خرج مع {y}", en: "Next one around {x} (estimated) · leave at {y}" },
   version: { fr: "Version {x}", ar: "النسخة {x}", en: "Version {x}" },
   updated: { fr: "Nouvelle version prête · Recharger", ar: "كاينة نسخة جديدة · عاود شارجي", en: "New version ready · Reload" },
   settings: { fr: "Réglages", ar: "الباراميترات", en: "Settings" },
@@ -304,10 +310,11 @@ export function setLang(l: Lang) {
   } catch {}
 }
 export const getLang = () => lang;
-export const t = (k: Key, x?: string | number, y?: string | number) => {
+export const t = (k: Key, x?: string | number, y?: string | number, z?: string | number) => {
   let v: string = S[k][lang];
   if (x !== undefined) v = v.replace("{x}", String(x));
   if (y !== undefined) v = v.replace("{y}", String(y));
+  if (z !== undefined) v = v.replace("{z}", String(z));
   return v;
 };
 

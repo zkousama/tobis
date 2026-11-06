@@ -128,6 +128,7 @@ export class BusMap {
 
   private handlers?: MapHandlers;
   private lastTrip?: FC;
+  private lastAlt?: FC;
   private lastFocus?: FC;
   private restyle() {
     // New base style for the language or theme; then draw our layers again in the new colours.
@@ -141,6 +142,7 @@ export class BusMap {
   /** Draw the trip or line asked for before the layers existed. */
   private drawKept() {
     if (this.lastTrip) (this.map.getSource("trip") as GeoJSONSource | undefined)?.setData(this.lastTrip);
+    if (this.lastAlt) (this.map.getSource("trip-alt") as GeoJSONSource | undefined)?.setData(this.lastAlt);
     if (this.lastFocus) (this.map.getSource("focus") as GeoJSONSource | undefined)?.setData(this.lastFocus);
   }
 
@@ -171,6 +173,7 @@ export class BusMap {
     m.addSource("bus-lines", { type: "geojson", data: linesFC });
     m.addSource("bus-stops", { type: "geojson", data: stopsFC });
     m.addSource("trip", { type: "geojson", data: empty() });
+    m.addSource("trip-alt", { type: "geojson", data: empty() });
     m.addSource("focus", { type: "geojson", data: empty() });
 
     m.addLayer({
@@ -239,6 +242,24 @@ export class BusMap {
         "circle-stroke-color": ["get", "colour"],
         "circle-stroke-width": ["interpolate", ["linear"], ["zoom"], 11, 2, 16, 3],
       },
+    });
+    // The other trips on offer, faint and grey under the chosen one, as a maps app shows them:
+    // a second stop nearby, and the walk to it, can be seen at a glance.
+    m.addLayer({
+      id: "trip-alt-walk",
+      type: "line",
+      source: "trip-alt",
+      filter: ["==", ["get", "kind"], "walk"],
+      layout: { "line-cap": "round", "line-join": "round" },
+      paint: { "line-color": P.walk, "line-opacity": 0.45, "line-width": 3, "line-dasharray": [0, 1.6] },
+    });
+    m.addLayer({
+      id: "trip-alt-ride",
+      type: "line",
+      source: "trip-alt",
+      filter: ["==", ["get", "kind"], "ride"],
+      layout: { "line-cap": "round", "line-join": "round" },
+      paint: { "line-color": this.dark ? "#7d868f" : "#9aa3ab", "line-opacity": 0.6, "line-width": ["interpolate", ["linear"], ["zoom"], 10, 3, 16, 7] },
     });
     // Planned trip: walking is dotted, riding is the line colour.
     m.addLayer({
@@ -319,7 +340,9 @@ export class BusMap {
     if (dest) this.marker(dest, pin("dest", labels?.dest));
   }
 
-  showTrip(j: Journey | null, origin?: LngLat, dest?: LngLat, labels?: { board: string; alight: string; origin: string; dest: string }) {
+  showTrip(j: Journey | null, origin?: LngLat, dest?: LngLat, labels?: { board: string; alight: string; origin: string; dest: string }, alts: Journey[] = []) {
+    this.lastAlt = { type: "FeatureCollection", features: alts.flatMap((a) => this.tripLines(a)) };
+    (this.map.getSource("trip-alt") as GeoJSONSource | undefined)?.setData(this.lastAlt);
     // Before the map has loaded (or while a new style loads) the layers don't exist yet:
     // what to draw is kept in lastTrip and drawn once they do.
     const src = this.map.getSource("trip") as GeoJSONSource | undefined;
@@ -351,7 +374,18 @@ export class BusMap {
     }
     this.lastTrip = { type: "FeatureCollection", features };
     src?.setData(this.lastTrip);
+    // Frame the other trips too, so their stops are on screen.
+    for (const f of this.lastAlt?.features ?? []) if (f.geometry.type === "LineString") f.geometry.coordinates.forEach((c) => bounds.extend(c as [number, number]));
     if (!bounds.isEmpty()) this.fit(bounds);
+  }
+
+  /** A trip's walks and rides as lines (no stops or labels): for the faint alternatives. */
+  private tripLines(j: Journey): GeoJSON.Feature[] {
+    return j.legs.map((leg) => {
+      if (leg.kind === "walk") return { type: "Feature", properties: { kind: "walk" }, geometry: { type: "LineString", coordinates: leg.path ?? [leg.from, leg.to] } };
+      const v = this.net.lines[leg.line].variants[leg.variant];
+      return { type: "Feature", properties: { kind: "ride" }, geometry: { type: "LineString", coordinates: sliceLine(v.shape, v.along[leg.board], v.along[leg.alight]) } };
+    });
   }
 
   showLine(li: number, vi: number) {
@@ -376,6 +410,8 @@ export class BusMap {
   }
   clearTrip() {
     this.lastTrip = undefined;
+    this.lastAlt = undefined;
+    (this.map.getSource("trip-alt") as GeoJSONSource | undefined)?.setData(empty());
     this.framed = undefined;
     (this.map.getSource("trip") as GeoJSONSource | undefined)?.setData(empty());
     this.clearMarkers();

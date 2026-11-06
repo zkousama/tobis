@@ -1921,3 +1921,52 @@ button.option:hover {
 .planner-results .field {
   min-height: 46px;
 }
+/* ---------- a trip card, the way a maps app lists it ---------- */
+.option {
+  gap: 6px;
+}
+.opt-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+}
+.option .opt-clock {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.option .ticket-fare {
+  flex: none;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+/* "Trambus à 10:19 de Rue de la Foire": when and where to get on. */
+.opt-catch {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+/* "5 min à pied · toutes les 10 min · jusqu'à 55 min": the walk, how often, how late it could be. */
+.opt-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px 12px;
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--ink-2);
+}
+.opt-meta > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.opt-meta .icon {
+  width: 16px;
+  height: 16px;
+}

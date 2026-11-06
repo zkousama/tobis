@@ -1,4 +1,4 @@
-import { waitFor, type RideLeg } from "../router.ts";
+import { waitFor, type Journey, type RideLeg } from "../router.ts";
 import { bearing, type LngLat } from "../geo.ts";
 import { fmtDistance, fmtMinutes, fmtStops, getLang, t } from "../i18n.ts";
 import { h, icon, lineBadge } from "../ui/dom.ts";
@@ -8,6 +8,7 @@ import { net, nm, render, state } from "../app/state.ts";
 import { go } from "../app/nav.ts";
 import { startTime } from "../app/plan.ts";
 import { clock } from "./tripopts.ts";
+import { departFor } from "../depart.ts";
 import { cardNote, header, journeyFare, legChips, stopLine, variantOf } from "./common.ts";
 
 export const DIRS = {
@@ -23,11 +24,12 @@ export function heading(a: LngLat, b: LngLat) {
 
 // A trip as a vertical route: dotted line for walking, the line's colour for
 // riding, a dot at each place you change what you're doing.
-// When you'd be there: from now, or from the chosen departure; for "arrive by", by when.
-function arrival(seconds: number) {
+// Leave – arrive, as on the trip's card; for "arrive by", by when.
+function tripSpan(j: Journey) {
   const w = state.when;
-  if (w.mode === "arrive") return t("whenSummaryArrive", clock(new Date(w.at)));
-  return t("arriveAround", clock(new Date(startTime().getTime() + seconds * 1000)));
+  if (w.mode === "arrive") return { minutes: Math.round(j.seconds / 60), text: t("whenSummaryArrive", clock(new Date(w.at))) };
+  const d = departFor(net, j, startTime());
+  return { minutes: Math.max(1, Math.round((d.arrive.getTime() - d.leave.getTime()) / 60000)), text: `${clock(d.leave)} – ${clock(d.arrive)}` };
 }
 
 export function tripBody(index: number) {
@@ -76,7 +78,15 @@ export function tripBody(index: number) {
           t("showStops"),
         )
       : null;
-    const waitNote = line.taxi ? t("taxiLeaves") : line.headway ? t("noteWait", line.headway) : t("noteWaitUnknown", fmtMinutes(waitFor(line)));
+    // The first bus, when its line publishes times: when it should come, and when to set off to catch it.
+    const dep = firstRide && state.when.mode !== "arrive" ? departFor(net, j, startTime()) : undefined;
+    const waitNote = dep?.catchAt
+      ? t("catchNote", clock(dep.catchAt), clock(dep.leave))
+      : line.taxi
+        ? t("taxiLeaves")
+        : line.headway
+          ? t("noteWait", line.headway)
+          : t("noteWaitUnknown", fmtMinutes(waitFor(line)));
     steps.push(
       h(
         "li",
@@ -131,8 +141,9 @@ export function tripBody(index: number) {
     h(
       "div",
       { class: "trip-summary" },
-      h("span", { class: "journey-time" }, `≈ ${fmtMinutes(j.seconds)}`),
-      h("span", { class: "muted" }, `${arrival(j.seconds)} · ${fmtDistance(j.walkMetres)} ${t("walkMin")}${fare ? ` · ≈ ${fmtDH(fare)}` : ""}`),
+      // The same times as the trip's card: leave – arrive, the walk timed to the first bus where its line has times.
+      h("span", { class: "journey-time" }, `≈ ${fmtMinutes(tripSpan(j).minutes * 60)}`),
+      h("span", { class: "muted" }, `${tripSpan(j).text} · ${fmtDistance(j.walkMetres)} ${t("walkMin")}${fare ? ` · ≈ ${fmtDH(fare)}` : ""}`),
     ),
     // Start sits under the summary, as in a maps app: seen at once, and never floating over the steps.
     h("div", { class: "trip-start" }, h("button", { class: "btn btn-primary", onclick: () => go({ name: "ride", index }) }, icon.arrow(), t("startTrip"))),

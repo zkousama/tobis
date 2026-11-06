@@ -1,16 +1,16 @@
-import type { RideLeg } from "../router.ts";
 import { dist } from "../geo.ts";
-import { fmtDistance, fmtMinutes, getLang, t, type Key } from "../i18n.ts";
+import { fmtDistance, fmtMinutes, getLang, t } from "../i18n.ts";
 import { h, icon } from "../ui/dom.ts";
 import { fmtDH } from "../fares.ts";
-import { buildOptions, learnVot, nearTie, paretoFront, recommend, tradeoff, winners, type Option, type Part } from "../compare.ts";
+import { buildOptions, learnVot, nearTie, recommend, tradeoff, winners, type Option } from "../compare.ts";
 import { getPrefs, savePrefs } from "../app/prefs.ts";
 import { walkPace } from "../pace.ts";
-import { net, nm, render, router, state } from "../app/state.ts";
+import { net, nm, router, state } from "../app/state.ts";
 import { go } from "../app/nav.ts";
 import { startTime } from "../app/plan.ts";
 import { clock, tripControls } from "./tripopts.ts";
-import { cardDue, dataNote, legChips, linesAt, previewTrip, stopLine, variantOf } from "./common.ts";
+import { departFor } from "../depart.ts";
+import { cardDue, dataNote, legChips, linesAt, previewTrip, stopLine } from "./common.ts";
 
 export function resultsBody() {
   const to = state.to;
@@ -80,27 +80,36 @@ export function resultsBody() {
 // ---------- comparing every way to get there ----------
 // Options are ranked by generalised cost: price plus time, priced at the
 // rider's own value of time (the slider), walking and waiting weighted heavier.
-export let showAllOptions = false;
 export function compareBlock(extraNote: Node | null = null) {
   if (!state.from || !state.to) return null;
   // Arrive by: the night note and the clock work from when the trip would leave, about an hour before.
   const w = state.when;
   const at = w.mode === "arrive" ? new Date(w.at - 3600_000) : startTime();
   const { options, note, night } = buildOptions(net, state.journeys, state.from.ll, state.to.ll, at, walkPace());
-  // Clock times on each option: "07:30 – 08:16" (a timetable's dash), or for arrive by, the latest time to leave.
-  const clockText = (o: Option) => {
+  // What a maps app shows on each trip: leave – arrive, when the bus comes and from where, the walk to it.
+  const cardTimes = (o: Option): CardTimes => {
+    const j = o.journey !== undefined ? state.journeys[o.journey] : undefined;
+    const d = j ? departFor(net, j, startTime()) : undefined;
+    const minutes = Math.max(1, Math.round((d ? d.arrive.getTime() - d.leave.getTime() : o.seconds * 1000) / 60000));
+    const line = d?.line !== undefined ? net.lines[d.line] : undefined;
+    const stopName = d?.stop !== undefined ? nm(net.stops[d.stop].n) : "";
+    const lineName = line ? (line.brt ? t("brt") : `${t("lineWord")} ${line.ref}`) : "";
+    const catchLine = !line ? null : d!.catchAt && w.mode !== "arrive" ? t("catchAt", lineName, clock(d!.catchAt), stopName) : t("fromStop", stopName);
+    const walk = d && d.walkSeconds > 30 ? `${fmtMinutes(d.walkSeconds)} ${t("walkMin")}` : null;
+    const every = d?.everyMinutes ? (line?.headway ? t("everyN", d.everyMinutes) : t("everyAbout", d.everyMinutes)) : null;
+    let times: string;
     if (w.mode === "arrive") {
       const leave = new Date(w.at - o.range[1] * 1000);
-      return leave.getTime() < Date.now() ? t("tooLate") : t("leaveBefore", clock(leave));
+      times = leave.getTime() < Date.now() ? t("tooLate") : t("leaveBefore", clock(leave));
+    } else {
+      const leave = d?.leave ?? startTime();
+      times = `${clock(leave)} – ${clock(d?.arrive ?? new Date(leave.getTime() + o.seconds * 1000))}`;
     }
-    const t0 = startTime();
-    const end = new Date(t0.getTime() + o.seconds * 1000);
-    return w.mode === "now" ? t("arriveAround", clock(end)) : `${clock(t0)} – ${clock(end)}`;
+    return { times, minutes, catchLine, walkLine: [walk, every].filter(Boolean).join(" · ") || null };
   };
   const prefs = getPrefs();
-  // Drop options that are worse than another on time, price and walking at once.
-  const front = paretoFront(options);
-  const hidden = options.length - front.length;
+  // Every trip is shown, best first (as in a maps app): a slower trip from another stop nearby is
+  // still a choice the rider may want, so none is hidden behind a link.
   const win = winners(options);
   const list = h("div", { class: "options" });
   // A long walk to the first stop is told under the first trip. Late at night the warning comes first:
@@ -112,8 +121,8 @@ export function compareBlock(extraNote: Node | null = null) {
     if (!night || o.journey === undefined) return false;
     return state.journeys[o.journey].legs.some((l) => l.kind === "ride" && !net.lines[l.line].hours);
   };
-  const draw = () => {
-    const ranked = recommend(showAllOptions ? options : front, prefs);
+  const draw = (preview = true) => {
+    const ranked = recommend(options, prefs);
     const longest = Math.max(...ranked.map((o) => o.range[1]), 1);
     list.replaceChildren(
       ...ranked.flatMap((o, i) => [
@@ -124,7 +133,7 @@ export function compareBlock(extraNote: Node | null = null) {
           [...(unsure(o) ? [t("nightUnsure")] : []), ...(i === 0 ? [t("recommended")] : [nearTie(ranked[0], o, prefs) && t("nearTie"), win.fast === o && t("prioFast"), win.cheap === o && t("prioCheap"), win.walk === o && t("prioWalk")])].filter(Boolean) as string[],
           longest,
           i === 0 ? null : tradeText(ranked[0], o),
-          clockText(o),
+          cardTimes(o),
           () => {
             // Picking something other than the top option teaches the app a little.
             const next = { ...prefs, vot: learnVot(o, options, prefs) };
@@ -135,27 +144,18 @@ export function compareBlock(extraNote: Node | null = null) {
       ]),
     );
     const top = ranked[0];
-    if (top?.journey !== undefined) previewTrip(top.journey);
+    if (preview && top?.journey !== undefined) previewTrip(top.journey);
   };
   draw();
+  // "Leave now" times move with the clock: refresh them every minute while the list is on screen.
+  if (w.mode === "now") {
+    const tick = window.setInterval(() => (list.isConnected ? draw(false) : window.clearInterval(tick)), 60_000);
+  }
   return h(
     "div",
     { class: "compare" },
     nightWarning,
     list,
-    hidden > 0
-      ? h(
-          "button",
-          {
-            class: "link show-all",
-            onclick: () => {
-              showAllOptions = !showAllOptions;
-              render();
-            },
-          },
-          showAllOptions ? t("hideWorse") : hidden === 1 ? t("showWorseOne") : t("showWorse", hidden),
-        )
-      : null,
     note ? h("p", { class: "tip" }, h("span", { class: "row-main" }, h("strong", null, t("petitTaxi")), h("small", null, t("petitTaxiOtherTown", note.town)))) : null,
   );
 }
@@ -170,51 +170,22 @@ export function tradeText(best: Option, o: Option) {
 }
 export const fmtNum = (n: number) => (n % 1 ? n.toFixed(1).replace(".", getLang() === "en" ? "." : ",") : String(n));
 
-export function timeBar(o: Option, longest: number, spoken: string) {
-  const total = o.parts.reduce((n, p) => n + p.s, 0) || 1;
-  const label: Record<Part["k"], Key> = { walk: "legendWalk", wait: "legendWait", ride: "legendRide" };
-  // The bar is the likely time; the faint tail reaches the slow end of the range.
-  const tail = Math.max(0, o.range[1] - o.seconds);
-  return h(
-    "div",
-    { class: "tbar-track", role: "img", "aria-label": spoken, title: spoken },
-    h(
-      "div",
-      { class: "tbar", style: `width:${Math.max(14, (o.seconds / longest) * 100)}%` },
-      o.parts
-        .filter((p) => p.s > 20)
-        .map((p) => h("span", { class: `seg seg-${p.k}`, style: `flex-grow:${p.s / total};${p.colour ? `--c:${p.colour}` : ""}`, title: `${t(label[p.k])} · ${fmtMinutes(p.s)}` })),
-    ),
-    tail > 60 ? h("span", { class: "tbar-tail", style: `width:${(tail / longest) * 100}%`, title: t("rangeTitle") }) : null,
-  );
+
+
+export interface CardTimes {
+  times: string; // "10:14 – 10:58", or "Partez avant 07:05"
+  minutes: number;
+  catchLine: string | null; // "Trambus à 10:19 de Rue de la Foire"
+  walkLine: string | null; // "5 min à pied · toutes les 10 min"
 }
 
-export function breakdown(o: Option) {
-  const sum = (k: Part["k"]) => o.parts.filter((p) => p.k === k).reduce((n, p) => n + p.s, 0);
-  return [
-    sum("walk") > 30 ? t("bdWalk", fmtMinutes(sum("walk"))) : null,
-    sum("wait") > 30 ? t("bdWait", fmtMinutes(sum("wait"))) : null,
-    sum("ride") > 30 ? t("bdRide", fmtMinutes(sum("ride"))) : null,
-  ]
-    .filter(Boolean)
-    .join(" · ");
-}
-
-export function optionRow(o: Option, first: boolean, tags: string[], longest: number, trade: string | null, clockLine: string | null, onChoose: () => void) {
+// A trip, the way a maps app lists it: times and duration, the lines, when and where to get on, the walk.
+export function optionRow(o: Option, first: boolean, tags: string[], _longest: number, trade: string | null, when: CardTimes, onChoose: () => void) {
   const j = o.journey !== undefined ? state.journeys[o.journey] : undefined;
   let head: Node;
-  let sub: string;
-  if (o.kind === "transit" && j) {
-    const rides = j.legs.filter((l): l is RideLeg => l.kind === "ride");
-    head = legChips(j);
-    sub = `${nm(net.stops[variantOf(rides[0]).stops[rides[0].board]].n)} · ${rides.length > 1 ? `${rides.length - 1} ${rides.length > 2 ? t("changes") : t("change")}` : t("direct")}`;
-  } else if (o.kind === "walk") {
-    head = h("span", { class: "mode-name" }, icon.walk(), t("walkAll"));
-    sub = fmtDistance(o.walkMetres);
-  } else {
-    head = h("span", { class: "mode-name" }, icon.car(), o.kind === "airportTaxi" ? t("airportTaxi") : t("petitTaxi"));
-    sub = o.kind === "airportTaxi" ? t("airportTaxiSub") : `${t("petitTaxiSub")}${o.nightRate ? ` · ${t("petitTaxiNight")}` : ""}`;
-  }
+  if (o.kind === "transit" && j) head = legChips(j);
+  else if (o.kind === "walk") head = h("span", { class: "mode-name" }, icon.walk(), `${t("walkAll")} · ${fmtDistance(o.walkMetres)}`);
+  else head = h("span", { class: "mode-name" }, icon.car(), o.kind === "airportTaxi" ? `${t("airportTaxi")} · ${t("airportTaxiSub")}` : t("petitTaxi"));
   const price = !o.cost
     ? t("fareUnknown")
     : o.cost.high === 0
@@ -222,29 +193,21 @@ export function optionRow(o: Option, first: boolean, tags: string[], longest: nu
       : o.cost.low === o.cost.high
         ? `≈ ${fmtDH(o.cost.low)}${o.perCar ? ` ${t("perCar")}` : ""}`
         : `≈ ⁦${o.cost.low}–${o.cost.high} DH⁩`;
-  const [lo, hi] = o.range.map((x) => Math.max(1, Math.round(x / 60)));
+  const hi = Math.max(1, Math.round(o.range[1] / 60));
   const body = [
-    h(
-      "div",
-      { class: "opt-top" },
-      h(
-        "div",
-        { class: "opt-main" },
-        tags.length ? h("div", { class: "opt-tags" }, tags.map((x) => h("span", { class: `opt-tag${x === t("nightUnsure") ? " opt-tag-warn" : ""}` }, x))) : null,
-        head,
-        h("span", { class: "journey-sub" }, sub),
-        clockLine ? h("span", { class: "opt-clock" }, clockLine) : null,
-      ),
-      h(
-        "div",
-        { class: "ticket-stub" },
-        h("span", { class: "ticket-time" }, String(Math.max(1, Math.round(o.seconds / 60))), h("small", null, t("min"))),
-        hi > lo ? h("span", { class: "ticket-range", title: t("rangeTitle") }, t("upTo", `\u2066${hi}\u2069 ${t("min")}`)) : null,
-        h("span", { class: "ticket-fare" }, price),
-        cardDue(j) ? h("span", { class: "ticket-card" }, t("cardPlus", fmtDH(cardDue(j)!))) : null,
-      ),
-    ),
-    timeBar(o, longest, breakdown(o)),
+    tags.length ? h("div", { class: "opt-tags" }, tags.map((x) => h("span", { class: `opt-tag${x === t("nightUnsure") ? " opt-tag-warn" : ""}` }, x))) : null,
+    h("div", { class: "opt-row" }, h("span", { class: "opt-clock" }, when.times), h("span", { class: "ticket-time" }, String(when.minutes), h("small", null, t("min")))),
+    h("div", { class: "opt-row" }, head, h("span", { class: "ticket-fare" }, price)),
+    when.catchLine ? h("p", { class: "opt-catch" }, when.catchLine) : null,
+    when.walkLine || hi > when.minutes + 1 || cardDue(j)
+      ? h(
+          "p",
+          { class: "opt-meta" },
+          when.walkLine ? h("span", null, icon.walk(), when.walkLine) : null,
+          hi > when.minutes + 1 ? h("span", { title: t("rangeTitle") }, t("upTo", `\u2066${hi}\u2069 ${t("min")}`)) : null,
+          cardDue(j) ? h("span", null, t("cardPlus", fmtDH(cardDue(j)!))) : null,
+        )
+      : null,
     trade ? h("p", { class: "opt-trade" }, trade) : null,
   ];
   if (o.journey === undefined) return h("div", { class: `option${first ? " best" : ""}` }, body);

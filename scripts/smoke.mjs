@@ -329,12 +329,16 @@ async function runProfile(P) {
     const n = await tripOptions();
     ok(n >= 2, `only ${n} option(s)`);
     ok(/Recommandé/.test(await text(".option:first-child .opt-tags")), "first option isn't 'Recommandé'");
-    ok(/carte/.test(await text(".ticket-card")), "no card cost on the Trambus option");
+    ok(/carte/.test(await text(".option .opt-meta")), "no card cost on the Trambus option");
     // Line badges stay compact pills (a broken shared style once made them tall blobs).
     const tall = await run(() => Math.max(...[...document.querySelectorAll(".option .badge")].map((b) => b.getBoundingClientRect().height)));
     ok(tall <= 40, `a line badge is ${Math.round(tall)}px tall`);
     // Times sit in direction marks (they read right inside Darija text): "⁦10:00⁩ – ⁦10:46⁩".
-    ok(/arrivée vers \D{0,3}\d\d:\d\d/.test(await text(".opt-clock")), `no arrival time on the options ("${await text(".opt-clock")}")`);
+    // Each card, as in a maps app: leave – arrive, then when and where to get on, and the walk.
+    ok(/\d\d:\d\d\D{0,3} – \D{0,3}\d\d:\d\d/.test(await text(".opt-clock")), `no leave – arrive times ("${await text(".opt-clock")}")`);
+    ok(/Trambus à \D{0,3}\d\d:\d\d\D{0,3} de /.test(await text(".opt-catch")), `no "Trambus à HH:MM de <stop>" ("${await text(".opt-catch")}")`);
+    ok(/De /.test(await text(".opt-catch")), "a bus card doesn't say which stop it leaves from");
+    ok(/à pied/.test(await text(".opt-meta")), "no walk on the cards");
     await shot("results");
     await audit("results");
     // The route preference, in Options with the lines and modes.
@@ -382,7 +386,11 @@ async function runProfile(P) {
     await audit("results, time panel open");
     await click(".trip-chip", "");
     await setWhen(1, "07:30");
-    await until("07:30 departures", () => document.querySelector(".opt-clock") && [...document.querySelectorAll(".opt-clock")].every((e) => e.textContent.includes("07:30")));
+    // Nothing leaves before 07:30 (a Trambus trip may leave a little later, timed to catch it).
+    await until("07:30 departures", () => {
+      const starts = [...document.querySelectorAll(".opt-clock")].map((e) => e.textContent.replace(/[^\d:–]/g, "").split("–")[0]);
+      return starts.length && starts.every((x) => x >= "07:30" && x < "08:30");
+    });
     ok(/Départ.*07:30.*Demain/.test(await text(".trip-chip")), `chip says "${await text(".trip-chip")}"`);
     await setWhen(2, "08:00");
     await until("leave-before times", () => document.querySelector(".opt-clock") && [...document.querySelectorAll(".opt-clock")].every((e) => /Partez avant/.test(e.textContent)));
@@ -393,7 +401,7 @@ async function runProfile(P) {
 
   await step("when: no Trambus at 05:00", async () => {
     await setWhen(1, "05:00");
-    await until("05:00 departures", () => document.querySelector(".opt-clock")?.textContent.includes("05:00"));
+    await until("05:00 departures", () => /0[5-6]:\d\d/.test(document.querySelector(".opt-clock")?.textContent ?? ""));
     ok(!(await optionLines()).flat().includes("Trambus"), "a Trambus option at 05:00");
   });
 
@@ -446,7 +454,7 @@ async function runProfile(P) {
     ok(await run(() => !document.querySelector(".mini-stops").hidden), "the stops list didn't open");
     await run(() => (history.back(), true));
     await tripOptions();
-    ok(!(await text(".ticket-card")), "card cost still shown after 'I have the card'");
+    ok(!/carte/.test(await text(".option .opt-meta")), "card cost still shown after 'I have the card'");
     await clearPrefs();
   });
 

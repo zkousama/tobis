@@ -313,7 +313,15 @@ export class Router {
 
 /** Best few journeys, each using a different sequence of lines, dropping clearly worse ones. */
 export function pickDiverse(js: Journey[], net: Network, limit: number): Journey[] {
-  const key = (j: Journey) => j.legs.filter((l): l is RideLeg => l.kind === "ride").map((l) => net.lines[l.line].ref).join(">") || "walk";
+  // One trip per sequence of lines *and* first stop: the same line from another stop nearby is a real
+  // alternative (a different walk), and the rider should see it. Platforms sharing a name count as one stop.
+  const key = (j: Journey) => {
+    const rides = j.legs.filter((l): l is RideLeg => l.kind === "ride");
+    if (!rides.length) return "walk";
+    const first = rides[0];
+    const stop = net.stops[net.lines[first.line].variants[first.variant].stops[first.board]];
+    return `${rides.map((l) => net.lines[l.line].ref).join(">")}@${stop.n.d ?? ""}`;
+  };
   const best = new Map<string, Journey>();
   for (const j of js) {
     const k = key(j);

@@ -197,3 +197,23 @@ test("ALSA hours: only line 26's look real (06:30-21:00, every 30 min), so it's 
   assert.ok(!runsAt(l26.hours, 90), "runs at 01:30");
   assert.ok(!runsAt(l26.hours, 21 * 60 + 30), "runs at 21:30");
 });
+
+test("departure timed to the walk: leave so you reach the stop as the Trambus comes", { skip: !have }, async () => {
+  const { departFor } = await import("../src/depart.ts");
+  const from = new Date(2026, 10, 6, 10, 3);
+  const trips = router.plan(PLACES.talborjt, [-9.53, 30.395], { at: from });
+  const brtTrip = trips.find((j) => refs(j)[0] === "BHNS");
+  assert.ok(brtTrip, "a Trambus trip");
+  const d = departFor(net, brtTrip!, from);
+  assert.ok(d.catchAt, "a timed passage");
+  assert.ok(Math.abs(d.leave.getTime() + d.walkSeconds * 1000 - d.catchAt!.getTime()) < 1000, "leave + walk = the passage");
+  assert.ok(d.leave.getTime() >= from.getTime(), "never leave in the past");
+  assert.ok(d.catchAt!.getTime() - (from.getTime() + d.walkSeconds * 1000) < 10 * 60_000, "the first passage you can reach, not a later one");
+  assert.ok(d.arrive > d.catchAt!);
+  const busTrip = trips.find((j) => j.rides > 0 && !net.lines[(j.legs.find((l) => l.kind === "ride") as RideLeg).line].hours);
+  if (busTrip) {
+    const b = departFor(net, busTrip, from);
+    assert.equal(b.catchAt, undefined, "no invented time for a bus without timetable");
+    assert.equal(b.leave.getTime(), from.getTime());
+  }
+});

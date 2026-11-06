@@ -3,7 +3,7 @@ import { dist } from "../geo.ts";
 import { getLang, t } from "../i18n.ts";
 import { h, icon, lineBadge } from "../ui/dom.ts";
 import { fareFor, fmtDH, hasCard, setHasCard } from "../fares.ts";
-import { bmap, net, nm, state } from "../app/state.ts";
+import { bmap, current, net, nm, state } from "../app/state.ts";
 import { back } from "../app/nav.ts";
 
 // Pieces several screens share.
@@ -109,7 +109,9 @@ export function cardNote(ref: string, first: number, ride: number, onChange: () 
 export function previewTrip(i: number) {
   const j = state.journeys[i];
   if (!j) return;
-  bmap?.showTrip(j, state.from?.ll, state.to?.ll, { board: "", alight: t("getOff"), origin: nm(state.from?.label), dest: nm(state.to?.label) });
+  // The other bus trips on offer go on the map too, faint, as a maps app shows them.
+  const alts = current().name === "results" ? state.journeys.filter((x, k) => k !== i && x.rides > 0) : [];
+  bmap?.showTrip(j, state.from?.ll, state.to?.ll, { board: "", alight: t("getOff"), origin: nm(state.from?.label), dest: nm(state.to?.label) }, alts);
 }
 
 export function stopLine(stop: number) {
