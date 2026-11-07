@@ -151,14 +151,18 @@ export function segmented<T extends string>(options: { id: T; label: string; lan
 }
 
 /** A change riders report about a line that no credible source confirms yet: shown, labelled as such. */
-export function lineNotices(l: { ref: string; notices?: { what: string; text: string | Partial<Record<"fr" | "ar" | "en", string>>; source: string; date: string }[] }) {
+export function lineNotices(l: { ref: string; notices?: { what: string; confirmed?: boolean; text: string | Partial<Record<"fr" | "ar" | "en", string>>; source: string; date: string }[] }) {
   const say = (x: string | Partial<Record<"fr" | "ar" | "en", string>>) => (typeof x === "string" ? x : (x[getLang()] ?? x.en ?? x.fr ?? ""));
   if (!l.notices?.length) return null;
   return h(
     "div",
     { class: "tip tip-unconfirmed", role: "note" },
     icon.info(),
-    h("span", null, ...l.notices.map((n) => h("span", { class: "notice-line" }, t("unconfirmedChange", say(n.text)), " ", h("small", null, t("reportedBy", n.date))))),
+    h("span", null, ...l.notices.map((n) =>
+      n.confirmed
+        ? h("span", { class: "notice-line" }, t("announcedChange", say(n.text)), " ", h("small", null, t("announcedBy", n.source, n.date)))
+        : h("span", { class: "notice-line" }, t("unconfirmedChange", say(n.text)), " ", h("small", null, t("reportedBy", n.date))),
+    )),
   );
 }
 

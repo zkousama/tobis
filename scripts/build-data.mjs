@@ -648,9 +648,14 @@ function provenance(ref) {
   const used = mine.filter((d) => d.verdict === "apply" || d.verdict === "keep" || d.verdict === "flag").flatMap((d) => (d.verdict === "flag" ? d.dissent : d.by));
   const seen = new Map();
   for (const c of used) if (c.source.type !== "rider" && !seen.has(c.source.name)) seen.set(c.source.name, { name: c.source.name, date: c.source.date, ...(c.source.url ? { url: c.source.url } : {}) });
+  // Shown in the app: rider reports (unconfirmed), and route changes the operator announced, which the
+  // drawn route can't reflect until its new stops are added by hand.
   const notices = mine
-    .filter((d) => d.verdict === "flag")
-    .map((d) => ({ what: d.fact.split(":")[2], text: typeof d.value === "object" ? d.value : String(d.value), source: d.by[0].source.name, date: d.by[0].source.date, ...(d.by[0].source.url ? { url: d.by[0].source.url } : {}) }));
+    .filter((d) => d.verdict === "flag" || (d.verdict === "apply" && d.fact.endsWith(":route")))
+    .map((d) => {
+      const lead = d.by.find((c) => c.source.type !== "rider") ?? d.by[0];
+      return { what: d.fact.split(":")[2], confirmed: d.verdict === "apply", text: typeof d.value === "object" ? d.value : String(d.value), source: lead.source.name, date: lead.source.date, ...(lead.source.url ? { url: lead.source.url } : {}) };
+    });
   return { sources: [...seen.values()], ...(notices.length ? { notices } : {}) };
 }
 

@@ -140,6 +140,8 @@ const S = {
   unconfirmedChange: { fr: "Changement signalé, non confirmé : {x}.", ar: "تبديل مبلّغ عليه، ما مأكّدش: {x}.", en: "Reported change, not confirmed: {x}." },
   reportedBy: { fr: "Signalé par un usager le {x}", ar: "بلّغ عليه واحد من الركاب نهار {x}", en: "Reported by a rider on {x}" },
   lineDataFrom: { fr: "Données : {x}", ar: "المعطيات: {x}", en: "Data: {x}" },
+  announcedChange: { fr: "Changement annoncé : {x}. Le tracé affiché n'est pas encore à jour.", ar: "تبديل معلن: {x}. الطريق اللي باينة باقي ما تحدّثاتش.", en: "Announced change: {x}. The route shown isn't updated yet." },
+  announcedBy: { fr: "Annoncé par {x} le {y}", ar: "علن عليه {x} نهار {y}", en: "Announced by {x} on {y}" },
   reportError: { fr: "Signaler une erreur", ar: "بلّغ على غلطة", en: "Report a mistake" },
   version: { fr: "Version {x}", ar: "النسخة {x}", en: "Version {x}" },
   updated: { fr: "Nouvelle version prête · Recharger", ar: "كاينة نسخة جديدة · عاود شارجي", en: "New version ready · Reload" },
