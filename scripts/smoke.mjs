@@ -616,15 +616,22 @@ async function runProfile(P) {
     ok(/Dcheira/.test(await run(() => document.querySelector(".field-to input").value)), "the usual trip didn't plan Dcheira");
   });
 
-  await step("a line with an unconfirmed rider report says so, with its source and a report link", async () => {
+  await step("a line with an announced change says so, with its source and a report link; one already drawn doesn't", async () => {
     await open(SITE + "?council");
     await click(".sheet-body .row", "Toutes les lignes");
     await until("the lines list", () => document.querySelectorAll(".sheet-body .row").length > 30);
-    await run(() => ([...document.querySelectorAll(".sheet-body .row")].find((r) => r.querySelector(".badge")?.textContent.trim() === "2").click(), true));
+    const pick = (ref) => run((r) => ([...document.querySelectorAll(".sheet-body .row")].find((x) => x.querySelector(".badge")?.textContent.trim() === r).click(), true), ref);
+    await pick("6");
+    await until("line 6", () => document.querySelector(".line"));
+    ok(/Changement annoncé/.test(await text(".tip-unconfirmed")), "no announced change on line 6");
+    ok(/ALSA Facebook/.test(await text(".tip-unconfirmed")), "no source for line 6's change");
+    ok(/alsa\.ma/.test(await text(".provenance")), "no data source on line 6");
+    ok(await run(() => /template=data-correction/.test(document.querySelector(".provenance a")?.href ?? "")), "no report link on line 6");
+    await run(() => (history.back(), true));
+    await until("the lines list again", () => !document.querySelector(".line") && document.querySelectorAll(".sheet-body .row").length > 30);
+    await pick("2");
     await until("line 2", () => document.querySelector(".line"));
-    ok(/non confirmé/.test(await text(".tip-unconfirmed")), "no 'non confirmé' notice on line 2");
-    ok(/alsa\.ma/.test(await text(".provenance")), "no data source on line 2");
-    ok(await run(() => /template=data-correction/.test(document.querySelector(".provenance a")?.href ?? "")), "no report link on line 2");
+    ok(await run(() => !document.querySelector(".tip-unconfirmed")), "line 2's new terminus is drawn, so no notice");
   });
 
   await step("lines: list, a line, its other direction, a stop, back steps back", async () => {

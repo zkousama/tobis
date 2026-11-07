@@ -1,4 +1,4 @@
-// Reads the text of an operator post (a screenshot run through OCR, or pasted text) and drafts the
+// Reads the text of an operator post (from an export of the page, or pasted) and drafts the
 // claims it seems to make, for a person to check and approve. It never decides anything itself: what
 // it finds is a suggestion, and every draft carries the post's link and date as things to fill in.
 

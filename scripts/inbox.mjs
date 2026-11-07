@@ -1,7 +1,7 @@
 // The council's inbox: what the operator posted goes in data/council/inbox/, as an export of the page's
-// posts (JSON: a list of { text, url, time, media }, the shape Apify's Facebook posts scraper writes),
-// screenshots (read with OCR, in French, Arabic and English) or text pasted into a .txt. This drafts the
-// claims each post seems to make and waits for a person to check them.
+// posts (JSON: a list of { text, url, time, media }, the shape Apify's Facebook posts scraper writes) or
+// a post's text pasted into a .txt. This drafts the claims each post seems to make and waits for a person
+// to check them. Fare grids and maps are pictures; a person reads those (OCR made nothing of them).
 //
 //   node scripts/inbox.mjs                       read the inbox, write a draft per post in data/council/drafts/
 //   node scripts/inbox.mjs --approve <draft>     after filling in the TODOs: add its claims to claims.json
@@ -15,39 +15,29 @@ import { TRUST } from "./council.mjs";
 
 const DIR = "data/council";
 const INBOX = `${DIR}/inbox`, DRAFTS = `${DIR}/drafts`, EVIDENCE = `${DIR}/evidence`;
-for (const d of [INBOX, DRAFTS, EVIDENCE, `${DIR}/.ocr-cache`]) mkdirSync(d, { recursive: true });
+for (const d of [INBOX, DRAFTS, EVIDENCE]) mkdirSync(d, { recursive: true });
 
 const args = process.argv.slice(2);
 if (args[0] === "--approve") approve(args[1]);
 else if (args[0] === "--ignore") ignore(args[1], args.slice(2).join(" "));
-else await read();
+else read();
 
-async function read() {
-  const files = readdirSync(INBOX).filter((f) => /\.(png|jpe?g|webp|txt)$/i.test(f));
+function read() {
+  const files = readdirSync(INBOX).filter((f) => /\.txt$/i.test(f));
   const exports = readdirSync(INBOX).filter((f) => /\.json$/i.test(f));
-  if (!files.length && !exports.length) return console.log(`Nothing in ${INBOX}/. Put an export of the page's posts there, screenshots of posts, or their text in a .txt.`);
+  if (!files.length && !exports.length) return console.log(`Nothing in ${INBOX}/. Put an export of the page's posts there, or a post's text in a .txt.`);
   const net = JSON.parse(readFileSync("public/data/agadir.json", "utf8"));
   const known = { lines: net.lines.map((l) => l.ref), stops: net.stops.map((s) => s.n.d).filter(Boolean) };
   for (const f of exports) readExport(f, known);
-  let ocr;
   for (const f of files) {
-    const path = join(INBOX, f);
-    let text;
-    if (extname(f).toLowerCase() === ".txt") text = readFileSync(path, "utf8");
-    else {
-      // French and Arabic posts, often both in one picture.
-      // The language models download once, into a cache next to the inbox (gitignored).
-      ocr ??= await (await import("tesseract.js")).createWorker(["fra", "ara", "eng"], 1, { cachePath: `${DIR}/.ocr-cache` });
-      text = (await ocr.recognize(path)).data.text;
-    }
+    const text = readFileSync(join(INBOX, f), "utf8");
     const found = extract(text, known);
     const draft = { file: f, ...found, text };
     const out = join(DRAFTS, `${basename(f, extname(f))}.json`);
     writeFileSync(out, JSON.stringify(draft, null, 2) + "\n");
     console.log(`${f}: lines ${found.lines.join(", ") || "none"} · ${found.kinds.join(", ") || "no change words"} · ${found.stops.length} stops · ${found.claims.length} draft claim(s) → ${out}`);
   }
-  await ocr?.terminate();
-  console.log(`\nCheck each draft against its picture, fill in the TODOs (the post's link and date, the change in fr/ar/en), then: node scripts/inbox.mjs --approve <draft>`);
+  console.log(`\nCheck each draft against the post and its pictures, fill in the TODOs (the change in fr/ar/en, anything else the text can't give), then: node scripts/inbox.mjs --approve <draft>`);
 }
 
 /** An export of the page's posts: one draft per post the claims don't cite yet. */
@@ -99,7 +89,7 @@ function ignore(path, why) {
   if (!path || !existsSync(path)) throw new Error(`no draft at ${path}`);
   if (!why) throw new Error('say why, e.g. --ignore <draft> "night service for a match"');
   const draft = JSON.parse(readFileSync(path, "utf8"));
-  if (!draft.post) throw new Error("only posts from an export can be set aside; delete a screenshot instead");
+  if (!draft.post) throw new Error("only posts from an export can be set aside; delete a .txt draft instead");
   const file = `${DIR}/claims.json`;
   const all = JSON.parse(readFileSync(file, "utf8"));
   all.ignored = [...(all.ignored ?? []), { url: draft.post, date: draft.claims[0]?.source.date ?? basename(path).slice(0, 10), why }];
