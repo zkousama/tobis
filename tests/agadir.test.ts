@@ -217,3 +217,7 @@ test("departure timed to the walk: leave so you reach the stop as the Trambus co
     assert.equal(b.leave.getTime(), from.getTime());
   }
 });
+
+test("line 22 is gone: the Trambus replaced it in May 2026, though ALSA's site still lists it", { skip: !have }, () => {
+  assert.ok(!net.lines.some((l) => l.ref === "22"));
+});

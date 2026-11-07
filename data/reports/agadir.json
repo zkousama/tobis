@@ -314,22 +314,6 @@
       "share": 1
     },
     {
-      "rel": "alsa:L22:outgoing",
-      "ref": "22",
-      "clean": true,
-      "right": 24,
-      "n": 32,
-      "share": 0.75
-    },
-    {
-      "rel": "alsa:L22:return",
-      "ref": "22",
-      "clean": true,
-      "right": 22,
-      "n": 32,
-      "share": 0.6875
-    },
-    {
       "rel": "alsa:L23:outgoing",
       "ref": "23",
       "clean": true,

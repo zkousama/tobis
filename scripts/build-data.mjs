@@ -618,6 +618,11 @@ function parseHours(raw) {
 if (alsa) {
   for (const l of alsa.lines) {
     const ref = l.id.replace(/^L-?/, "");
+    // Lines that no longer run but that ALSA's site still lists (see cities/<id>.json, with the source).
+    if (cfg.removedLines?.[ref]) {
+      console.log(`  line ${ref} left out: ${cfg.removedLines[ref]}`);
+      continue;
+    }
     const fare = parseFare(alsaDetails[l.id]?.tarifa);
     const published = parseHours(alsaDetails[l.id]?.horario);
     for (const dirKey of ["outgoing", "return"]) {
