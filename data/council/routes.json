@@ -1,0 +1,491 @@
+{
+  "about": "Routes the operator announced that its site doesn't show yet, drawn from the announcement. Placed stops are existing stops, by id and name (the build stops if either changes); unplaced ones are named in the app. The way between stops is traced on the streets. A new line here is left aside once the operator's feed lists it.",
+  "routes": [
+    {
+      "ref": "8B",
+      "name": "Tadart – Port",
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2026-07-15",
+        "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid02w9Yhc8X41Q3jYZrCZskp8GtT9WtpFFYMq1RS5FmaGdWdX5i71wFDw74KdZKsLxX9l"
+      },
+      "also": [
+        {
+          "type": "operator-announcement",
+          "name": "ALSA Facebook",
+          "date": "2026-09-02",
+          "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid02aFeG4Ms7jG5PztzTxJs5CZ8D2uGAkMiz35kBjk7QZyLn6vtxzsrv8YeUrNp233f4l"
+        }
+      ],
+      "note": "stops from the July post (picture 3); the September post says it also serves Hay Al Hassania without saying where, so that one isn't placed; the Port hub is the Trambus Port station, where the 8B ⇄ Trambus transfer happens",
+      "directions": [
+        {
+          "from": "Tadart",
+          "to": "Pôle d'échange du Port",
+          "stops": [
+            {
+              "id": "70924",
+              "stop": "Taddart 3"
+            },
+            {
+              "id": "70922",
+              "stop": "Taddart 2"
+            },
+            {
+              "id": "70920",
+              "stop": "Taddart 1"
+            },
+            {
+              "name": {
+                "fr": "Blocs C/D (Tadart)",
+                "ar": "البلوك C / D (تدارت)",
+                "en": "Blocs C/D (Tadart)"
+              }
+            },
+            {
+              "name": {
+                "fr": "Hay Harrouchi",
+                "ar": "حي الهروشي",
+                "en": "Hay Harrouchi"
+              }
+            },
+            {
+              "name": {
+                "fr": "Hay Ben Ali",
+                "ar": "حي بن علي",
+                "en": "Hay Ben Ali"
+              }
+            },
+            {
+              "name": {
+                "fr": "Hay Al Hassania",
+                "ar": "حي الحسنية",
+                "en": "Hay Al Hassania"
+              }
+            },
+            {
+              "id": "70884",
+              "stop": "Souk Anza"
+            },
+            {
+              "name": {
+                "fr": "Marché central d'Anza",
+                "ar": "سوق أنزا المركزي",
+                "en": "Marché central d'Anza"
+              }
+            },
+            {
+              "id": "70484",
+              "stop": "Hay El Amal",
+              "as": "Hay Al Amal Anza"
+            },
+            {
+              "id": "70793",
+              "stop": "Port De Peche"
+            },
+            {
+              "id": "12471096227",
+              "stop": "Port",
+              "as": "Pôle d'échange du Port"
+            }
+          ]
+        },
+        {
+          "from": "Pôle d'échange du Port",
+          "to": "Tadart",
+          "stops": [
+            {
+              "id": "12471096227",
+              "stop": "Port",
+              "as": "Pôle d'échange du Port"
+            },
+            {
+              "id": "70794",
+              "stop": "Port De Peche"
+            },
+            {
+              "id": "70483",
+              "stop": "Hay El Amal",
+              "as": "Hay Al Amal Anza"
+            },
+            {
+              "name": {
+                "fr": "Marché central d'Anza",
+                "ar": "سوق أنزا المركزي",
+                "en": "Marché central d'Anza"
+              }
+            },
+            {
+              "id": "70883",
+              "stop": "Souk Anza"
+            },
+            {
+              "name": {
+                "fr": "Hay Al Hassania",
+                "ar": "حي الحسنية",
+                "en": "Hay Al Hassania"
+              }
+            },
+            {
+              "name": {
+                "fr": "Hay Ben Ali",
+                "ar": "حي بن علي",
+                "en": "Hay Ben Ali"
+              }
+            },
+            {
+              "name": {
+                "fr": "Hay Harrouchi",
+                "ar": "حي الهروشي",
+                "en": "Hay Harrouchi"
+              }
+            },
+            {
+              "name": {
+                "fr": "Blocs C/D (Tadart)",
+                "ar": "البلوك C / D (تدارت)",
+                "en": "Blocs C/D (Tadart)"
+              }
+            },
+            {
+              "id": "70919",
+              "stop": "Taddart 1"
+            },
+            {
+              "id": "70921",
+              "stop": "Taddart 2"
+            },
+            {
+              "id": "70923",
+              "stop": "Taddart 3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "342",
+      "name": "Amskroud – Tikiouine (via Agafay)",
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2026-09-16",
+        "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid02uyQCAuCnYYnrN33gkRDWvhcgrdjCye4oCDHB4cgsTfSDVGDJRaGzqrZt2Xk2iNntl"
+      },
+      "note": "the map in the post; the stops it shares with line 34 are line 34's, CMC is line 73's Cité des Métiers; Parc Haliopolis has a stop on one side only; Lion parc and Parc Haliopolis use one stop for both directions (the street graph reaches the other side's stop only by a long detour)",
+      "directions": [
+        {
+          "from": "Amskroud",
+          "to": "Tikiouine",
+          "stops": [
+            {
+              "id": "700356",
+              "stop": "Terminus Amskroud poste"
+            },
+            {
+              "id": "700357",
+              "stop": "Commune Amskroud"
+            },
+            {
+              "name": {
+                "fr": "Agafay",
+                "ar": "أكفاي",
+                "en": "Agafay"
+              }
+            },
+            {
+              "name": {
+                "fr": "Sidi Bouswab",
+                "ar": "سيدي بوسحاب",
+                "en": "Sidi Bouswab"
+              }
+            },
+            {
+              "name": {
+                "fr": "ISIA",
+                "ar": "المعهد المتخصص في الصناعات الغذائية",
+                "en": "ISIA"
+              }
+            },
+            {
+              "id": "700426",
+              "stop": "Haliopolis Tamait 2",
+              "as": "Parc Haliopolis"
+            },
+            {
+              "id": "700008",
+              "stop": "Cité des Métiers",
+              "as": "CMC"
+            },
+            {
+              "id": "700424",
+              "stop": "Lion parc"
+            },
+            {
+              "id": "40992",
+              "stop": "Crocoparc"
+            },
+            {
+              "id": "70841",
+              "stop": "Rn1 Souk Tikiouine"
+            }
+          ]
+        },
+        {
+          "from": "Tikiouine",
+          "to": "Amskroud",
+          "stops": [
+            {
+              "id": "70841",
+              "stop": "Rn1 Souk Tikiouine"
+            },
+            {
+              "id": "40992",
+              "stop": "Crocoparc"
+            },
+            {
+              "id": "700424",
+              "stop": "Lion parc"
+            },
+            {
+              "id": "700008",
+              "stop": "Cité des Métiers",
+              "as": "CMC"
+            },
+            {
+              "id": "700426",
+              "stop": "Haliopolis Tamait 2",
+              "as": "Parc Haliopolis"
+            },
+            {
+              "name": {
+                "fr": "ISIA",
+                "ar": "المعهد المتخصص في الصناعات الغذائية",
+                "en": "ISIA"
+              }
+            },
+            {
+              "name": {
+                "fr": "Sidi Bouswab",
+                "ar": "سيدي بوسحاب",
+                "en": "Sidi Bouswab"
+              }
+            },
+            {
+              "name": {
+                "fr": "Agafay",
+                "ar": "أكفاي",
+                "en": "Agafay"
+              }
+            },
+            {
+              "id": "700354",
+              "stop": "Commune Amskroud"
+            },
+            {
+              "id": "700355",
+              "stop": "Terminus Amskroud poste"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "1",
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2026-06-17",
+        "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid02pvPYfucMtN3sjkW4iCUHGrKEJAZMTji1u5dEFHWBmtCp9UE9mdSjGfvcRXaihsqZl"
+      },
+      "note": "the map in the post; the stops are line 3's on the same streets",
+      "changes": [
+        {
+          "after": "71417",
+          "to": "CHU Mohammed VI",
+          "add": [
+            {
+              "id": "70663",
+              "stop": "Les Amicales"
+            },
+            {
+              "id": "70643",
+              "stop": "Lagouira Najah",
+              "as": "Najah"
+            },
+            {
+              "name": {
+                "fr": "Bouargane",
+                "ar": "بوركان",
+                "en": "Bouargane"
+              }
+            },
+            {
+              "id": "70696",
+              "stop": "L'Wafa-L'Qods",
+              "as": "Hay Al Wafa"
+            },
+            {
+              "id": "70307",
+              "stop": "Dakhla L'Fath",
+              "as": "Dakhla"
+            },
+            {
+              "id": "700266",
+              "stop": "Terminus CHU",
+              "as": "CHU Mohammed VI"
+            }
+          ]
+        },
+        {
+          "before": "71418",
+          "from": "CHU Mohammed VI",
+          "add": [
+            {
+              "id": "700267",
+              "stop": "Terminus CHU",
+              "as": "CHU Mohammed VI"
+            },
+            {
+              "id": "70308",
+              "stop": "Dakhla L'Fath",
+              "as": "Dakhla"
+            },
+            {
+              "id": "70697",
+              "stop": "L'Wafa-L'Qods",
+              "as": "Hay Al Wafa"
+            },
+            {
+              "name": {
+                "fr": "Bouargane",
+                "ar": "بوركان",
+                "en": "Bouargane"
+              }
+            },
+            {
+              "id": "70644",
+              "stop": "Lagouira Najah",
+              "as": "Najah"
+            },
+            {
+              "id": "70664",
+              "stop": "Les Amicales"
+            }
+          ]
+        }
+      ],
+      "name": "Mouquaouama Sud Inbiaat – CHU Mohammed VI"
+    },
+    {
+      "ref": "6",
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2026-05-30",
+        "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0m36BR2VU6NZ3FpTfj83SCujmKUF3BJSCAfEFAnwvzpxydHC28L8xbShZiNutKxqQl"
+      },
+      "note": "the stop list in the post follows the Trambus (Salam, Place Al Ouid, Dakhla); Salam and Place Al Ouid use the street stops next to those stations; no bus stop is within 430 m of Dakhla, so that one is the Trambus station of the name",
+      "changes": [
+        {
+          "after": "70443",
+          "to": "CHU Mohammed VI",
+          "add": [
+            {
+              "id": "70852",
+              "stop": "Salam Fac Des Lettres-Assalam",
+              "as": "Hay Salam"
+            },
+            {
+              "id": "70292",
+              "stop": "Complexe Jamal Dorra",
+              "as": "Place Al Ouid"
+            },
+            {
+              "id": "12475932654",
+              "stop": "Dakhla",
+              "as": "Dakhla"
+            },
+            {
+              "id": "700266",
+              "stop": "Terminus CHU",
+              "as": "CHU Mohammed VI"
+            }
+          ]
+        },
+        {
+          "before": "70442",
+          "from": "CHU Mohammed VI",
+          "add": [
+            {
+              "id": "700267",
+              "stop": "Terminus CHU",
+              "as": "CHU Mohammed VI"
+            },
+            {
+              "id": "12475932655",
+              "stop": "Dakhla",
+              "as": "Dakhla"
+            },
+            {
+              "id": "70291",
+              "stop": "Complexe Jamal Dorra",
+              "as": "Place Al Ouid"
+            },
+            {
+              "id": "70424",
+              "stop": "Entree Hay Assalam",
+              "as": "Hay Salam"
+            }
+          ]
+        }
+      ],
+      "name": "CHU Mohammed VI – Mesdoura"
+    },
+    {
+      "ref": "31",
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2026-09-30",
+        "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0p1rs1eUvmn3qBR3Q9KMp8AW7DknvAFok1Az7mvNxfHcBxjUVUZtoUiA4vpyu35EZl"
+      },
+      "note": "the map in the post: the new route leaves the loop by the coast (Les Huileries Souss) for Souk Anza and Cimenterie Anza RN, the stops lines 32 and 33 use",
+      "changes": [
+        {
+          "between": [
+            "70483",
+            "70410"
+          ],
+          "with": [
+            {
+              "id": "70883",
+              "stop": "Souk Anza"
+            },
+            {
+              "id": "71180",
+              "stop": "Cimenterie Anza RN"
+            }
+          ]
+        },
+        {
+          "between": [
+            "70411",
+            "70484"
+          ],
+          "with": [
+            {
+              "id": "71181",
+              "stop": "Cimenterie Anza RN"
+            },
+            {
+              "id": "70884",
+              "stop": "Souk Anza"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

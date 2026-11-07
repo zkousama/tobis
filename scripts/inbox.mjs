@@ -1,4 +1,5 @@
-// The council's inbox: what the operator posted goes in data/council/inbox/, as an export of the page's
+// The council's inbox: what the operator posted goes in data/council/inbox/ (scripts/fetch-facebook.mjs
+// puts the latest posts there), as an export of the page's
 // posts (JSON: a list of { text, url, time, media }, the shape Apify's Facebook posts scraper writes) or
 // a post's text pasted into a .txt. This drafts the claims each post seems to make and waits for a person
 // to check them. Fare grids and maps are pictures; a person reads those (OCR made nothing of them).
@@ -16,6 +17,9 @@ import { TRUST } from "./council.mjs";
 const DIR = "data/council";
 const INBOX = `${DIR}/inbox`, DRAFTS = `${DIR}/drafts`, EVIDENCE = `${DIR}/evidence`;
 for (const d of [INBOX, DRAFTS, EVIDENCE]) mkdirSync(d, { recursive: true });
+
+// With INBOX_REPORT=<file>: a list of the new posts, for the monthly check's issue.
+const report = [];
 
 const args = process.argv.slice(2);
 if (args[0] === "--approve") approve(args[1]);
@@ -37,6 +41,7 @@ function read() {
     writeFileSync(out, JSON.stringify(draft, null, 2) + "\n");
     console.log(`${f}: lines ${found.lines.join(", ") || "none"} · ${found.kinds.join(", ") || "no change words"} · ${found.stops.length} stops · ${found.claims.length} draft claim(s) → ${out}`);
   }
+  if (process.env.INBOX_REPORT && report.length) writeFileSync(process.env.INBOX_REPORT, report.join("\n") + "\n");
   console.log(`\nCheck each draft against the post and its pictures, fill in the TODOs (the change in fr/ar/en, anything else the text can't give), then: node scripts/inbox.mjs --approve <draft>`);
 }
 
@@ -60,6 +65,7 @@ function readExport(f, known) {
     const out = join(DRAFTS, `${date}-${id}.json`);
     writeFileSync(out, JSON.stringify({ file: f, post: url, ...found, pictures, text: p.text }, null, 2) + "\n");
     console.log(`${date}: lines ${found.lines.join(", ") || "none"} · ${found.kinds.join(", ") || "no change words"} · ${pictures.length} picture(s) · ${found.claims.length} draft claim(s) → ${out}`);
+    report.push(`- ${date} · [post](${url}) · lines ${found.lines.join(", ") || "none named"} · ${found.kinds.join(", ") || "no change words"} · ${pictures.length} picture(s)\n  > ${p.text.replace(/\s+/g, " ").slice(0, 240)}`);
     fresh++;
   }
   console.log(`${f}: ${posts.length} posts, ${fresh} not yet in the claims or set aside`);

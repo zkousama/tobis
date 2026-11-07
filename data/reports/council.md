@@ -262,8 +262,3 @@ Announced change (ALSA Facebook, 2026-07-29) and no feed changed this after it.
 Announced change (ALSA Facebook, 2026-10-12) and no feed changed this after it.
 
 - for: ALSA Facebook (operator-announcement, 2026-10-12) <https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid033pNPVynnHuWoVTvCXX4ZxVrGPWEpz5wr4r8PDpkSbXZGSgcbxLKuX5dDnBKEbdNml>
-
-## Announced lines missing from the data
-
-- 8B: new line from 16 July 2026: Tadart (quartiers 1-3, blocs C/D, Hay Harrouchi, Hay Ben Ali) – Souk Anza – Marché central Anza – Hay Amal – Port de pêche – Pôle d'échange du Port <https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid02w9Yhc8X41Q3jYZrCZskp8GtT9WtpFFYMq1RS5FmaGdWdX5i71wFDw74KdZKsLxX9l>
-- 342: new line from 17 September 2026, Amskroud – Tikiouine via Agafay, Sidi Bouswab, Parc Haliopolis, CMC, ISIA <https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid02uyQCAuCnYYnrN33gkRDWvhcgrdjCye4oCDHB4cgsTfSDVGDJRaGzqrZt2Xk2iNntl>

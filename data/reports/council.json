@@ -1711,7 +1711,6 @@
       {
         "fact": "line:2:route",
         "kind": "change",
-        "terminus": "Taoukt terminus",
         "value": {
           "fr": "terminus déplacé d'Aït Mouden à Aït Taoukt",
           "ar": "المنتهى تحول من آيت المودن لآيت تاوكت",
@@ -1723,7 +1722,8 @@
           "name": "ALSA Facebook",
           "date": "2026-04-10",
           "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0wVkcL5gd2RkqWyz7puPkMyqmEUWQboxiRPhviRD6efaRwfesjsrbZFT44rZmjG2cl"
-        }
+        },
+        "drawnIf": "Taoukt terminus"
       }
     ],
     "dissent": [
@@ -1768,7 +1768,8 @@
           "name": "ALSA Facebook",
           "date": "2026-05-30",
           "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0m36BR2VU6NZ3FpTfj83SCujmKUF3BJSCAfEFAnwvzpxydHC28L8xbShZiNutKxqQl"
-        }
+        },
+        "drawnIf": "Terminus CHU"
       }
     ],
     "dissent": [
@@ -1801,7 +1802,6 @@
       {
         "fact": "line:27:route",
         "kind": "change",
-        "terminus": "Terminus CHU",
         "value": {
           "fr": "terminus déplacé des Facultés au CHU Mohammed VI",
           "ar": "المنتهى تحول من الكليات للمستشفى الجامعي محمد السادس",
@@ -1813,7 +1813,8 @@
           "name": "ALSA Facebook",
           "date": "2026-04-10",
           "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0wVkcL5gd2RkqWyz7puPkMyqmEUWQboxiRPhviRD6efaRwfesjsrbZFT44rZmjG2cl"
-        }
+        },
+        "drawnIf": "Terminus CHU"
       }
     ],
     "dissent": [
@@ -1858,7 +1859,8 @@
           "name": "ALSA Facebook",
           "date": "2026-09-02",
           "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid02aFeG4Ms7jG5PztzTxJs5CZ8D2uGAkMiz35kBjk7QZyLn6vtxzsrv8YeUrNp233f4l"
-        }
+        },
+        "drawnIf": "Souk Anza"
       }
     ],
     "dissent": [
@@ -2051,7 +2053,8 @@
           "name": "ALSA Facebook",
           "date": "2026-06-17",
           "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid02pvPYfucMtN3sjkW4iCUHGrKEJAZMTji1u5dEFHWBmtCp9UE9mdSjGfvcRXaihsqZl"
-        }
+        },
+        "drawnIf": "Terminus CHU"
       }
     ],
     "dissent": [],
@@ -2080,7 +2083,8 @@
           "name": "ALSA Facebook",
           "date": "2026-09-30",
           "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0p1rs1eUvmn3qBR3Q9KMp8AW7DknvAFok1Az7mvNxfHcBxjUVUZtoUiA4vpyu35EZl"
-        }
+        },
+        "drawnIf": "Cimenterie Anza RN"
       }
     ],
     "dissent": [],

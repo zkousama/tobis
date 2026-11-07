@@ -17,6 +17,7 @@
     "deploy:live": "bun run release && bunx wrangler@4.139.0 pages deploy dist --project-name tobis --branch master",
     "data:pack": "node scripts/pack-data.mjs",
     "screenshots": "node scripts/screenshots.mjs",
+    "council:fetch": "node scripts/fetch-facebook.mjs",
     "council:inbox": "node scripts/inbox.mjs"
   },
   "dependencies": {

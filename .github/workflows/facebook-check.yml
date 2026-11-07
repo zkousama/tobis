@@ -1,0 +1,53 @@
+name: facebook check
+
+# On the 1st of each month: fetch ALSA Agadir's latest Facebook posts (through Apify, with the
+# APIFY_TOKEN secret) and list the ones the council's claims don't cite or set aside yet. New posts
+# open or update an issue; a person reads them and adds claims (see the README's data council).
+on:
+  schedule:
+    - cron: "23 7 1 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+
+      # The inbox matches posts against the built network's lines and stops (a release asset).
+      - name: data
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag=$(node -p 'require("./data.lock.json").tag')
+          file=$(node -p 'require("./data.lock.json").file')
+          gh release download "$tag" --pattern "$file" --dir data-pack
+          node scripts/pack-data.mjs --unpack
+
+      - name: posts
+        id: posts
+        env:
+          APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
+        run: |
+          if [ -z "$APIFY_TOKEN" ]; then echo "No APIFY_TOKEN secret: nothing to check."; exit 0; fi
+          node scripts/fetch-facebook.mjs 15
+          INBOX_REPORT=new-posts.md node scripts/inbox.mjs
+          [ -s new-posts.md ] && echo "found=yes" >> "$GITHUB_OUTPUT" || true
+
+      - name: issue
+        if: steps.posts.outputs.found == 'yes'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          { echo "ALSA posted on Facebook since the last claims were added (checked $(date -u +%F)):"; echo; cat new-posts.md; echo; echo "To take them: \`bun run council:fetch && bun run council:inbox\`, read each draft against its post, then \`node scripts/inbox.mjs --approve <draft>\` or \`--ignore <draft> \"why\"\`. A new line or route goes in \`data/council/routes.json\`."; } > body.md
+          gh label create alsa-posts --color 1d4ed8 --description "ALSA posted something the data may need" --force
+          open=$(gh issue list --label alsa-posts --state open --json number --jq '.[0].number')
+          if [ -n "$open" ]; then gh issue comment "$open" --body-file body.md; else gh issue create --title "New ALSA posts to read" --label alsa-posts --body-file body.md; fi

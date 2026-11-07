@@ -1,12 +1,6 @@
 {
   "gaps": [
     {
-      "rel": "alsa:L12:return",
-      "ref": "12",
-      "straightLegs": 2,
-      "of": 34
-    },
-    {
       "rel": "alsa:L42:outgoing",
       "ref": "42",
       "straightLegs": 2,
@@ -213,9 +207,9 @@
       "rel": "alsa:L12:return",
       "ref": "12",
       "clean": true,
-      "right": 27,
-      "n": 32,
-      "share": 0.84375
+      "right": 28,
+      "n": 33,
+      "share": 0.8484848484848485
     },
     {
       "rel": "alsa:L13:outgoing",
@@ -688,6 +682,16 @@
       "right": 1,
       "n": 2,
       "share": 0.5
+    }
+  ],
+  "outside": [
+    {
+      "id": 700183,
+      "name": "SCANIA V",
+      "ll": [
+        -0.1659939,
+        30.383297
+      ]
     }
   ],
   "brtOrderDiffers": [

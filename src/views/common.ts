@@ -1,4 +1,5 @@
 import type { Journey, RideLeg } from "../router.ts";
+import type { Line } from "../network.ts";
 import { dist } from "../geo.ts";
 import { getLang, t } from "../i18n.ts";
 import { h, icon, lineBadge } from "../ui/dom.ts";
@@ -150,8 +151,18 @@ export function segmented<T extends string>(options: { id: T; label: string; lan
   );
 }
 
-/** A change riders report about a line that no credible source confirms yet: shown, labelled as such. */
-export function lineNotices(l: { ref: string; notices?: { what: string; confirmed?: boolean; text: string | Partial<Record<"fr" | "ar" | "en", string>>; source: string; date: string }[] }) {
+// "15 juil. 2026", in the reader's language.
+const fmtDate = (iso: string) => {
+  const d = new Date(`${iso}T12:00:00`);
+  return Number.isNaN(d.getTime()) ? iso : new Intl.DateTimeFormat(getLang() === "ar" ? "ar-MA" : getLang(), { day: "numeric", month: "short", year: "numeric" }).format(d);
+};
+
+/**
+ * What isn't settled about a line: a change riders report that nobody confirms, a change announced but
+ * not drawn yet, or a route drawn from an announcement. Short: one line each. `brief` (in a trip's
+ * steps) leaves out the stops not on the map yet.
+ */
+export function lineNotices(l: Pick<Line, "ref" | "notices">, brief = false) {
   const say = (x: string | Partial<Record<"fr" | "ar" | "en", string>>) => (typeof x === "string" ? x : (x[getLang()] ?? x.en ?? x.fr ?? ""));
   if (!l.notices?.length) return null;
   return h(
@@ -159,9 +170,11 @@ export function lineNotices(l: { ref: string; notices?: { what: string; confirme
     { class: "tip tip-unconfirmed", role: "note" },
     icon.info(),
     h("span", null, ...l.notices.map((n) =>
-      n.confirmed
-        ? h("span", { class: "notice-line" }, t("announcedChange", say(n.text)), " ", h("small", null, t("announcedBy", n.source, n.date)))
-        : h("span", { class: "notice-line" }, t("unconfirmedChange", say(n.text)), " ", h("small", null, t("reportedBy", n.date))),
+      n.what === "drawn"
+        ? h("span", { class: "notice-line" }, t("drawnRoute", fmtDate(n.date)), !brief && n.missing?.length ? ` ${t("notPlaced", n.missing.map(say).join(", "))}` : "")
+        : n.confirmed
+          ? h("span", { class: "notice-line" }, t("announcedChange", say(n.text)), " ", h("small", null, t("announcedBy", n.source, fmtDate(n.date))))
+          : h("span", { class: "notice-line" }, t("unconfirmedChange", say(n.text)), " ", h("small", null, t("reportedBy", fmtDate(n.date)))),
     )),
   );
 }

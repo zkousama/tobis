@@ -543,6 +543,15 @@ const alsaStopIndex = new Map();
 function addAlsaStop(s) {
   if (alsaStopIndex.has(s.id)) return alsaStopIndex.get(s.id);
   if (!s.lat || !s.lon) return -1;
+  // A typo in ALSA's data can put a stop far away ("Scania" on line 12 at longitude -0.17, in Algeria):
+  // a stop outside the city is left out, not drawn to.
+  const [w, so, e, n] = cfg.bbox;
+  if (s.lon < w || s.lon > e || s.lat < so || s.lat > n) {
+    report.outside = [...(report.outside ?? []), { id: s.id, name: s.name, ll: [s.lon, s.lat] }];
+    console.log(`  stop ${s.id} "${cleanName(s.name)}" left out: at ${s.lon}, ${s.lat}, outside the city`);
+    alsaStopIndex.set(s.id, -1);
+    return -1;
+  }
   const i = stops.length;
   stops.push({ id: s.id, src: "alsa", ll: [round5(s.lon), round5(s.lat)], n: { d: cleanName(s.name) } });
   alsaStopIndex.set(s.id, i);
@@ -667,7 +676,7 @@ function provenance(line) {
   const ref = line.ref;
   const names = new Set(line.variants.flatMap((v) => v.stops.map((si) => normKey(stops[si].n.d))));
   // An announced route change whose new end is already a stop on the line is already drawn.
-  const drawn = (d) => d.by.some((c) => c.terminus && names.has(normKey(c.terminus)));
+  const drawn = (d) => d.by.some((c) => c.drawnIf && names.has(normKey(c.drawnIf)));
   const mine = decisions.filter((d) => d.fact.startsWith(`line:${ref}:`));
   const used = mine.filter((d) => d.verdict === "apply" || d.verdict === "keep" || d.verdict === "flag").flatMap((d) => (d.verdict === "flag" ? d.dissent : d.by));
   const seen = new Map();
@@ -680,6 +689,9 @@ function provenance(line) {
       const lead = d.by.find((c) => c.source.type !== "rider") ?? d.by[0];
       return { what: d.fact.split(":")[2], confirmed: d.verdict === "apply", text: typeof d.value === "object" ? d.value : String(d.value), source: lead.source.name, date: lead.source.date, ...(lead.source.url ? { url: lead.source.url } : {}) };
     });
+  // Drawn from an announcement, not the operator's data: said so, with the stops not placed yet.
+  const a = announced.get(ref);
+  if (a) notices.push({ what: "drawn", confirmed: true, text: "", ...(a.missing.length ? { missing: a.missing } : {}), source: a.source.name, date: a.source.date, ...(a.source.url ? { url: a.source.url } : {}) });
   return { sources: [...seen.values()], ...(notices.length ? { notices } : {}) };
 }
 
@@ -868,6 +880,68 @@ if (cfg.grandsTaxis) {
       entries.push({ rel, t: { from: stops[dir[0]].n.d, to: stops[dir[1]].n.d, name: `Grand taxi ${r.stand} – ${r.to}` }, ref: `GT${k}`, isBrt: false, taxi: true, seqIdx: dir, tr, alsa: true, fare, colour: "#5f6b76" });
     }
   });
+}
+
+// ---- Routes the operator announced that its site doesn't show yet (data/council/routes.json) ----
+// Placed stops are existing stops, named by id and name, so a renamed or moved stop stops the build
+// instead of drawing the line wrong. Stops nobody has mapped are kept by name, for the app to say so.
+const announced = new Map(); // ref → { source, missing names }
+{
+  const file = JSON.parse(await readFile("data/council/routes.json", "utf8").catch(() => '{"routes":[]}'));
+  const byId = new Map(stops.map((s, i) => [String(s.id), i]));
+  const place = (list, where) => {
+    const seq = [], missing = [];
+    for (const x of list) {
+      if (x.name) { missing.push(x.name); continue; }
+      const i = byId.get(String(x.id));
+      if (i === undefined) throw new Error(`routes.json ${where}: no stop ${x.id} (${x.stop})`);
+      if (normKey(stops[i].n.d) !== normKey(x.stop)) throw new Error(`routes.json ${where}: stop ${x.id} is "${stops[i].n.d}" now, not "${x.stop}"`);
+      seq.push(i);
+    }
+    return { seq, missing };
+  };
+  const has = (e, id) => e.seqIdx.some((si) => String(stops[si].id) === String(id));
+  for (const r of file.routes) {
+    if (accepted(`line:${r.ref}:runs`) === false) continue;
+    const missing = [];
+    if (r.directions) {
+      if (entries.some((e) => e.ref === r.ref)) {
+        console.log(`  line ${r.ref}: the operator's data has it now, so the announced route is left aside`);
+        continue;
+      }
+      r.directions.forEach((d, k) => {
+        const { seq, missing: m } = place(d.stops, `${r.ref} direction ${k + 1}`);
+        missing.push(...m);
+        const rel = { id: `announced:${r.ref}:${k}`, members: osmWaysFor(r.ref) };
+        entries.push({ rel, t: { from: d.from, to: d.to, name: r.name }, ref: r.ref, isBrt: false, seqIdx: seq, tr: trace(rel, seq), alsa: true });
+      });
+    } else {
+      // A new end makes the operator's line name stale.
+      if (r.name) for (const e of entries) if (e.ref === r.ref) e.t = { ...e.t, name: r.name };
+      for (const [k, op] of r.changes.entries()) {
+        const where = `${r.ref} change ${k + 1}`;
+        const key = op.after ?? op.before ?? op.between[0];
+        const targets = entries.filter((e) => e.ref === r.ref && has(e, key) && (!op.between || has(e, op.between[1])));
+        if (targets.length !== 1) throw new Error(`routes.json ${where}: ${targets.length} directions have stop ${key}`);
+        const e = targets[0];
+        const { seq, missing: m } = place(op.add ?? op.with, where);
+        missing.push(...m);
+        // Already in the operator's data: nothing to do.
+        if (seq.every((si) => e.seqIdx.includes(si)) && !op.between) continue;
+        const at = (id) => e.seqIdx.findIndex((si) => String(stops[si].id) === String(id));
+        let next;
+        if (op.after) next = [...e.seqIdx.slice(0, at(op.after) + 1), ...seq, ...e.seqIdx.slice(at(op.after) + 1)];
+        else if (op.before) next = [...e.seqIdx.slice(0, at(op.before)), ...seq, ...e.seqIdx.slice(at(op.before))];
+        else next = [...e.seqIdx.slice(0, at(op.between[0]) + 1), ...seq, ...e.seqIdx.slice(at(op.between[1]))];
+        e.seqIdx = next;
+        e.tr = trace(e.rel, next);
+        if (op.to) e.t = { ...e.t, to: op.to };
+        if (op.from) e.t = { ...e.t, from: op.from };
+      }
+    }
+    const seen = new Set();
+    announced.set(r.ref, { source: r.source, missing: missing.filter((n) => !seen.has(n.fr) && seen.add(n.fr)) });
+  }
 }
 
 // Repair directions whose stop order is scrambled in OSM, and keep the repair

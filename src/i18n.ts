@@ -141,6 +141,8 @@ const S = {
   reportedBy: { fr: "Signalé par un usager le {x}", ar: "بلّغ عليه واحد من الركاب نهار {x}", en: "Reported by a rider on {x}" },
   lineDataFrom: { fr: "Données : {x}", ar: "المعطيات: {x}", en: "Data: {x}" },
   announcedChange: { fr: "Changement annoncé : {x}. Le tracé affiché n'est pas encore à jour.", ar: "تبديل معلن: {x}. الطريق اللي باينة باقي ما تحدّثاتش.", en: "Announced change: {x}. The route shown isn't updated yet." },
+  drawnRoute: { fr: "Tracé approximatif, annoncé le {x}.", ar: "طريق تقريبية، تعلنات نهار {x}.", en: "Approximate route, announced on {x}." },
+  notPlaced: { fr: "Pas encore sur la carte : {x}.", ar: "باقي ما بانوش فالخريطة: {x}.", en: "Not on the map yet: {x}." },
   announcedBy: { fr: "Annoncé par {x} le {y}", ar: "علن عليه {x} نهار {y}", en: "Announced by {x} on {y}" },
   reportError: { fr: "Signaler une erreur", ar: "بلّغ على غلطة", en: "Report a mistake" },
   version: { fr: "Version {x}", ar: "النسخة {x}", en: "Version {x}" },

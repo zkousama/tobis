@@ -58,7 +58,8 @@ export interface Line {
   // From the data council (scripts/council.mjs): what this line's data rests on, and changes riders
   // report that no credible source confirms yet.
   sources?: { name: string; date: string; url?: string }[];
-  notices?: { what: string; confirmed?: boolean; text: string | Partial<Record<"fr" | "ar" | "en", string>>; source: string; date: string; url?: string }[];
+  // what: "route", "fare"…, or "drawn" (the route is drawn from an announcement; `missing` = stops not placed yet)
+  notices?: { what: string; confirmed?: boolean; text: string | Partial<Record<"fr" | "ar" | "en", string>>; missing?: Partial<Record<"fr" | "ar" | "en", string>>[]; source: string; date: string; url?: string }[];
 }
 
 export interface Network {

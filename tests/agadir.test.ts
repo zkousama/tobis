@@ -236,9 +236,42 @@ test("fares follow ALSA's grid of 19 January 2026, zone lines included", { skip:
   assert.equal(fareFor(line("31"), v, k - 1, k)?.normal, 5);
 });
 
-test("an announced route change already drawn isn't flagged; one not drawn yet is", { skip: !have }, () => {
+test("an announced route change already drawn isn't flagged; one drawn from the announcement says so", { skip: !have }, () => {
   const line = (ref: string) => net.lines.find((l) => l.ref === ref)!;
-  assert.equal(line("2").notices, undefined); // the Aït Taoukt terminus is on the map
+  assert.equal(line("2").notices, undefined); // the Aït Taoukt terminus is in ALSA's data
   assert.equal(line("27").notices, undefined); // so is the CHU
-  assert.ok(line("6").notices?.some((n) => n.what === "route" && n.confirmed));
+  assert.deepEqual(line("6").notices?.map((n) => n.what), ["drawn"]);
+});
+
+test("routes ALSA announced but its site doesn't show are drawn, and say so", { skip: !have }, () => {
+  const line = (ref: string) => net.lines.find((l) => l.ref === ref);
+  const names = (ref: string) => new Set(line(ref)!.variants.flatMap((v) => v.stops.map((i) => net.stops[i].n.d)));
+  // New lines: 8B ends at the Trambus's Port station (the transfer), 342 at Amskroud and Tikiouine.
+  assert.ok(names("8B").has("Port") && names("8B").has("Taddart 1"));
+  assert.ok(names("342").has("Cité des Métiers") && names("342").has("Terminus Amskroud poste"));
+  // Extensions to the CHU, and line 31's new way through Anza (its old loop by the coast is gone).
+  for (const ref of ["1", "6"]) assert.ok(line(ref)!.variants.every((v) => v.stops.some((i) => net.stops[i].n.d === "Terminus CHU")), `line ${ref}`);
+  assert.ok(names("31").has("Souk Anza") && !names("31").has("Les Huileries Souss"));
+  // The app says it's drawn from the announcement, with the stops nobody has placed yet.
+  const note = line("8B")!.notices?.find((n) => n.what === "drawn");
+  assert.ok(note?.missing?.some((m) => m.fr === "Hay Harrouchi"));
+  assert.equal(line("2")!.notices, undefined);
+});
+
+test("Inezgane to the CHU: line 6 goes there now", { skip: !have }, () => {
+  const chu = net.stops.find((s) => s.n.d === "Terminus CHU")!.ll;
+  const js = router.plan(PLACES.inezganeSouk, chu);
+  assert.ok(js.some((j) => refs(j).includes("6")), `got ${js.map((j) => refs(j).join("+")).join(", ")}`);
+});
+
+test("every stop is in the city, and no line is drawn far off its stops", { skip: !have }, () => {
+  const [w, s, e, n] = net.bbox;
+  for (const st of net.stops) assert.ok(st.ll[0] > w && st.ll[0] < e && st.ll[1] > s && st.ll[1] < n, `${st.n.d} at ${st.ll}`);
+  for (const l of net.lines)
+    for (const v of l.variants) {
+      let crow = 0;
+      for (let k = 1; k < v.stops.length; k++) crow += dist(net.stops[v.stops[k - 1]].ll, net.stops[v.stops[k]].ll);
+      // Streets wind, one-way loops add some; a line many times longer than its stops is drawn wrong.
+      assert.ok(v.length < crow * 2.5 + 5000, `line ${l.ref} ${v.from} → ${v.to}: ${Math.round(v.length / 1000)} km for ${Math.round(crow / 1000)} km of stops`);
+    }
 });

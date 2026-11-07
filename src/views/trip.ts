@@ -100,7 +100,7 @@ export function tripBody(index: number) {
           firstRide ? h("button", { class: "link tl-other", onclick: () => go({ name: "pickStop", which: "board" }) }, t("otherStop")) : null,
           h("div", { class: "tl-board" }, `${line.taxi ? t("takeTaxi") : t("stepTake")} `, lineBadge(line.ref, line.colour), ` ${t("towards")} `, h("strong", null, v.to)),
           note(icon.clock(), waitNote),
-          lineNotices(line),
+          lineNotices(line, true),
         ),
       ),
       h(
