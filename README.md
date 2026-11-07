@@ -72,6 +72,17 @@ It updates itself the next time it opens with signal.
 | Base map | Protomaps daily build, from OpenStreetMap | ODbL 1.0 |
 | Icons | Tabler Icons | MIT |
 
+### When the sources disagree: the data council
+
+No single source is right. ALSA's site still listed line 22 months after the Trambus replaced it, launch coverage said the Trambus ran every 5 minutes where Amalway now says 10, and riders know about a new terminus before any feed does. So every fact (a line runs, its fare, how often it comes, where it ends) is a claim with a source, a date and a link, and `scripts/council.mjs` decides between them:
+
+- **Trust tiers:** an operator announcement (a post on the operator's page, a communiqué) outranks the operator's site, which outranks OpenStreetMap and the press, which outrank a rider.
+- **A feed that never changed isn't newer evidence:** an announced change beats a site still showing the old state, unless the site changed that fact after the announcement.
+- **Riders alone never change the data:** one report shows in the app as "unconfirmed", with who reported it and when, and applies once a credible source agrees.
+- **A change without a value** ("fares went up", amounts unknown) is watched, not shown.
+
+Feeds give claims automatically; announcements, press and rider reports go in [`data/council/claims.json`](data/council/claims.json) by hand, each with its link. Every build publishes the verdicts, reasons and dissent in [`data/reports/council.md`](data/reports/council.md). In the app, each line says what its data rests on and links to a [correction form](https://github.com/zkousama/tobis/issues/new?template=data-correction.yml) that asks for the source.
+
 The built data in `public/data/` is a derived database of OpenStreetMap and is available under the ODbL.
 
 Where OpenStreetMap's bus routes are incomplete, the build says so in `data/reports/agadir.json`, and `scripts/osm-draft-trambus.mjs` writes a JOSM file that fills in the Trambus routes for review and upload.

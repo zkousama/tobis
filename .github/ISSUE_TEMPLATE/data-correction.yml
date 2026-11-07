@@ -1,0 +1,22 @@
+name: Something's wrong in the data
+description: A line that changed or stopped, a stop in the wrong place, a wrong price or time.
+labels: [data]
+body:
+  - type: input
+    id: line
+    attributes:
+      label: Line (if it's about one)
+      placeholder: "e.g. 2, 27, Trambus"
+  - type: textarea
+    id: what
+    attributes:
+      label: What's wrong, and what it should be
+      placeholder: "e.g. line 2 now ends at the CHU, after Taoukt"
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Where you saw it (a link if you have one)
+      description: An ALSA or Amalway post, a news article, or "I take this bus". Each correction goes into the data with its source.
+      placeholder: "https://www.facebook.com/... or 'I take it every day'"

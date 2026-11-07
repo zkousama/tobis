@@ -9,7 +9,7 @@ import { go } from "../app/nav.ts";
 import { startTime } from "../app/plan.ts";
 import { clock } from "./tripopts.ts";
 import { departFor } from "../depart.ts";
-import { cardNote, header, journeyFare, legChips, stopLine, variantOf } from "./common.ts";
+import { cardNote, header, journeyFare, legChips, lineNotices, stopLine, variantOf } from "./common.ts";
 
 export const DIRS = {
   fr: ["le nord", "le nord-est", "l'est", "le sud-est", "le sud", "le sud-ouest", "l'ouest", "le nord-ouest"],
@@ -100,6 +100,7 @@ export function tripBody(index: number) {
           firstRide ? h("button", { class: "link tl-other", onclick: () => go({ name: "pickStop", which: "board" }) }, t("otherStop")) : null,
           h("div", { class: "tl-board" }, `${line.taxi ? t("takeTaxi") : t("stepTake")} `, lineBadge(line.ref, line.colour), ` ${t("towards")} `, h("strong", null, v.to)),
           note(icon.clock(), waitNote),
+          lineNotices(line),
         ),
       ),
       h(

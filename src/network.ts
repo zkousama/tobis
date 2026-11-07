@@ -55,6 +55,10 @@ export interface Line {
   // and ALSA lines whose hours span a real day (most ALSA lines carry the same 6:25-10:30 filler).
   hours?: { first?: string; last?: string };
   taxi?: boolean; // a grand taxi route: leaves its stand when full
+  // From the data council (scripts/council.mjs): what this line's data rests on, and changes riders
+  // report that no credible source confirms yet.
+  sources?: { name: string; date: string; url?: string }[];
+  notices?: { what: string; text: string | Partial<Record<"fr" | "ar" | "en", string>>; source: string; date: string; url?: string }[];
 }
 
 export interface Network {

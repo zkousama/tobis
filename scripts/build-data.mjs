@@ -3,6 +3,7 @@
 // Usage: node scripts/build-data.mjs agadir
 import { readFile, writeFile, mkdir, access } from "node:fs/promises";
 import { RoadGraph } from "./roadgraph.mjs";
+import { deliberate, report as councilReport } from "./council.mjs";
 
 const city = process.argv[2] ?? "agadir";
 const cfg = JSON.parse(await readFile(`cities/${city}.json`, "utf8"));
@@ -615,15 +616,55 @@ function parseHours(raw) {
   return { hours: { first: hhmm(first), last: hhmm(last) }, headway: every > 0 && every <= 120 ? every : undefined };
 }
 
+// ---- the data council (scripts/council.mjs): the feeds' claims and the hand-collected ones, weighed ----
+const alsaDate = ((await readFile(`${ALSA_DIR}/fetched-at.txt`, "utf8").catch(() => "")) || "").trim().slice(0, 10);
+const feedClaims = [];
+if (alsa) {
+  const src = { type: "operator-site", name: "alsa.ma", date: alsaDate, url: "https://www.alsa.ma/fr/agadir/lignes" };
+  for (const l of alsa.lines) {
+    const ref = l.id.replace(/^L-?/, "");
+    feedClaims.push({ fact: `line:${ref}:runs`, value: true, source: src });
+    const f = parseFare(alsaDetails[l.id]?.tarifa);
+    if (f?.kind === "flat") feedClaims.push({ fact: `line:${ref}:fare`, value: f.normal, source: src });
+    const p = parseHours(alsaDetails[l.id]?.horario);
+    if (p?.hours) feedClaims.push({ fact: `line:${ref}:first`, value: p.hours.first, source: src }, { fact: `line:${ref}:last`, value: p.hours.last, source: src });
+    if (p?.headway) feedClaims.push({ fact: `line:${ref}:headway`, value: p.headway, source: src });
+  }
+}
+const handClaims = JSON.parse(await readFile("data/council/claims.json", "utf8").catch(() => '{"claims":[]}')).claims;
+const decisions = deliberate([...feedClaims, ...handClaims]);
+const decision = (fact) => decisions.find((d) => d.fact === fact);
+/** The value the build should use: the council's, or the credible one when a rider's claim is only flagged. */
+const accepted = (fact) => {
+  const d = decision(fact);
+  if (!d) return undefined;
+  if (d.verdict === "apply" || d.verdict === "keep") return d.value;
+  if (d.verdict === "flag") return d.dissent[0]?.value;
+  return undefined;
+};
+/** What a line's data rests on, and what riders report that isn't confirmed: shown in the app. */
+function provenance(ref) {
+  const mine = decisions.filter((d) => d.fact.startsWith(`line:${ref}:`));
+  const used = mine.filter((d) => d.verdict === "apply" || d.verdict === "keep" || d.verdict === "flag").flatMap((d) => (d.verdict === "flag" ? d.dissent : d.by));
+  const seen = new Map();
+  for (const c of used) if (c.source.type !== "rider" && !seen.has(c.source.name)) seen.set(c.source.name, { name: c.source.name, date: c.source.date, ...(c.source.url ? { url: c.source.url } : {}) });
+  const notices = mine
+    .filter((d) => d.verdict === "flag")
+    .map((d) => ({ what: d.fact.split(":")[2], text: typeof d.value === "object" ? d.value : String(d.value), source: d.by[0].source.name, date: d.by[0].source.date, ...(d.by[0].source.url ? { url: d.by[0].source.url } : {}) }));
+  return { sources: [...seen.values()], ...(notices.length ? { notices } : {}) };
+}
+
 if (alsa) {
   for (const l of alsa.lines) {
     const ref = l.id.replace(/^L-?/, "");
-    // Lines that no longer run but that ALSA's site still lists (see cities/<id>.json, with the source).
-    if (cfg.removedLines?.[ref]) {
-      console.log(`  line ${ref} left out: ${cfg.removedLines[ref]}`);
+    // The council's verdict: a line the operator's site still lists may have been withdrawn.
+    if (accepted(`line:${ref}:runs`) === false) {
+      console.log(`  line ${ref} left out: ${decision(`line:${ref}:runs`).reason}`);
       continue;
     }
-    const fare = parseFare(alsaDetails[l.id]?.tarifa);
+    const feedFare = parseFare(alsaDetails[l.id]?.tarifa);
+    const fareNow = accepted(`line:${ref}:fare`);
+    const fare = feedFare?.kind === "flat" && fareNow !== undefined && fareNow !== feedFare.normal ? { ...feedFare, normal: fareNow, card: undefined } : feedFare;
     const published = parseHours(alsaDetails[l.id]?.horario);
     for (const dirKey of ["outgoing", "return"]) {
       const dir = l[dirKey];
@@ -724,7 +765,7 @@ if (cfg.brt) {
     // The Trambus has its own two-way lane down the middle of the avenues.
     const tr = trace(rel, seqIdx, "anyDrive");
     const ends = forward ? [stations[0].name, stations.at(-1).name] : [stations.at(-1).name, stations[0].name];
-    entries.push({ rel, t: { from: ends[0], to: ends[1], name: cfg.brt.name }, ref: "BHNS", isBrt: true, seqIdx, tr, alsa: true, fare: cfg.brt.fare, headway: cfg.brt.headwayMin, hours: cfg.brt.firstBus || cfg.brt.lastBus ? { first: cfg.brt.firstBus, last: cfg.brt.lastBus } : undefined });
+    entries.push({ rel, t: { from: ends[0], to: ends[1], name: cfg.brt.name }, ref: "BHNS", isBrt: true, seqIdx, tr, alsa: true, fare: { ...cfg.brt.fare, normal: accepted("line:BHNS:fare") ?? cfg.brt.fare.normal, firstCard: accepted("line:BHNS:card") ?? cfg.brt.fare.firstCard }, headway: accepted("line:BHNS:headway") ?? cfg.brt.headwayMin, hours: { first: accepted("line:BHNS:first") ?? cfg.brt.firstBus, ...(cfg.brt.lastBus ? { last: cfg.brt.lastBus } : {}) } });
     // For the OSM draft: platforms in order and the ways between them.
     report.brtDraft = [...(report.brtDraft ?? []), { from: ends[0], to: ends[1], platforms: seqIdx.map((si) => stops[si].id), ways: tr?.wayIds ?? [] }];
     if (tr) report.sides.push({ rel: rel.id, ref: "BHNS", clean: tr.share <= SCRAMBLED, ...rightSide(tr) });
@@ -882,6 +923,8 @@ const lines = [...byRef.values()].sort((a, b) => order(a) - order(b));
 // The Trambus in Amalway's orange (beta.amalway.ma); bus lines keep ALSA's colours.
 lines.forEach((l, i) => (l.colour = l.brt ? "#ed6c36" : (l.colour ?? PALETTE[i % PALETTE.length])));
 for (const l of lines) if (l.taxi) l.variants.forEach((v) => (v.inferred = undefined));
+// Where each line's data comes from, and unconfirmed reports about it (the council's).
+for (const l of lines) if (!l.taxi) Object.assign(l, provenance(l.ref));
 
 // Each place's nearest other town, to tell apart places with the same name.
 places.forEach((p, i) => {
@@ -940,6 +983,10 @@ const json = JSON.stringify(out);
 await writeFile(`public/data/${city}.json`, json);
 await mkdir(`data/reports`, { recursive: true });
 await writeFile(`data/reports/${city}.json`, JSON.stringify(report, null, 2));
+await writeFile(`data/reports/council.md`, councilReport(decisions));
+await writeFile(`data/reports/council.json`, JSON.stringify(decisions, null, 2));
+const tally = (v) => decisions.filter((d) => d.verdict === v).length;
+console.log(`council: ${decisions.length} facts, ${tally("apply")} decided, ${tally("flag")} unconfirmed, ${tally("watch")} on watch`);
 const variants = lines.reduce((n, l) => n + l.variants.length, 0);
 const routable = lines.filter((l) => l.variants.some((v) => v.stops.length >= 2)).length;
 console.log(`${lines.length} lines (${routable} with stops), ${variants} directions, ${stops.length} stops, ${places.length} places`);

@@ -616,6 +616,17 @@ async function runProfile(P) {
     ok(/Dcheira/.test(await run(() => document.querySelector(".field-to input").value)), "the usual trip didn't plan Dcheira");
   });
 
+  await step("a line with an unconfirmed rider report says so, with its source and a report link", async () => {
+    await open(SITE + "?council");
+    await click(".sheet-body .row", "Toutes les lignes");
+    await until("the lines list", () => document.querySelectorAll(".sheet-body .row").length > 30);
+    await run(() => ([...document.querySelectorAll(".sheet-body .row")].find((r) => r.querySelector(".badge")?.textContent.trim() === "2").click(), true));
+    await until("line 2", () => document.querySelector(".line"));
+    ok(/non confirmé/.test(await text(".tip-unconfirmed")), "no 'non confirmé' notice on line 2");
+    ok(/alsa\.ma/.test(await text(".provenance")), "no data source on line 2");
+    ok(await run(() => /template=data-correction/.test(document.querySelector(".provenance a")?.href ?? "")), "no report link on line 2");
+  });
+
   await step("lines: list, a line, its other direction, a stop, back steps back", async () => {
     await open(SITE + "?lines");
     await click(".sheet-body .row", "Toutes les lignes");
@@ -732,8 +743,8 @@ async function runProfile(P) {
     await click(".map-btn");
     await until("settings", () => document.querySelector(".setting-list"));
     ok(/Version [0-9a-f]{7}/.test(await text(".sheet-body .fine")), "no version line");
-    ok((await run(() => document.querySelector(".gh-link")?.href)) === "https://github.com/zkousama/tobis", "no GitHub link");
-    ok(await run(() => !!document.querySelector(".gh-link svg")), "no GitHub mark");
+    ok(await run(() => !![...document.querySelectorAll(".gh-link")].find((a) => a.href === "https://github.com/zkousama/tobis")?.querySelector("svg")), "no GitHub link with its mark");
+    ok(await run(() => [...document.querySelectorAll(".gh-link")].some((a) => a.href.includes("template=data-correction.yml"))), "no 'Signaler une erreur' link");
     await shot("settings");
     await audit("settings");
     await click(".about .segmented button", "English");

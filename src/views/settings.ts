@@ -7,7 +7,7 @@ import { offline } from "../app/chrome.ts";
 import { install, installEvent, isIos, standalone } from "../app/install.ts";
 import { go } from "../app/nav.ts";
 import { replan, skipBrt } from "../app/plan.ts";
-import { dataNote, header, segmented, settingToggle } from "./common.ts";
+import { dataNote, header, reportUrl, segmented, settingToggle } from "./common.ts";
 
 export function installBlock() {
   if (standalone()) return h("p", { class: "notice" }, icon.check(), " ", t("installed"));
@@ -90,6 +90,7 @@ export function aboutBody() {
       " · ",
       h("a", { href: "https://protomaps.com", target: "_blank", rel: "noopener" }, "Protomaps"),
     ),
+    h("a", { class: "gh-link", href: reportUrl(), target: "_blank", rel: "noopener" }, icon.flag(), h("span", null, t("reportError"))),
     h(
       "a",
       { class: "gh-link", href: "https://github.com/zkousama/tobis", target: "_blank", rel: "noopener" },

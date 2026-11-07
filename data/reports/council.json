@@ -1,0 +1,1570 @@
+[
+  {
+    "fact": "line:AE:runs",
+    "verdict": "keep",
+    "value": true,
+    "by": [
+      {
+        "fact": "line:AE:runs",
+        "value": true,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:1:runs",
+    "verdict": "keep",
+    "value": true,
+    "by": [
+      {
+        "fact": "line:1:runs",
+        "value": true,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:2:runs",
+    "verdict": "keep",
+    "value": true,
+    "by": [
+      {
+        "fact": "line:2:runs",
+        "value": true,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:2:fare",
+    "verdict": "keep",
+    "value": 4,
+    "by": [
+      {
+        "fact": "line:2:fare",
+        "value": 4,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:3:runs",
+    "verdict": "keep",
+    "value": true,
+    "by": [
+      {
+        "fact": "line:3:runs",
+        "value": true,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:3:fare",
+    "verdict": "keep",
+    "value": 4,
+    "by": [
+      {
+        "fact": "line:3:fare",
+        "value": 4,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:5:runs",
+    "verdict": "keep",
+    "value": true,
+    "by": [
+      {
+        "fact": "line:5:runs",
+        "value": true,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:5:fare",
+    "verdict": "keep",
+    "value": 4,
+    "by": [
+      {
+        "fact": "line:5:fare",
+        "value": 4,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:6:runs",
+    "verdict": "keep",
+    "value": true,
+    "by": [
+      {
+        "fact": "line:6:runs",
+        "value": true,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:6:fare",
+    "verdict": "keep",
+    "value": 3.5,
+    "by": [
+      {
+        "fact": "line:6:fare",
+        "value": 3.5,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:8:runs",
+    "verdict": "keep",
+    "value": true,
+    "by": [
+      {
+        "fact": "line:8:runs",
+        "value": true,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:8:fare",
+    "verdict": "keep",
+    "value": 2.5,
+    "by": [
+      {
+        "fact": "line:8:fare",
+        "value": 2.5,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:9:runs",
+    "verdict": "keep",
+    "value": true,
+    "by": [
+      {
+        "fact": "line:9:runs",
+        "value": true,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:9:fare",
+    "verdict": "keep",
+    "value": 4,
+    "by": [
+      {
+        "fact": "line:9:fare",
+        "value": 4,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:10:runs",
+    "verdict": "keep",
+    "value": true,
+    "by": [
+      {
+        "fact": "line:10:runs",
+        "value": true,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:10:fare",
+    "verdict": "keep",
+    "value": 2.5,
+    "by": [
+      {
+        "fact": "line:10:fare",
+        "value": 2.5,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:11:runs",
+    "verdict": "keep",
+    "value": true,
+    "by": [
+      {
+        "fact": "line:11:runs",
+        "value": true,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:11:fare",
+    "verdict": "keep",
+    "value": 4,
+    "by": [
+      {
+        "fact": "line:11:fare",
+        "value": 4,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:12:runs",
+    "verdict": "keep",
+    "value": true,
+    "by": [
+      {
+        "fact": "line:12:runs",
+        "value": true,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:12:fare",
+    "verdict": "keep",
+    "value": 4,
+    "by": [
+      {
+        "fact": "line:12:fare",
+        "value": 4,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:13:runs",
+    "verdict": "keep",
+    "value": true,
+    "by": [
+      {
+        "fact": "line:13:runs",
+        "value": true,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:13:fare",
+    "verdict": "keep",
+    "value": 3.5,
+    "by": [
+      {
+        "fact": "line:13:fare",
+        "value": 3.5,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:14:runs",
+    "verdict": "keep",
+    "value": true,
+    "by": [
+      {
+        "fact": "line:14:runs",
+        "value": true,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:14:fare",
+    "verdict": "keep",
+    "value": 3.5,
+    "by": [
+      {
+        "fact": "line:14:fare",
+        "value": 3.5,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:15:runs",
+    "verdict": "keep",
+    "value": true,
+    "by": [
+      {
+        "fact": "line:15:runs",
+        "value": true,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:15:fare",
+    "verdict": "keep",
+    "value": 4,
+    "by": [
+      {
+        "fact": "line:15:fare",
+        "value": 4,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:16:runs",
+    "verdict": "keep",
+    "value": true,
+    "by": [
+      {
+        "fact": "line:16:runs",
+        "value": true,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:16:fare",
+    "verdict": "keep",
+    "value": 4,
+    "by": [
+      {
+        "fact": "line:16:fare",
+        "value": 4,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:20:runs",
+    "verdict": "keep",
+    "value": true,
+    "by": [
+      {
+        "fact": "line:20:runs",
+        "value": true,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:20:fare",
+    "verdict": "keep",
+    "value": 4,
+    "by": [
+      {
+        "fact": "line:20:fare",
+        "value": 4,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:21:runs",
+    "verdict": "keep",
+    "value": true,
+    "by": [
+      {
+        "fact": "line:21:runs",
+        "value": true,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:21:fare",
+    "verdict": "keep",
+    "value": 3.5,
+    "by": [
+      {
+        "fact": "line:21:fare",
+        "value": 3.5,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:22:runs",
+    "verdict": "apply",
+    "value": false,
+    "by": [
+      {
+        "fact": "line:22:runs",
+        "value": false,
+        "kind": "change",
+        "note": "communiqué: the Amal Way line replaces line 22 for good",
+        "source": {
+          "type": "press",
+          "name": "LesEco.ma",
+          "date": "2026-05-07",
+          "url": "https://leseco.ma/maroc/agadir-le-bhns-entre-en-service.html"
+        }
+      },
+      {
+        "fact": "line:22:runs",
+        "value": false,
+        "kind": "change",
+        "note": "same communiqué",
+        "source": {
+          "type": "press",
+          "name": "SNRT News",
+          "date": "2026-05-07",
+          "url": "https://snrtnews.com/fr/article/agadir-lance-la-premiere-ligne-de-son-bus-a-haut-niveau-de-service-baptise-amalway-trambus"
+        }
+      },
+      {
+        "fact": "line:22:runs",
+        "value": false,
+        "note": "\"Line 22 doesn't exist anymore because its served route was replaced by Amalway's L1\"",
+        "source": {
+          "type": "rider",
+          "name": "r/Agadir rider",
+          "date": "2026-11-06",
+          "url": "https://www.reddit.com/r/Agadir/comments/1xph8ac/"
+        }
+      }
+    ],
+    "dissent": [
+      {
+        "fact": "line:22:runs",
+        "value": true,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "reason": "announced change (LesEco.ma, 2026-05-07) and no feed changed this after it"
+  },
+  {
+    "fact": "line:22:fare",
+    "verdict": "keep",
+    "value": 4,
+    "by": [
+      {
+        "fact": "line:22:fare",
+        "value": 4,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:23:runs",
+    "verdict": "keep",
+    "value": true,
+    "by": [
+      {
+        "fact": "line:23:runs",
+        "value": true,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:23:fare",
+    "verdict": "keep",
+    "value": 3.5,
+    "by": [
+      {
+        "fact": "line:23:fare",
+        "value": 3.5,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:24:runs",
+    "verdict": "keep",
+    "value": true,
+    "by": [
+      {
+        "fact": "line:24:runs",
+        "value": true,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:24:fare",
+    "verdict": "keep",
+    "value": 4,
+    "by": [
+      {
+        "fact": "line:24:fare",
+        "value": 4,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:26:runs",
+    "verdict": "keep",
+    "value": true,
+    "by": [
+      {
+        "fact": "line:26:runs",
+        "value": true,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:26:fare",
+    "verdict": "keep",
+    "value": 4,
+    "by": [
+      {
+        "fact": "line:26:fare",
+        "value": 4,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:26:first",
+    "verdict": "keep",
+    "value": "06:30",
+    "by": [
+      {
+        "fact": "line:26:first",
+        "value": "06:30",
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:26:last",
+    "verdict": "keep",
+    "value": "21:00",
+    "by": [
+      {
+        "fact": "line:26:last",
+        "value": "21:00",
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:26:headway",
+    "verdict": "keep",
+    "value": 30,
+    "by": [
+      {
+        "fact": "line:26:headway",
+        "value": 30,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:27:runs",
+    "verdict": "keep",
+    "value": true,
+    "by": [
+      {
+        "fact": "line:27:runs",
+        "value": true,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:27:fare",
+    "verdict": "keep",
+    "value": 4,
+    "by": [
+      {
+        "fact": "line:27:fare",
+        "value": 4,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:31:runs",
+    "verdict": "keep",
+    "value": true,
+    "by": [
+      {
+        "fact": "line:31:runs",
+        "value": true,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:32:runs",
+    "verdict": "keep",
+    "value": true,
+    "by": [
+      {
+        "fact": "line:32:runs",
+        "value": true,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:33:runs",
+    "verdict": "keep",
+    "value": true,
+    "by": [
+      {
+        "fact": "line:33:runs",
+        "value": true,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:34:runs",
+    "verdict": "keep",
+    "value": true,
+    "by": [
+      {
+        "fact": "line:34:runs",
+        "value": true,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:35:runs",
+    "verdict": "keep",
+    "value": true,
+    "by": [
+      {
+        "fact": "line:35:runs",
+        "value": true,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:36:runs",
+    "verdict": "keep",
+    "value": true,
+    "by": [
+      {
+        "fact": "line:36:runs",
+        "value": true,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:37:runs",
+    "verdict": "keep",
+    "value": true,
+    "by": [
+      {
+        "fact": "line:37:runs",
+        "value": true,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:38:runs",
+    "verdict": "keep",
+    "value": true,
+    "by": [
+      {
+        "fact": "line:38:runs",
+        "value": true,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:39:runs",
+    "verdict": "keep",
+    "value": true,
+    "by": [
+      {
+        "fact": "line:39:runs",
+        "value": true,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:39:fare",
+    "verdict": "keep",
+    "value": 3,
+    "by": [
+      {
+        "fact": "line:39:fare",
+        "value": 3,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:40:runs",
+    "verdict": "keep",
+    "value": true,
+    "by": [
+      {
+        "fact": "line:40:runs",
+        "value": true,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:41:runs",
+    "verdict": "keep",
+    "value": true,
+    "by": [
+      {
+        "fact": "line:41:runs",
+        "value": true,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:42:runs",
+    "verdict": "keep",
+    "value": true,
+    "by": [
+      {
+        "fact": "line:42:runs",
+        "value": true,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:43:runs",
+    "verdict": "keep",
+    "value": true,
+    "by": [
+      {
+        "fact": "line:43:runs",
+        "value": true,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:72:runs",
+    "verdict": "keep",
+    "value": true,
+    "by": [
+      {
+        "fact": "line:72:runs",
+        "value": true,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:73:runs",
+    "verdict": "keep",
+    "value": true,
+    "by": [
+      {
+        "fact": "line:73:runs",
+        "value": true,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:95:runs",
+    "verdict": "keep",
+    "value": true,
+    "by": [
+      {
+        "fact": "line:95:runs",
+        "value": true,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:95:fare",
+    "verdict": "keep",
+    "value": 4,
+    "by": [
+      {
+        "fact": "line:95:fare",
+        "value": 4,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:97:runs",
+    "verdict": "keep",
+    "value": true,
+    "by": [
+      {
+        "fact": "line:97:runs",
+        "value": true,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:97:fare",
+    "verdict": "keep",
+    "value": 3.5,
+    "by": [
+      {
+        "fact": "line:97:fare",
+        "value": 3.5,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:98:runs",
+    "verdict": "keep",
+    "value": true,
+    "by": [
+      {
+        "fact": "line:98:runs",
+        "value": true,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:98:fare",
+    "verdict": "keep",
+    "value": 3.5,
+    "by": [
+      {
+        "fact": "line:98:fare",
+        "value": 3.5,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:99:runs",
+    "verdict": "keep",
+    "value": true,
+    "by": [
+      {
+        "fact": "line:99:runs",
+        "value": true,
+        "source": {
+          "type": "operator-site",
+          "name": "alsa.ma",
+          "date": "2026-11-03",
+          "url": "https://www.alsa.ma/fr/agadir/lignes"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (alsa.ma)"
+  },
+  {
+    "fact": "line:BHNS:headway",
+    "verdict": "apply",
+    "value": 10,
+    "by": [
+      {
+        "fact": "line:BHNS:headway",
+        "value": 10,
+        "note": "\"passages toutes les 10 minutes dès 06h00\"",
+        "source": {
+          "type": "operator-site",
+          "name": "beta.amalway.ma",
+          "date": "2026-11-06",
+          "url": "https://beta.amalway.ma/"
+        }
+      }
+    ],
+    "dissent": [
+      {
+        "fact": "line:BHNS:headway",
+        "value": 5,
+        "note": "\"five-minute intervals during peak hours\", at launch",
+        "source": {
+          "type": "press",
+          "name": "Morocco World News",
+          "date": "2026-05-07",
+          "url": "https://www.moroccoworldnews.com/2026/05/292850/agadir-launches-first-bus-rapid-transit-line-after-years-of-delays/"
+        }
+      }
+    ],
+    "reason": "most trusted source (beta.amalway.ma); 1 disagree with less trust or older dates"
+  },
+  {
+    "fact": "line:BHNS:first",
+    "verdict": "keep",
+    "value": "06:00",
+    "by": [
+      {
+        "fact": "line:BHNS:first",
+        "value": "06:00",
+        "note": "\"dès 06h00\"",
+        "source": {
+          "type": "operator-site",
+          "name": "beta.amalway.ma",
+          "date": "2026-11-06",
+          "url": "https://beta.amalway.ma/"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (beta.amalway.ma)"
+  },
+  {
+    "fact": "line:BHNS:fare",
+    "verdict": "keep",
+    "value": 5,
+    "by": [
+      {
+        "fact": "line:BHNS:fare",
+        "value": 5,
+        "source": {
+          "type": "operator-site",
+          "name": "beta.amalway.ma",
+          "date": "2026-11-03",
+          "url": "https://beta.amalway.ma/#/reseau"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "only source (beta.amalway.ma)"
+  },
+  {
+    "fact": "line:BHNS:card",
+    "verdict": "apply",
+    "value": 10,
+    "by": [
+      {
+        "fact": "line:BHNS:card",
+        "value": 10,
+        "note": "a card bought once, then topped up",
+        "source": {
+          "type": "press",
+          "name": "Hespress",
+          "date": "2026",
+          "url": "https://fr.hespress.com/340808-340808.html"
+        }
+      },
+      {
+        "fact": "line:BHNS:card",
+        "value": 10,
+        "note": "\"requires a card that you buy for the first time with 10 dh\"",
+        "source": {
+          "type": "rider",
+          "name": "rider",
+          "date": "2026-11-04"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "2 sources agree"
+  },
+  {
+    "fact": "line:2:route",
+    "verdict": "flag",
+    "value": {
+      "fr": "prolongée jusqu'au nouveau CHU",
+      "ar": "تزادت حتى للسبيطار الجديد (CHU)",
+      "en": "extended to the new CHU"
+    },
+    "by": [
+      {
+        "fact": "line:2:route",
+        "value": {
+          "fr": "prolongée jusqu'au nouveau CHU",
+          "ar": "تزادت حتى للسبيطار الجديد (CHU)",
+          "en": "extended to the new CHU"
+        },
+        "note": "also: lines 2 and 27 were extended earlier this year; new routes are in ALSA's Facebook posts",
+        "source": {
+          "type": "rider",
+          "name": "r/Agadir rider",
+          "date": "2026-11-06",
+          "url": "https://www.reddit.com/r/Agadir/comments/1xph8ac/"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "one rider reports it, unconfirmed"
+  },
+  {
+    "fact": "line:6:route",
+    "verdict": "flag",
+    "value": {
+      "fr": "prolongée jusqu'au nouveau CHU",
+      "ar": "تزادت حتى للسبيطار الجديد (CHU)",
+      "en": "extended to the new CHU"
+    },
+    "by": [
+      {
+        "fact": "line:6:route",
+        "value": {
+          "fr": "prolongée jusqu'au nouveau CHU",
+          "ar": "تزادت حتى للسبيطار الجديد (CHU)",
+          "en": "extended to the new CHU"
+        },
+        "source": {
+          "type": "rider",
+          "name": "r/Agadir rider",
+          "date": "2026-11-06",
+          "url": "https://www.reddit.com/r/Agadir/comments/1xph8ac/"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "one rider reports it, unconfirmed"
+  },
+  {
+    "fact": "line:27:route",
+    "verdict": "flag",
+    "value": {
+      "fr": "itinéraire prolongé",
+      "ar": "الطريق تزادت",
+      "en": "route extended"
+    },
+    "by": [
+      {
+        "fact": "line:27:route",
+        "value": {
+          "fr": "itinéraire prolongé",
+          "ar": "الطريق تزادت",
+          "en": "route extended"
+        },
+        "note": "the extent isn't given",
+        "source": {
+          "type": "rider",
+          "name": "r/Agadir rider",
+          "date": "2026-11-06",
+          "url": "https://www.reddit.com/r/Agadir/comments/1xph8ac/"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "one rider reports it, unconfirmed"
+  },
+  {
+    "fact": "line:8:route",
+    "verdict": "flag",
+    "value": {
+      "fr": "passe maintenant par Anza et Anza haut",
+      "ar": "ولّات كدوز من أنزا وأنزا الفوقانية",
+      "en": "now serves Anza and upper Anza"
+    },
+    "by": [
+      {
+        "fact": "line:8:route",
+        "value": {
+          "fr": "passe maintenant par Anza et Anza haut",
+          "ar": "ولّات كدوز من أنزا وأنزا الفوقانية",
+          "en": "now serves Anza and upper Anza"
+        },
+        "note": "written as \"B8\"",
+        "source": {
+          "type": "rider",
+          "name": "r/Agadir rider",
+          "date": "2026-11-06",
+          "url": "https://www.reddit.com/r/Agadir/comments/1xph8ac/"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "one rider reports it, unconfirmed"
+  },
+  {
+    "fact": "network:fares",
+    "verdict": "watch",
+    "by": [
+      {
+        "fact": "network:fares",
+        "note": "ALSA raised urban and suburban fares from 19 January 2026; no new price list found yet",
+        "source": {
+          "type": "press",
+          "name": "bladi.info",
+          "date": "2026-01-21",
+          "url": "https://www.bladi.info/threads/agadir-le-prix-du-bus-augmente-juste-apres-la-can-la-colere-monte-chez-les-usagers.561105/"
+        }
+      },
+      {
+        "fact": "network:fares",
+        "note": "\"since January 2026, a lot of lines had their fare prices hiked\"",
+        "source": {
+          "type": "rider",
+          "name": "r/Agadir rider",
+          "date": "2026-11-06",
+          "url": "https://www.reddit.com/r/Agadir/comments/1xph8ac/"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "a change is reported but without the new value"
+  }
+]

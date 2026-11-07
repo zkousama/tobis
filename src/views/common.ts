@@ -149,3 +149,32 @@ export function segmented<T extends string>(options: { id: T; label: string; lan
     options.map((o) => h("button", { class: o.id === currentId ? "on" : "", lang: o.lang, "aria-pressed": o.id === currentId ? "true" : "false", onclick: () => pick(o.id) }, o.label)),
   );
 }
+
+/** A change riders report about a line that no credible source confirms yet: shown, labelled as such. */
+export function lineNotices(l: { ref: string; notices?: { what: string; text: string | Partial<Record<"fr" | "ar" | "en", string>>; source: string; date: string }[] }) {
+  const say = (x: string | Partial<Record<"fr" | "ar" | "en", string>>) => (typeof x === "string" ? x : (x[getLang()] ?? x.en ?? x.fr ?? ""));
+  if (!l.notices?.length) return null;
+  return h(
+    "div",
+    { class: "tip tip-unconfirmed", role: "note" },
+    icon.info(),
+    h("span", null, ...l.notices.map((n) => h("span", { class: "notice-line" }, t("unconfirmedChange", say(n.text)), " ", h("small", null, t("reportedBy", n.date))))),
+  );
+}
+
+/** "Data: ALSA site, 2026-11-03" and a way to say something's wrong. */
+export function provenanceLine(l: { ref: string; sources?: { name: string; date: string }[] }) {
+  const src = l.sources?.map((s) => `${s.name} (${s.date})`).join(", ");
+  return h(
+    "p",
+    { class: "fine provenance" },
+    src ? `${t("lineDataFrom", src)} · ` : "",
+    h("a", { href: reportUrl(l.ref), target: "_blank", rel: "noopener" }, t("reportError")),
+  );
+}
+
+/** A prefilled GitHub issue (the "data correction" form), so a rider can say what changed. */
+export function reportUrl(ref?: string) {
+  const q = new URLSearchParams({ template: "data-correction.yml", title: ref ? `Line ${ref}: ` : "Data: ", ...(ref ? { line: ref } : {}) });
+  return `https://github.com/zkousama/tobis/issues/new?${q}`;
+}

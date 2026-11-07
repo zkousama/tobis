@@ -2018,3 +2018,24 @@ button.option:hover {
     min-height: 44px;
   }
 }
+/* A change riders report that isn't confirmed yet: amber, like the night warning, labelled as unconfirmed. */
+.tip-unconfirmed {
+  align-items: flex-start;
+  margin: 6px 0 10px;
+  background: var(--warn-bg);
+  color: var(--warn-ink);
+  font-size: 0.875rem;
+}
+.tip-unconfirmed .icon {
+  flex: none;
+}
+.notice-line {
+  display: block;
+}
+.notice-line small {
+  display: block;
+  opacity: 0.85;
+}
+.provenance {
+  margin-top: 12px;
+}

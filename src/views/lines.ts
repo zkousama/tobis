@@ -7,7 +7,7 @@ import { go } from "../app/nav.ts";
 import { catchBusHere, plan, setEndpoint } from "../app/plan.ts";
 import { nextPasses } from "../passes.ts";
 import { clock } from "./tripopts.ts";
-import { header, linesAt, stopLine } from "./common.ts";
+import { header, lineNotices, linesAt, provenanceLine, stopLine } from "./common.ts";
 
 export function linesBody() {
   return h(
@@ -71,6 +71,7 @@ export function lineBody(li: number, vi: number) {
     { class: "line" },
     header(h("span", { class: "head-line" }, lineBadge(l.ref, l.colour, "lg"), h("span", null, `${v.from} – ${v.to}`)), facts),
     dirs,
+    lineNotices(l),
     v.inferred ? h("p", { class: "fine", style: "margin:0 0 8px" }, t("orderInferred")) : null,
     v.stops.length < 2
       ? h("p", { class: "notice" }, t("pathOnly"))
@@ -79,6 +80,7 @@ export function lineBody(li: number, vi: number) {
           { class: "line-stops" },
           v.stops.map((s) => h("li", null, h("button", { class: "row", onclick: () => go({ name: "stop", stop: s }) }, h("span", { class: "row-main" }, h("span", null, nm(net.stops[s].n)), stopLine(s))))),
         ),
+    provenanceLine(l),
   );
 }
 

@@ -1,0 +1,183 @@
+{
+  "about": "Claims about the network that don't come from a feed: operator announcements (Facebook posts, communiqués), the Amalway site, the press, and riders. Each needs a source with a type (operator-announcement, operator-site, press, osm, rider), a name, a date and, where there is one, a link. scripts/council.mjs decides between them and the feeds; data/reports/council.md is the result.",
+  "claims": [
+    {
+      "fact": "line:22:runs",
+      "value": false,
+      "kind": "change",
+      "note": "communiqué: the Amal Way line replaces line 22 for good",
+      "source": {
+        "type": "press",
+        "name": "LesEco.ma",
+        "date": "2026-05-07",
+        "url": "https://leseco.ma/maroc/agadir-le-bhns-entre-en-service.html"
+      }
+    },
+    {
+      "fact": "line:22:runs",
+      "value": false,
+      "kind": "change",
+      "note": "same communiqué",
+      "source": {
+        "type": "press",
+        "name": "SNRT News",
+        "date": "2026-05-07",
+        "url": "https://snrtnews.com/fr/article/agadir-lance-la-premiere-ligne-de-son-bus-a-haut-niveau-de-service-baptise-amalway-trambus"
+      }
+    },
+    {
+      "fact": "line:22:runs",
+      "value": false,
+      "note": "\"Line 22 doesn't exist anymore because its served route was replaced by Amalway's L1\"",
+      "source": {
+        "type": "rider",
+        "name": "r/Agadir rider",
+        "date": "2026-11-06",
+        "url": "https://www.reddit.com/r/Agadir/comments/1xph8ac/"
+      }
+    },
+    {
+      "fact": "line:BHNS:headway",
+      "value": 10,
+      "note": "\"passages toutes les 10 minutes dès 06h00\"",
+      "source": {
+        "type": "operator-site",
+        "name": "beta.amalway.ma",
+        "date": "2026-11-06",
+        "url": "https://beta.amalway.ma/"
+      }
+    },
+    {
+      "fact": "line:BHNS:headway",
+      "value": 5,
+      "note": "\"five-minute intervals during peak hours\", at launch",
+      "source": {
+        "type": "press",
+        "name": "Morocco World News",
+        "date": "2026-05-07",
+        "url": "https://www.moroccoworldnews.com/2026/05/292850/agadir-launches-first-bus-rapid-transit-line-after-years-of-delays/"
+      }
+    },
+    {
+      "fact": "line:BHNS:first",
+      "value": "06:00",
+      "note": "\"dès 06h00\"",
+      "source": {
+        "type": "operator-site",
+        "name": "beta.amalway.ma",
+        "date": "2026-11-06",
+        "url": "https://beta.amalway.ma/"
+      }
+    },
+    {
+      "fact": "line:BHNS:fare",
+      "value": 5,
+      "source": {
+        "type": "operator-site",
+        "name": "beta.amalway.ma",
+        "date": "2026-11-03",
+        "url": "https://beta.amalway.ma/#/reseau"
+      }
+    },
+    {
+      "fact": "line:BHNS:card",
+      "value": 10,
+      "note": "a card bought once, then topped up",
+      "source": {
+        "type": "press",
+        "name": "Hespress",
+        "date": "2026",
+        "url": "https://fr.hespress.com/340808-340808.html"
+      }
+    },
+    {
+      "fact": "line:BHNS:card",
+      "value": 10,
+      "note": "\"requires a card that you buy for the first time with 10 dh\"",
+      "source": {
+        "type": "rider",
+        "name": "rider",
+        "date": "2026-11-04"
+      }
+    },
+    {
+      "fact": "line:2:route",
+      "value": {
+        "fr": "prolongée jusqu'au nouveau CHU",
+        "ar": "تزادت حتى للسبيطار الجديد (CHU)",
+        "en": "extended to the new CHU"
+      },
+      "note": "also: lines 2 and 27 were extended earlier this year; new routes are in ALSA's Facebook posts",
+      "source": {
+        "type": "rider",
+        "name": "r/Agadir rider",
+        "date": "2026-11-06",
+        "url": "https://www.reddit.com/r/Agadir/comments/1xph8ac/"
+      }
+    },
+    {
+      "fact": "line:6:route",
+      "value": {
+        "fr": "prolongée jusqu'au nouveau CHU",
+        "ar": "تزادت حتى للسبيطار الجديد (CHU)",
+        "en": "extended to the new CHU"
+      },
+      "source": {
+        "type": "rider",
+        "name": "r/Agadir rider",
+        "date": "2026-11-06",
+        "url": "https://www.reddit.com/r/Agadir/comments/1xph8ac/"
+      }
+    },
+    {
+      "fact": "line:27:route",
+      "value": {
+        "fr": "itinéraire prolongé",
+        "ar": "الطريق تزادت",
+        "en": "route extended"
+      },
+      "note": "the extent isn't given",
+      "source": {
+        "type": "rider",
+        "name": "r/Agadir rider",
+        "date": "2026-11-06",
+        "url": "https://www.reddit.com/r/Agadir/comments/1xph8ac/"
+      }
+    },
+    {
+      "fact": "line:8:route",
+      "value": {
+        "fr": "passe maintenant par Anza et Anza haut",
+        "ar": "ولّات كدوز من أنزا وأنزا الفوقانية",
+        "en": "now serves Anza and upper Anza"
+      },
+      "note": "written as \"B8\"",
+      "source": {
+        "type": "rider",
+        "name": "r/Agadir rider",
+        "date": "2026-11-06",
+        "url": "https://www.reddit.com/r/Agadir/comments/1xph8ac/"
+      }
+    },
+    {
+      "fact": "network:fares",
+      "note": "ALSA raised urban and suburban fares from 19 January 2026; no new price list found yet",
+      "source": {
+        "type": "press",
+        "name": "bladi.info",
+        "date": "2026-01-21",
+        "url": "https://www.bladi.info/threads/agadir-le-prix-du-bus-augmente-juste-apres-la-can-la-colere-monte-chez-les-usagers.561105/"
+      }
+    },
+    {
+      "fact": "network:fares",
+      "note": "\"since January 2026, a lot of lines had their fare prices hiked\"",
+      "source": {
+        "type": "rider",
+        "name": "r/Agadir rider",
+        "date": "2026-11-06",
+        "url": "https://www.reddit.com/r/Agadir/comments/1xph8ac/"
+      }
+    }
+  ]
+}
