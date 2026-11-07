@@ -145,7 +145,7 @@
       }
     },
     {
-      "fact": "line:8:route",
+      "fact": "line:8B:route",
       "value": {
         "fr": "passe maintenant par Anza et Anza haut",
         "ar": "ولّات كدوز من أنزا وأنزا الفوقانية",
@@ -178,6 +178,526 @@
         "date": "2026-11-06",
         "url": "https://www.reddit.com/r/Agadir/comments/1xph8ac/"
       }
+    },
+    {
+      "fact": "line:1:fare",
+      "value": 4,
+      "kind": "change",
+      "note": "new fare grid from 19/01/2026, signed with Agadir Mobilité; lines run with the new buses",
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2026-01-19",
+        "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0mcHmndvxKUFUF17KUtW1DuPrroZoP1Jm5anKpXJdUo5FWSTmG8DaHDdg7vB492r3l"
+      }
+    },
+    {
+      "fact": "line:2:fare",
+      "value": 5,
+      "kind": "change",
+      "note": "new fare grid from 19/01/2026, signed with Agadir Mobilité; lines run with the new buses",
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2026-01-19",
+        "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0mcHmndvxKUFUF17KUtW1DuPrroZoP1Jm5anKpXJdUo5FWSTmG8DaHDdg7vB492r3l"
+      }
+    },
+    {
+      "fact": "line:3:fare",
+      "value": 5,
+      "kind": "change",
+      "note": "new fare grid from 19/01/2026, signed with Agadir Mobilité; lines run with the new buses",
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2026-01-19",
+        "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0mcHmndvxKUFUF17KUtW1DuPrroZoP1Jm5anKpXJdUo5FWSTmG8DaHDdg7vB492r3l"
+      }
+    },
+    {
+      "fact": "line:5:fare",
+      "value": 5,
+      "kind": "change",
+      "note": "new fare grid from 19/01/2026, signed with Agadir Mobilité; lines run with the new buses",
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2026-01-19",
+        "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0mcHmndvxKUFUF17KUtW1DuPrroZoP1Jm5anKpXJdUo5FWSTmG8DaHDdg7vB492r3l"
+      }
+    },
+    {
+      "fact": "line:6:fare",
+      "value": 4,
+      "kind": "change",
+      "note": "new fare grid from 19/01/2026, signed with Agadir Mobilité; lines run with the new buses",
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2026-01-19",
+        "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0mcHmndvxKUFUF17KUtW1DuPrroZoP1Jm5anKpXJdUo5FWSTmG8DaHDdg7vB492r3l"
+      }
+    },
+    {
+      "fact": "line:8:fare",
+      "value": 5,
+      "kind": "change",
+      "note": "new fare grid from 19/01/2026, signed with Agadir Mobilité; lines run with the new buses",
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2026-01-19",
+        "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0mcHmndvxKUFUF17KUtW1DuPrroZoP1Jm5anKpXJdUo5FWSTmG8DaHDdg7vB492r3l"
+      }
+    },
+    {
+      "fact": "line:10:fare",
+      "value": 5,
+      "kind": "change",
+      "note": "new fare grid from 19/01/2026, signed with Agadir Mobilité; lines run with the new buses",
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2026-01-19",
+        "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0mcHmndvxKUFUF17KUtW1DuPrroZoP1Jm5anKpXJdUo5FWSTmG8DaHDdg7vB492r3l"
+      }
+    },
+    {
+      "fact": "line:11:fare",
+      "value": 5,
+      "kind": "change",
+      "note": "new fare grid from 19/01/2026, signed with Agadir Mobilité; lines run with the new buses",
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2026-01-19",
+        "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0mcHmndvxKUFUF17KUtW1DuPrroZoP1Jm5anKpXJdUo5FWSTmG8DaHDdg7vB492r3l"
+      }
+    },
+    {
+      "fact": "line:12:fare",
+      "value": 5,
+      "kind": "change",
+      "note": "new fare grid from 19/01/2026, signed with Agadir Mobilité; lines run with the new buses",
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2026-01-19",
+        "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0mcHmndvxKUFUF17KUtW1DuPrroZoP1Jm5anKpXJdUo5FWSTmG8DaHDdg7vB492r3l"
+      }
+    },
+    {
+      "fact": "line:13:fare",
+      "value": 4,
+      "kind": "change",
+      "note": "new fare grid from 19/01/2026, signed with Agadir Mobilité; lines run with the new buses",
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2026-01-19",
+        "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0mcHmndvxKUFUF17KUtW1DuPrroZoP1Jm5anKpXJdUo5FWSTmG8DaHDdg7vB492r3l"
+      }
+    },
+    {
+      "fact": "line:15:fare",
+      "value": 5,
+      "kind": "change",
+      "note": "new fare grid from 19/01/2026, signed with Agadir Mobilité; lines run with the new buses",
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2026-01-19",
+        "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0mcHmndvxKUFUF17KUtW1DuPrroZoP1Jm5anKpXJdUo5FWSTmG8DaHDdg7vB492r3l"
+      }
+    },
+    {
+      "fact": "line:16:fare",
+      "value": 5,
+      "kind": "change",
+      "note": "new fare grid from 19/01/2026, signed with Agadir Mobilité; lines run with the new buses",
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2026-01-19",
+        "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0mcHmndvxKUFUF17KUtW1DuPrroZoP1Jm5anKpXJdUo5FWSTmG8DaHDdg7vB492r3l"
+      }
+    },
+    {
+      "fact": "line:20:fare",
+      "value": 5,
+      "kind": "change",
+      "note": "new fare grid from 19/01/2026, signed with Agadir Mobilité; lines run with the new buses",
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2026-01-19",
+        "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0mcHmndvxKUFUF17KUtW1DuPrroZoP1Jm5anKpXJdUo5FWSTmG8DaHDdg7vB492r3l"
+      }
+    },
+    {
+      "fact": "line:23:fare",
+      "value": 4,
+      "kind": "change",
+      "note": "new fare grid from 19/01/2026, signed with Agadir Mobilité; lines run with the new buses",
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2026-01-19",
+        "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0mcHmndvxKUFUF17KUtW1DuPrroZoP1Jm5anKpXJdUo5FWSTmG8DaHDdg7vB492r3l"
+      }
+    },
+    {
+      "fact": "line:24:fare",
+      "value": 10,
+      "kind": "change",
+      "note": "new fare grid from 19/01/2026, signed with Agadir Mobilité; lines run with the new buses",
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2026-01-19",
+        "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0mcHmndvxKUFUF17KUtW1DuPrroZoP1Jm5anKpXJdUo5FWSTmG8DaHDdg7vB492r3l"
+      }
+    },
+    {
+      "fact": "line:95:fare",
+      "value": 5,
+      "kind": "change",
+      "note": "new fare grid from 19/01/2026, signed with Agadir Mobilité; lines run with the new buses",
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2026-01-19",
+        "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0mcHmndvxKUFUF17KUtW1DuPrroZoP1Jm5anKpXJdUo5FWSTmG8DaHDdg7vB492r3l"
+      }
+    },
+    {
+      "fact": "line:97:fare",
+      "value": 4,
+      "kind": "change",
+      "note": "new fare grid from 19/01/2026, signed with Agadir Mobilité; lines run with the new buses",
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2026-01-19",
+        "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0mcHmndvxKUFUF17KUtW1DuPrroZoP1Jm5anKpXJdUo5FWSTmG8DaHDdg7vB492r3l"
+      }
+    },
+    {
+      "fact": "line:26:fare",
+      "value": 5,
+      "kind": "change",
+      "note": "new fare grid from 19/01/2026, signed with Agadir Mobilité; lines run with the new buses",
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2026-01-19",
+        "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0mcHmndvxKUFUF17KUtW1DuPrroZoP1Jm5anKpXJdUo5FWSTmG8DaHDdg7vB492r3l"
+      }
+    },
+    {
+      "fact": "line:27:fare",
+      "value": 5,
+      "kind": "change",
+      "note": "new fare grid from 19/01/2026, signed with Agadir Mobilité; lines run with the new buses",
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2026-01-19",
+        "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0mcHmndvxKUFUF17KUtW1DuPrroZoP1Jm5anKpXJdUo5FWSTmG8DaHDdg7vB492r3l"
+      }
+    },
+    {
+      "fact": "line:32:fare",
+      "kind": "change",
+      "value": {
+        "0-1": 8,
+        "0-2": 6,
+        "0-3": 6,
+        "1-2": 6,
+        "1-3": 6,
+        "2-3": 6
+      },
+      "note": "zones: 0 Place Salam, 1 Taghazout, 2 Tamraght, 3 Aourir (grid: Place Salam–Taghazout 8, –Tamraght 6, –Aourir 6, Aourir–Taghazout 6, Aourir–Tamraght 6, Tamraght–Taghazout 6)",
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2026-01-19",
+        "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0mcHmndvxKUFUF17KUtW1DuPrroZoP1Jm5anKpXJdUo5FWSTmG8DaHDdg7vB492r3l"
+      }
+    },
+    {
+      "fact": "line:33:fare",
+      "kind": "change",
+      "value": {
+        "0-1": 10,
+        "0-2": 9,
+        "0-3": 8,
+        "1-2": 6,
+        "1-3": 9,
+        "2-3": 6
+      },
+      "note": "zones: 0 Place Salam, 1 Tamri, 2 Imi Ouaddar, 3 Taghazout (grid: Place Salam–Tamri 10, –Imi Ouaddar 9, –Taghazout 8, Imi Ouaddar–Tamri 6, Taghazout–Tamri 9, Taghazout–Imi Ouaddar 6)",
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2026-01-19",
+        "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0mcHmndvxKUFUF17KUtW1DuPrroZoP1Jm5anKpXJdUo5FWSTmG8DaHDdg7vB492r3l"
+      }
+    },
+    {
+      "fact": "line:31:fare",
+      "kind": "change",
+      "value": {
+        "0-1": 5,
+        "0-2": 6,
+        "1-2": 6
+      },
+      "note": "zones: 0 Place Salam, 1 Hassania, 2 Aourir; the grid names the city end Souk El Hed (Souk El Hed–Hassania 5, –Aourir 6, Hassania–Aourir 6)",
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2026-01-19",
+        "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0mcHmndvxKUFUF17KUtW1DuPrroZoP1Jm5anKpXJdUo5FWSTmG8DaHDdg7vB492r3l"
+      }
+    },
+    {
+      "fact": "line:BHNS:card",
+      "value": 5,
+      "kind": "change",
+      "note": "\"Le prix de la carte + 1 voyage à 10 Dhs\"; trip 5 DH",
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2026-05-06",
+        "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0WVLHJT3oMF6om7fSPmBMfxmWNBuJdKch8bPnfy1PYj3nbmhmkDhH9SbnYGtuQiGxl"
+      }
+    },
+    {
+      "fact": "line:22:runs",
+      "value": false,
+      "kind": "change",
+      "note": "\"cette offre modernisée remplacera définitivement la ligne 22\" from 7 May 2026",
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2026-05-06",
+        "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0WVLHJT3oMF6om7fSPmBMfxmWNBuJdKch8bPnfy1PYj3nbmhmkDhH9SbnYGtuQiGxl"
+      }
+    },
+    {
+      "fact": "line:2:route",
+      "kind": "change",
+      "terminus": "Taoukt terminus",
+      "value": {
+        "fr": "terminus déplacé d'Aït Mouden à Aït Taoukt",
+        "ar": "المنتهى تحول من آيت المودن لآيت تاوكت",
+        "en": "terminus moved from Ait Mouden to Ait Taoukt"
+      },
+      "note": "from 9 April 2026",
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2026-04-10",
+        "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0wVkcL5gd2RkqWyz7puPkMyqmEUWQboxiRPhviRD6efaRwfesjsrbZFT44rZmjG2cl"
+      }
+    },
+    {
+      "fact": "line:27:route",
+      "kind": "change",
+      "terminus": "Terminus CHU",
+      "value": {
+        "fr": "terminus déplacé des Facultés au CHU Mohammed VI",
+        "ar": "المنتهى تحول من الكليات للمستشفى الجامعي محمد السادس",
+        "en": "terminus moved from the Faculties to CHU Mohammed VI"
+      },
+      "note": "from 9 April 2026",
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2026-04-10",
+        "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0wVkcL5gd2RkqWyz7puPkMyqmEUWQboxiRPhviRD6efaRwfesjsrbZFT44rZmjG2cl"
+      }
+    },
+    {
+      "fact": "line:6:route",
+      "kind": "change",
+      "value": {
+        "fr": "prolongée jusqu'au CHU Mohammed VI (Mesdoura, Inezgane, Jihadia, Dcheira, Tassila, Hay El Houda, Facultés, Hay Salam, Place El Wad, Dakhla, CHU)",
+        "ar": "تزادت حتى للمستشفى الجامعي محمد السادس (مسدورة، إنزكان، الجهادية، الدشيرة، تاسيلا، حي الهدى، الكليات، حي السلام، ساحة الود، الداخلة)",
+        "en": "extended to CHU Mohammed VI (via Dakhla)"
+      },
+      "note": "from 1 June 2026",
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2026-05-30",
+        "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0m36BR2VU6NZ3FpTfj83SCujmKUF3BJSCAfEFAnwvzpxydHC28L8xbShZiNutKxqQl"
+      }
+    },
+    {
+      "fact": "line:1:route",
+      "kind": "change",
+      "value": {
+        "fr": "prolongée jusqu'au CHU Mohammed VI par Les Amicales, Najah, Bourkane, Hay Al Wafa et Dakhla",
+        "ar": "تزادت حتى للمستشفى الجامعي محمد السادس عبر الأميكال، النجاح، بوركان، حي الوفاء والداخلة",
+        "en": "extended to CHU Mohammed VI via Les Amicales, Najah, Bourkane, Hay Al Wafa and Dakhla"
+      },
+      "note": "from 18 June 2026",
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2026-06-17",
+        "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid02pvPYfucMtN3sjkW4iCUHGrKEJAZMTji1u5dEFHWBmtCp9UE9mdSjGfvcRXaihsqZl"
+      }
+    },
+    {
+      "fact": "line:31:route",
+      "kind": "change",
+      "value": {
+        "fr": "nouveau tracé à Anza (Cimentière Anza, Souk Anza, Hay Amal)",
+        "ar": "مسار جديد فأنزا (سيمنتيري أنزا، سوق أنزا، حي الأمل)",
+        "en": "new route through Anza (Cimentière Anza, Souk Anza, Hay Amal)"
+      },
+      "note": "see the map in the post",
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2026-09-30",
+        "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0p1rs1eUvmn3qBR3Q9KMp8AW7DknvAFok1Az7mvNxfHcBxjUVUZtoUiA4vpyu35EZl"
+      }
+    },
+    {
+      "fact": "line:8B:runs",
+      "value": true,
+      "kind": "change",
+      "note": "new line from 16 July 2026: Tadart (quartiers 1-3, blocs C/D, Hay Harrouchi, Hay Ben Ali) – Souk Anza – Marché central Anza – Hay Amal – Port de pêche – Pôle d'échange du Port",
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2026-07-15",
+        "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid02w9Yhc8X41Q3jYZrCZskp8GtT9WtpFFYMq1RS5FmaGdWdX5i71wFDw74KdZKsLxX9l"
+      }
+    },
+    {
+      "fact": "line:8B:route",
+      "kind": "change",
+      "value": {
+        "fr": "passe aussi par Hay Al Hassania",
+        "ar": "ولّات كدوز من حي الحسنية",
+        "en": "now also serves Hay Al Hassania"
+      },
+      "note": "from 2 September 2026",
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2026-09-02",
+        "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid02aFeG4Ms7jG5PztzTxJs5CZ8D2uGAkMiz35kBjk7QZyLn6vtxzsrv8YeUrNp233f4l"
+      }
+    },
+    {
+      "fact": "line:342:runs",
+      "value": true,
+      "kind": "change",
+      "note": "new line from 17 September 2026, Amskroud – Tikiouine via Agafay, Sidi Bouswab, Parc Haliopolis, CMC, ISIA",
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2026-09-16",
+        "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid02uyQCAuCnYYnrN33gkRDWvhcgrdjCye4oCDHB4cgsTfSDVGDJRaGzqrZt2Xk2iNntl"
+      }
+    },
+    {
+      "fact": "line:34:runs",
+      "value": true,
+      "kind": "change",
+      "note": "launched 30 July 2026, Amskroud – Tikiouine, 06:30 to 20:30 (already in alsa.ma's data)",
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2026-07-29",
+        "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0dtXcHhWz19Fn8bNGwC4qEz5JbdHn3APwJ1TAMQrmEhvxAFbXNNNAdK3j7HxJ2WMfl"
+      }
+    },
+    {
+      "fact": "line:34:first",
+      "value": "06:30",
+      "kind": "change",
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2026-07-29",
+        "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0dtXcHhWz19Fn8bNGwC4qEz5JbdHn3APwJ1TAMQrmEhvxAFbXNNNAdK3j7HxJ2WMfl"
+      }
+    },
+    {
+      "fact": "line:34:last",
+      "value": "20:30",
+      "kind": "change",
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2026-07-29",
+        "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0dtXcHhWz19Fn8bNGwC4qEz5JbdHn3APwJ1TAMQrmEhvxAFbXNNNAdK3j7HxJ2WMfl"
+      }
+    },
+    {
+      "fact": "network:transfer",
+      "value": "8B ⇄ BHNS at the Port terminus, same ticket within one hour, from 13 October 2026",
+      "kind": "change",
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2026-10-12",
+        "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid033pNPVynnHuWoVTvCXX4ZxVrGPWEpz5wr4r8PDpkSbXZGSgcbxLKuX5dDnBKEbdNml"
+      }
+    }
+  ],
+  "ignored": [
+    {
+      "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0o5bJm1A5uXtAuQdWLR349SGyDvAv1ByEFTY4JvCEwF1hstSphX3nhW9yPq18z5el",
+      "date": "2026-06-10",
+      "why": "night service (Bilmawn carnival and a national team match)"
+    },
+    {
+      "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0k3yQD2mLZEGyz6QdQAV9wbKYaK7xWCohevyQJHQQFF4ZYq9KN4c7B7LKtgByJtbil",
+      "date": "2026-06-19",
+      "why": "night service for national team matches"
+    },
+    {
+      "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0cJFDpSmRXo6JP7UUTfyuWiUbHFsM4oQJ8tfpS4H8EiBck9TUP4DybT3G975Zosgtl",
+      "date": "2026-06-29",
+      "why": "night service for a national team match"
+    },
+    {
+      "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid02uCQV2AcYDUEFi13z3ok4L6YtNMNMMP3taVnfG4EYihnhkh2RxTvLzFjPYBDzQ2D6l",
+      "date": "2026-07-09",
+      "why": "night service for a national team match"
+    },
+    {
+      "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0CY1npn1dWDgFZeoEoxSg17NyZyPTS1kcezSHS8EaETvdePvgT1oJC6Tun55cUecFl",
+      "date": "2026-07-19",
+      "why": "night service for the Timitar festival"
+    },
+    {
+      "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid09vecFswznbsPvJZUYRqPjhaQUxbGvmTZ7VXyW4jAVaFHEEoBCq1B5EJSqKw72NH7l",
+      "date": "2026-08-12",
+      "why": "night service for the Mohajir festival in Anza"
+    },
+    {
+      "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid02dzyHqfndBZE3AvvAmSpi2G65nPGV6ibUbPe16Mwehe4z3AS8nAD2AE2BPRXdxvUol",
+      "date": "2026-08-31",
+      "why": "school subscriptions open online"
+    },
+    {
+      "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0sMANaNN1zHiCatdCViZsMS1mKGwk9Y1TM9ExTHDeKHWwoZzKLYW8qJMzUiLxHZmrl",
+      "date": "2026-09-08",
+      "why": "student bus card"
+    },
+    {
+      "url": "https://www.facebook.com/ALSA.Agadir.officielle/posts/pfbid0297oBZiGX5num8VCZgh33HdfV92PGrCKLeYv5qV8c6hW8ws9bdCbEc8bzS8AyJz64l",
+      "date": "2026-01-18",
+      "why": "announces new fares on the new buses; the figures are in the 19 January post"
     }
   ]
 }

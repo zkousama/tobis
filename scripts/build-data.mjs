@@ -642,8 +642,32 @@ const accepted = (fact) => {
   if (d.verdict === "flag") return d.dissent[0]?.value;
   return undefined;
 };
+/**
+ * The fare to publish: the feed's, unless the council settled on another. A newer flat price drops the
+ * feed's card prices (nobody republished them); a newer zone grid replaces the prices it names and keeps
+ * the rest; a line the feed has no fare for takes the announced one.
+ */
+function fareWith(feedFare, fareNow) {
+  if (fareNow === undefined) return feedFare;
+  if (typeof fareNow === "number") {
+    if (!feedFare) return { kind: "flat", normal: fareNow };
+    if (feedFare.kind === "flat") return fareNow === feedFare.normal ? feedFare : { ...feedFare, normal: fareNow, card: undefined };
+    return feedFare;
+  }
+  if (feedFare?.kind === "zones" && typeof fareNow === "object") {
+    const changed = Object.keys(fareNow).filter((k) => fareNow[k] !== feedFare.normal[k]);
+    if (!changed.length) return feedFare;
+    // The old card prices belong to the old grid; nobody republished them.
+    return { ...feedFare, normal: { ...feedFare.normal, ...fareNow }, card: {} };
+  }
+  return feedFare;
+}
 /** What a line's data rests on, and what riders report that isn't confirmed: shown in the app. */
-function provenance(ref) {
+function provenance(line) {
+  const ref = line.ref;
+  const names = new Set(line.variants.flatMap((v) => v.stops.map((si) => normKey(stops[si].n.d))));
+  // An announced route change whose new end is already a stop on the line is already drawn.
+  const drawn = (d) => d.by.some((c) => c.terminus && names.has(normKey(c.terminus)));
   const mine = decisions.filter((d) => d.fact.startsWith(`line:${ref}:`));
   const used = mine.filter((d) => d.verdict === "apply" || d.verdict === "keep" || d.verdict === "flag").flatMap((d) => (d.verdict === "flag" ? d.dissent : d.by));
   const seen = new Map();
@@ -651,7 +675,7 @@ function provenance(ref) {
   // Shown in the app: rider reports (unconfirmed), and route changes the operator announced, which the
   // drawn route can't reflect until its new stops are added by hand.
   const notices = mine
-    .filter((d) => d.verdict === "flag" || (d.verdict === "apply" && d.fact.endsWith(":route")))
+    .filter((d) => d.verdict === "flag" || (d.verdict === "apply" && d.fact.endsWith(":route") && !drawn(d)))
     .map((d) => {
       const lead = d.by.find((c) => c.source.type !== "rider") ?? d.by[0];
       return { what: d.fact.split(":")[2], confirmed: d.verdict === "apply", text: typeof d.value === "object" ? d.value : String(d.value), source: lead.source.name, date: lead.source.date, ...(lead.source.url ? { url: lead.source.url } : {}) };
@@ -669,7 +693,7 @@ if (alsa) {
     }
     const feedFare = parseFare(alsaDetails[l.id]?.tarifa);
     const fareNow = accepted(`line:${ref}:fare`);
-    const fare = feedFare?.kind === "flat" && fareNow !== undefined && fareNow !== feedFare.normal ? { ...feedFare, normal: fareNow, card: undefined } : feedFare;
+    const fare = fareWith(feedFare, fareNow);
     const published = parseHours(alsaDetails[l.id]?.horario);
     for (const dirKey of ["outgoing", "return"]) {
       const dir = l[dirKey];
@@ -929,7 +953,10 @@ const lines = [...byRef.values()].sort((a, b) => order(a) - order(b));
 lines.forEach((l, i) => (l.colour = l.brt ? "#ed6c36" : (l.colour ?? PALETTE[i % PALETTE.length])));
 for (const l of lines) if (l.taxi) l.variants.forEach((v) => (v.inferred = undefined));
 // Where each line's data comes from, and unconfirmed reports about it (the council's).
-for (const l of lines) if (!l.taxi) Object.assign(l, provenance(l.ref));
+for (const l of lines) if (!l.taxi) Object.assign(l, provenance(l));
+// Lines the operator announced that nobody has mapped yet: listed in the council's report.
+const missing = decisions.filter((d) => /^line:[^:]+:runs$/.test(d.fact) && d.verdict === "apply" && d.value === true && !byRef.has(d.fact.split(":")[1]));
+for (const d of missing) console.log(`  line ${d.fact.split(":")[1]} announced but not in the data: ${d.by[0].note ?? ""}`);
 
 // Each place's nearest other town, to tell apart places with the same name.
 places.forEach((p, i) => {
@@ -988,7 +1015,10 @@ const json = JSON.stringify(out);
 await writeFile(`public/data/${city}.json`, json);
 await mkdir(`data/reports`, { recursive: true });
 await writeFile(`data/reports/${city}.json`, JSON.stringify(report, null, 2));
-await writeFile(`data/reports/council.md`, councilReport(decisions));
+await writeFile(
+  `data/reports/council.md`,
+  councilReport(decisions) + (missing.length ? `\n## Announced lines missing from the data\n\n${missing.map((d) => `- ${d.fact.split(":")[1]}: ${d.by[0].note ?? ""} <${d.by[0].source.url ?? ""}>`).join("\n")}\n` : ""),
+);
 await writeFile(`data/reports/council.json`, JSON.stringify(decisions, null, 2));
 const tally = (v) => decisions.filter((d) => d.verdict === v).length;
 console.log(`council: ${decisions.length} facts, ${tally("apply")} decided, ${tally("flag")} unconfirmed, ${tally("watch")} on watch`);

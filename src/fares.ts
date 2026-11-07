@@ -31,7 +31,8 @@ export function fareFor(line: Line, v: Variant, board: number, alight: number): 
   if (a === b) {
     // Same zone: the cheapest published price is the closest we have.
     const prices = Object.values(f.normal);
-    return prices.length ? { normal: Math.min(...prices), card: Math.min(...Object.values(f.card)) } : undefined;
+    const cards = Object.values(f.card);
+    return prices.length ? { normal: Math.min(...prices), card: cards.length ? Math.min(...cards) : undefined } : undefined;
   }
   const key = `${Math.min(a, b)}-${Math.max(a, b)}`;
   return f.normal[key] !== undefined ? { normal: f.normal[key], card: f.card[key] } : undefined;

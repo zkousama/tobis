@@ -80,7 +80,7 @@ test("the Trambus carries its card price (bought once) next to the ride fare", {
   const brt = net.lines.find((l) => l.brt);
   assert.ok(brt?.fare?.kind === "flat");
   assert.equal(brt.fare.normal, 5);
-  assert.equal(brt.fare.firstCard, 10);
+  assert.equal(brt.fare.firstCard, 5); // "le prix de la carte + 1 voyage à 10 Dhs", the trip being 5
 });
 
 test("leaving the Trambus out still finds buses, with no Trambus ride", { skip: !have }, () => {
@@ -220,4 +220,25 @@ test("departure timed to the walk: leave so you reach the stop as the Trambus co
 
 test("line 22 is gone: the Trambus replaced it in May 2026, though ALSA's site still lists it", { skip: !have }, () => {
   assert.ok(!net.lines.some((l) => l.ref === "22"));
+});
+
+test("fares follow ALSA's grid of 19 January 2026, zone lines included", { skip: !have }, async () => {
+  const { fareFor } = await import("../src/fares.ts");
+  const line = (ref: string) => net.lines.find((l) => l.ref === ref)!;
+  assert.deepEqual(line("1").fare, { kind: "flat", normal: 4 }); // the feed has no price for line 1
+  assert.deepEqual(line("6").fare, { kind: "flat", normal: 4, transfer: 1 });
+  const f31 = line("31").fare;
+  assert.ok(f31?.kind === "zones");
+  assert.deepEqual(f31.normal, { "0-1": 5, "0-2": 6, "1-2": 6 });
+  // The old card prices went with the old grid; a same-zone ride still gets a price.
+  const v = line("31").variants.find((x) => x.zones)!;
+  const k = v.zones!.findIndex((z, i) => i > 0 && z === v.zones![i - 1]);
+  assert.equal(fareFor(line("31"), v, k - 1, k)?.normal, 5);
+});
+
+test("an announced route change already drawn isn't flagged; one not drawn yet is", { skip: !have }, () => {
+  const line = (ref: string) => net.lines.find((l) => l.ref === ref)!;
+  assert.equal(line("2").notices, undefined); // the Aït Taoukt terminus is on the map
+  assert.equal(line("27").notices, undefined); // so is the CHU
+  assert.ok(line("6").notices?.some((n) => n.what === "route" && n.confirmed));
 });

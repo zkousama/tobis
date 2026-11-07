@@ -32,8 +32,8 @@
     "fare": {
       "kind": "flat",
       "normal": 5,
-      "firstCard": 10,
-      "note": "rechargeable card, 10 DH to buy the first time, then 5 DH a trip on it"
+      "firstCard": 5,
+      "note": "rechargeable card: 10 DH buys the card and the first trip (the card is 5), then 5 DH a trip on it"
     },
     "stations": [
       "Port",
