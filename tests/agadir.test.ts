@@ -275,3 +275,13 @@ test("every stop is in the city, and no line is drawn far off its stops", { skip
       assert.ok(v.length < crow * 2.5 + 5000, `line ${l.ref} ${v.from} → ${v.to}: ${Math.round(v.length / 1000)} km for ${Math.round(crow / 1000)} km of stops`);
     }
 });
+
+test("the Trambus end to end takes the published 45 minutes, not the street-bus estimate", { skip: !have }, async () => {
+  const { rideClock } = await import("../src/router.ts");
+  const brt = net.lines.find((l) => l.brt)!;
+  assert.equal(brt.runtime, 45);
+  for (const v of brt.variants) assert.equal(Math.round(rideClock(v.along, brt.runtime).at(-1)! / 60), 45);
+  // A bus line without a published time keeps the estimate.
+  const v12 = net.lines.find((l) => l.ref === "12")!.variants[0];
+  assert.ok(rideClock(v12.along)[1] > 0);
+});

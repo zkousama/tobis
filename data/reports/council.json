@@ -2334,5 +2334,37 @@
     ],
     "dissent": [],
     "reason": "announced change (ALSA Facebook, 2025-12-31) and no feed changed this after it"
+  },
+  {
+    "fact": "line:BHNS:runtime",
+    "verdict": "apply",
+    "value": 45,
+    "by": [
+      {
+        "fact": "line:BHNS:runtime",
+        "value": 45,
+        "note": "\"covering the full route in approximately 45 minutes\", at the launch",
+        "source": {
+          "type": "press",
+          "name": "Morocco World News",
+          "date": "2026-05-07",
+          "url": "https://www.moroccoworldnews.com/2026/05/292850/agadir-launches-first-bus-rapid-transit-line-after-years-of-delays/"
+        }
+      },
+      {
+        "fact": "line:BHNS:runtime",
+        "value": 45,
+        "note": "\"relie le quartier du Port à Tikiouine en seulement 45 minutes\", before the launch",
+        "source": {
+          "type": "operator-announcement",
+          "name": "Amalway Facebook",
+          "date": "2025-07-14",
+          "url": "https://www.facebook.com/61563512425769/posts/122159684246450414",
+          "posted": "2025-07-14T15:30:49.000Z"
+        }
+      }
+    ],
+    "dissent": [],
+    "reason": "2 sources agree"
   }
 ]

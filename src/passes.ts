@@ -15,7 +15,7 @@ export function nextPasses(line: Line, vi: number, at: number, now: Date, count 
   if (first === undefined || !line.headway) return [];
   const last = minutes(line.hours?.last);
   const v = line.variants[vi];
-  const offset = rideClock(v.along)[at] / 60; // minutes from the end of the line to this stop
+  const offset = rideClock(v.along, line.runtime)[at] / 60; // minutes from the end of the line to this stop
   const day = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const nowMin = (now.getTime() - day.getTime()) / 60000;
   const out: Date[] = [];

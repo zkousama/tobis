@@ -26,10 +26,19 @@ export function sectionSeconds(metres: number): number {
   const speed = Math.min(14, 4.5 + metres / 220); // m/s: ~23 km/h at 400 m spacing, 50 km/h on long rural runs
   return metres / speed + DWELL;
 }
-/** Cumulative riding seconds at each stop of a direction. */
-export function rideClock(along: number[]): Float64Array {
+/**
+ * Cumulative riding seconds at each stop of a direction. When the operator publishes the time for
+ * the whole line (`runtime`, minutes), the estimate is scaled to it: a line with its own lane and
+ * priority at junctions runs faster than the street-bus model says.
+ */
+export function rideClock(along: number[], runtime?: number): Float64Array {
   const t = new Float64Array(along.length);
   for (let i = 1; i < along.length; i++) t[i] = t[i - 1] + sectionSeconds(Math.max(0, along[i] - along[i - 1]));
+  const total = t[t.length - 1];
+  if (runtime && total > 0) {
+    const k = (runtime * 60) / total;
+    for (let i = 1; i < t.length; i++) t[i] *= k;
+  }
   return t;
 }
 
@@ -119,7 +128,7 @@ export class Router {
     net.lines.forEach((l, li) =>
       l.variants.forEach((v, vi) => {
         if (v.stops.length < 2) return;
-        const clock = rideClock(v.along);
+        const clock = rideClock(v.along, l.runtime);
         this.clocks.set(`${li}:${vi}`, clock);
         this.flat.push({ line: li, variant: vi, brt: l.brt, wait: waitFor(l), clock });
       }),

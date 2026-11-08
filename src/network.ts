@@ -51,6 +51,7 @@ export interface Line {
   variants: Variant[];
   fare?: LineFare;
   headway?: number; // minutes between buses, when the operator publishes it
+  runtime?: number; // minutes end to end, when published: ride times are scaled to it
   // Service hours ("06:00"), only when the operator publishes them and they look real: the Trambus,
   // and ALSA lines whose hours span a real day (most ALSA lines carry the same 6:25-10:30 filler).
   hours?: { first?: string; last?: string };

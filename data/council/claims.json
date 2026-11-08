@@ -780,6 +780,29 @@
         "url": "https://www.facebook.com/100064858474347/posts/1288085550030049",
         "posted": "2025-12-31T06:08:13.000Z"
       }
+    },
+    {
+      "fact": "line:BHNS:runtime",
+      "value": 45,
+      "note": "\"covering the full route in approximately 45 minutes\", at the launch",
+      "source": {
+        "type": "press",
+        "name": "Morocco World News",
+        "date": "2026-05-07",
+        "url": "https://www.moroccoworldnews.com/2026/05/292850/agadir-launches-first-bus-rapid-transit-line-after-years-of-delays/"
+      }
+    },
+    {
+      "fact": "line:BHNS:runtime",
+      "value": 45,
+      "note": "\"relie le quartier du Port à Tikiouine en seulement 45 minutes\", before the launch",
+      "source": {
+        "type": "operator-announcement",
+        "name": "Amalway Facebook",
+        "date": "2025-07-14",
+        "url": "https://www.facebook.com/61563512425769/posts/122159684246450414",
+        "posted": "2025-07-14T15:30:49.000Z"
+      }
     }
   ],
   "ignored": [
@@ -998,12 +1021,6 @@
       "posted": "2025-07-12T12:14:25.000Z",
       "date": "2025-07-12",
       "why": "greeting or occasion"
-    },
-    {
-      "url": "https://www.facebook.com/61563512425769/posts/122159684246450414",
-      "posted": "2025-07-14T15:30:49.000Z",
-      "date": "2025-07-14",
-      "why": "Port to Tikiouine in 45 minutes (before the launch)"
     },
     {
       "url": "https://www.facebook.com/61563512425769/posts/122159799608450414",

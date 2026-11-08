@@ -57,7 +57,7 @@ test("every hand-collected claim names a known kind of source, a name and a date
   const { TRUST } = await import("../scripts/council.mjs");
   const { claims } = JSON.parse(readFileSync("data/council/claims.json", "utf8"));
   for (const c of claims) {
-    assert.match(c.fact, /^(line:[A-Z0-9]+:(runs|fare|card|headway|first|last|route)|network:[a-z]+)$/, `fact "${c.fact}"`);
+    assert.match(c.fact, /^(line:[A-Z0-9]+:(runs|fare|card|headway|first|last|route|runtime)|network:[a-z]+)$/, `fact "${c.fact}"`);
     assert.ok(c.source.type in TRUST, `${c.fact}: source type "${c.source.type}"`);
     assert.ok(c.source.name && c.source.date, `${c.fact}: source needs a name and a date`);
     // What riders read in the app comes in each language.
