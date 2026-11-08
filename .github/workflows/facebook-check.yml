@@ -3,10 +3,22 @@ name: facebook check
 # On the 1st of each month: fetch ALSA Agadir's latest Facebook posts (through Apify, with the
 # APIFY_TOKEN secret) and list the ones the council's claims don't cite or set aside yet. New posts
 # open or update an issue; a person reads them and adds claims (see the README's data council).
+# Run by hand, it can go further back; the posts it read are attached to the run either way.
 on:
   schedule:
     - cron: "23 7 1 * *"
   workflow_dispatch:
+    inputs:
+      posts:
+        description: "How many posts at most (newest first)"
+        default: "15"
+      since:
+        description: "Only posts since this day (YYYY-MM-DD), or empty"
+        default: ""
+      issue:
+        description: "Open or update an issue with the new posts"
+        type: boolean
+        default: true
 
 permissions:
   contents: read
@@ -15,7 +27,7 @@ permissions:
 jobs:
   check:
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
@@ -36,14 +48,25 @@ jobs:
         id: posts
         env:
           APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
+          POSTS: ${{ inputs.posts || '15' }}
+          SINCE: ${{ inputs.since }}
         run: |
           if [ -z "$APIFY_TOKEN" ]; then echo "No APIFY_TOKEN secret: nothing to check."; exit 0; fi
-          node scripts/fetch-facebook.mjs 15
+          node scripts/fetch-facebook.mjs "$POSTS" "$SINCE"
           INBOX_REPORT=new-posts.md node scripts/inbox.mjs
           [ -s new-posts.md ] && echo "found=yes" >> "$GITHUB_OUTPUT" || true
 
+      # The posts as read (text, link, date, picture links; no commenters), to take into the inbox:
+      # gh run download <run id> --name alsa-facebook --dir data/council/inbox
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: hashFiles('data/council/inbox/alsa-facebook-latest.json') != ''
+        with:
+          name: alsa-facebook
+          path: data/council/inbox/alsa-facebook-latest.json
+          retention-days: 30
+
       - name: issue
-        if: steps.posts.outputs.found == 'yes'
+        if: steps.posts.outputs.found == 'yes' && (github.event_name == 'schedule' || inputs.issue)
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
