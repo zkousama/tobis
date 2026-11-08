@@ -98,9 +98,12 @@ async function runProfile(P) {
     "Page.addScriptToEvaluateOnNewDocument",
     {
       source: `(() => {
-        const R = Date, d = new R(), shift = new R(d.getFullYear(), d.getMonth(), d.getDate(), 10, 0).getTime() - R.now();
+        const R = Date, d = new R();
+        let shift = new R(d.getFullYear(), d.getMonth(), d.getDate(), 10, 0).getTime() - R.now();
         class F extends R { constructor(...a) { a.length ? super(...a) : super(R.now() + shift); } static now() { return R.now() + shift; } }
         globalThis.Date = F;
+        // A ride at bus speed in seconds, not minutes: the test moves the clock on.
+        globalThis.__advanceClock = (ms) => { shift += ms; };
       })();`,
     },
     s,
@@ -589,6 +592,68 @@ async function runProfile(P) {
     await until("'Descendez ici'", () => /Descendez ici/.test(document.querySelector(".ride-body").textContent), 8000);
     await where(...DCHEIRA);
     await until("arrived", () => /Arriv/.test(document.querySelector(".ride-body").textContent), 8000);
+    await where(...TALBORJT);
+  });
+
+  await step("shared ride times: a ride at bus speed gives stop-to-stop times and the wait, kept until sent", async () => {
+    await clearPrefs();
+    await open(SITE + "?times" + TRIP);
+    await run(() => (localStorage.setItem("shareTimes", "1"), true));
+    await tripOptions();
+    await click(".option");
+    await until("the trip", () => document.querySelector(".tl-board .badge"));
+    const leg = await run(() => ({
+      line: document.querySelector(".tl-board .badge").textContent.trim(),
+      board: document.querySelector(".tl-stop .tl-stop-name").textContent.trim(),
+      alight: document.querySelector(".tl-off .tl-stop-name").textContent.trim(),
+    }));
+    const net = await (await fetch(new URL("data/agadir.json", SITE))).json();
+    const line = net.lines.find((l) => (l.brt ? "Trambus" : l.ref) === leg.line);
+    let v, a, b;
+    for (const x of line?.variants ?? []) {
+      const names = x.stops.map((i) => net.stops[i].n.d);
+      const i = names.indexOf(leg.board), j = names.indexOf(leg.alight, i + 1);
+      if (i >= 0 && j > i) [v, a, b] = [x, i, j];
+    }
+    ok(v, `can't find ${leg.line} from ${leg.board} to ${leg.alight}`);
+    // Points along the line's own shape, every 50 m from the boarding stop to the one to get off at.
+    const cum = [0];
+    for (let k = 1; k < v.shape.length; k++) {
+      const [x1, y1] = v.shape[k - 1], [x2, y2] = v.shape[k];
+      cum.push(cum[k - 1] + Math.hypot((x2 - x1) * 111320 * Math.cos((y1 * Math.PI) / 180), (y2 - y1) * 110540));
+    }
+    const at = (m) => {
+      let k = 1;
+      while (k < cum.length - 1 && cum[k] < m) k++;
+      const f = (m - cum[k - 1]) / (cum[k] - cum[k - 1] || 1);
+      return [v.shape[k - 1][0] + (v.shape[k][0] - v.shape[k - 1][0]) * f, v.shape[k - 1][1] + (v.shape[k][1] - v.shape[k - 1][1]) * f];
+    };
+    await click(".trip-start .btn-primary");
+    await until("the ride screen", () => document.querySelector(".ride"));
+    // At the stop, then 90 s' wait (GPS drifting a few metres), then the bus at 6 m/s.
+    const step = async (ll, ms) => {
+      await run((x) => (globalThis.__advanceClock(x), true), ms);
+      await where(...ll);
+      await sleep(200);
+    };
+    for (let k = 0; k < 10; k++) await step(at(v.along[a] + (k % 2 ? 4 : -4)), 9000);
+    for (let m = v.along[a] + 50; m <= v.along[b] + 120; m += 50) await step(at(m), (50 / 6) * 1000);
+    await step(DCHEIRA, 30_000);
+    await until("arrived", () => /Arriv/.test(document.querySelector(".ride-body").textContent), 8000);
+    const q = await run(() => JSON.parse(localStorage.getItem("tripTimes") ?? "[]"));
+    const hops = q.filter((r) => r.k === "hop"), wait = q.find((r) => r.k === "wait");
+    ok(hops.length >= Math.min(2, b - a), `${hops.length} stop-to-stop times for ${b - a} stops: ${JSON.stringify(q).slice(0, 300)}`);
+    for (const h of hops) {
+      const i = v.stops.findIndex((si) => String(net.stops[si].id) === h.a);
+      const expect = (v.along[i + 1] - v.along[i]) / 6;
+      ok(Math.abs(h.s - expect) <= Math.max(10, expect * 0.25), `${h.a} → ${h.b}: ${h.s} s, the bus took ${Math.round(expect)} s`);
+      ok(h.l === leg.line.replace("Trambus", "BHNS") && h.v === String(v.rel) && /^\d{4}-\d\d-\d\d$/.test(h.d) && h.h === 10, `hop record ${JSON.stringify(h)}`);
+    }
+    ok(wait && wait.s >= 60 && wait.s <= 120, `wait ${JSON.stringify(wait)}`);
+    // Nothing about where: no coordinates in what's kept to send.
+    ok(!/\d+\.\d{4,}/.test(JSON.stringify(q)), "a coordinate in the ride times");
+    // Off again: what wasn't sent is dropped. And back where the other scenarios expect the rider.
+    await run(() => (localStorage.removeItem("shareTimes"), localStorage.removeItem("tripTimes"), true));
     await where(...TALBORJT);
   });
 
