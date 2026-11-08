@@ -59,7 +59,7 @@ function readExport(f, known) {
     // A post can be only a picture (a route map): it still gets a draft, to look at.
     if ((!p.text && !p.media?.length) || !url || cited.has(url) || cited.has(p.time)) continue;
     p.text ??= "";
-    const found = extract(p.text, known);
+    const found = extract(p.text, known, p.page ?? "ALSA Facebook");
     // The post itself gives the link and the day; what it says still needs a person.
     for (const c of found.claims) c.source = { ...c.source, url, posted: p.time, date: /^\d{4}-\d{2}-\d{2}$/.test(date) ? date : c.source.date };
     // Fare grids and maps are pictures: their links go with the draft, to look at.
@@ -68,7 +68,7 @@ function readExport(f, known) {
     const out = join(DRAFTS, `${date}-${id}.json`);
     writeFileSync(out, JSON.stringify({ file: f, post: url, posted: p.time, ...found, pictures, text: p.text }, null, 2) + "\n");
     console.log(`${date}: lines ${found.lines.join(", ") || "none"} · ${found.kinds.join(", ") || "no change words"} · ${pictures.length} picture(s) · ${found.claims.length} draft claim(s) → ${out}`);
-    report.push(`- ${date} · [post](${url}) · lines ${found.lines.join(", ") || "none named"} · ${found.kinds.join(", ") || "no change words"} · ${pictures.length} picture(s)\n  > ${p.text.replace(/\s+/g, " ").slice(0, 240) || "(a picture, no text)"}`);
+    report.push(`- ${date} · ${p.page ?? "ALSA Facebook"} · [post](${url}) · lines ${found.lines.join(", ") || "none named"} · ${found.kinds.join(", ") || "no change words"} · ${pictures.length} picture(s)\n  > ${p.text.replace(/\s+/g, " ").slice(0, 240) || "(a picture, no text)"}`);
     fresh++;
   }
   console.log(`${f}: ${posts.length} posts, ${fresh} not yet in the claims or set aside`);

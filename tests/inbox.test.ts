@@ -33,3 +33,29 @@ test("a withdrawn line, and a stop name inside a longer one isn't counted twice"
 test("lines that don't exist in the network are ignored", () => {
   assert.deepEqual(extract("ligne 999 et ligne 2", known).lines, ["2"]);
 });
+
+test("an Amalway post is about the Trambus unless it names a line", () => {
+  const known = { lines: ["BHNS", "8B", "6"], stops: [] };
+  assert.deepEqual(extract("Nouveaux horaires à partir du 01/12/2026 : premier départ à 05:30", known, "Amalway Facebook").lines, ["BHNS"]);
+  assert.equal(extract("Nouveaux horaires", known, "Amalway Facebook").claims.length, 0);
+  assert.deepEqual(extract("Correspondance ligne 8B et Trambus au Port", known, "ALSA Facebook").lines.sort(), ["8B", "BHNS"]);
+});
+
+test("Facebook reads go in three-month windows, and keep a post's permanent link", async () => {
+  // @ts-expect-error: a plain .mjs script
+  const { windows, keep } = await import("../scripts/fetch-facebook.mjs");
+  const w = windows(new Date("2026-01-01T00:00:00Z"), new Date("2026-11-08T12:00:00Z"));
+  assert.deepEqual(w[0], { from: "2026-08-09", to: "2026-11-09" });
+  assert.equal(w.at(-1).from, "2026-01-01");
+  assert.equal(w.length, 4);
+  const p = keep({ postId: "1536171421888126", facebookId: "100064858474347", url: "https://www.facebook.com/x/posts/pfbid0abc?x=1", time: "2026-10-12T18:36:13.000Z", text: "t", topComments: [{ profileName: "someone" }] }, "ALSA Facebook");
+  assert.equal(p.url, "https://www.facebook.com/100064858474347/posts/1536171421888126");
+  assert.equal(JSON.stringify(p).includes("someone"), false);
+});
+
+test("line refs with a letter, and ALSA's L-numbers, in French and Arabic", () => {
+  const known = { lines: ["8B", "342", "31", "BHNS"], stops: [] };
+  assert.deepEqual(extract("الخط 8B يغير مساره", known).lines, ["8B"]);
+  assert.deepEqual(extract("Lancement de la ligne L342 et de la ligne 31", known).lines.sort(), ["31", "342"]);
+  assert.deepEqual(extract("خط جديد L342 بين أمسكرود وتيكيوين", known).lines, ["342"]);
+});

@@ -20,14 +20,20 @@ const KINDS = {
 /**
  * @param {string} text  the post's text
  * @param {{ lines: string[], stops: string[] }} known  line refs and stop names in the network
+ * @param {string} page  where the post comes from ("ALSA Facebook", "Amalway Facebook")
  */
-export function extract(text, known) {
+export function extract(text, known, page = "ALSA Facebook") {
   const flat = text.replace(/\s+/g, " ");
   // Lines: "ligne 2", "L2", "L-27", "الخط 6", "lignes 2 et 6".
   const refs = new Set();
-  for (const m of flat.matchAll(/\b(?:lignes?|lines?|L)\s*-?\s*(\d{1,3}(?:\s*(?:,|et|and|&|و)\s*\d{1,3})*)/gi))
-    for (const r of m[1].split(/\s*(?:,|et|and|&|و)\s*/)) refs.add(r.trim());
-  for (const m of flat.matchAll(/(?:الخط|الخطوط)\s*(?:رقم\s*)?(\d{1,3})/g)) refs.add(m[1]);
+  // A ref is digits with maybe a letter ("8B"); "L342" is line 342.
+  const REF = String.raw`\d{1,3}[A-Za-z]?(?![\p{L}\d])`;
+  for (const m of flat.matchAll(new RegExp(String.raw`\b(?:lignes?|lines?|L)\s*-?\s*(${REF}(?:\s*(?:,|et|and|&|و)\s*${REF})*)`, "giu")))
+    for (const r of m[1].split(/\s*(?:,|et|and|&|و)\s*/)) refs.add(r.trim().toUpperCase());
+  for (const m of flat.matchAll(new RegExp(String.raw`(?:الخط|الخطوط|خط)\s*(?:رقم\s*)?(${REF})`, "gu"))) refs.add(m[1].toUpperCase());
+  // The Trambus by its names; and Amalway's own page is about the Trambus unless it says otherwise.
+  if (/trambus|bhns|ترامبيس|الطرامبيس|الحافلات ذات المستوى العالي/i.test(flat)) refs.add("BHNS");
+  if (page.startsWith("Amalway") && !refs.size) refs.add("BHNS");
   const lines = [...refs].filter((r) => known.lines.includes(r));
 
   // Stops named in the post, matched on their normalised names (longest first, so "Fac De Sciences 2"
@@ -48,7 +54,7 @@ export function extract(text, known) {
     .map(([k]) => k);
 
   // Draft claims: one per line and kind. Values the text can't give are left as TODO.
-  const source = { type: "operator-announcement", name: "ALSA Facebook", date: dates[0] ?? "TODO", url: "TODO" };
+  const source = { type: "operator-announcement", name: page, date: dates[0] ?? "TODO", url: "TODO" };
   const claims = [];
   for (const ref of lines) {
     if (kinds.includes("stopped")) claims.push({ fact: `line:${ref}:runs`, value: false, kind: "change", source });
