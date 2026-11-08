@@ -691,6 +691,95 @@
         "url": "https://www.facebook.com/100064858474347/posts/1536171421888126",
         "posted": "2026-10-12T18:36:13.000Z"
       }
+    },
+    {
+      "fact": "line:BHNS:headway",
+      "value": 8,
+      "note": "\"un passage toutes les 8 minutes\", four months after the launch",
+      "source": {
+        "type": "operator-announcement",
+        "name": "Amalway Facebook",
+        "date": "2026-09-09",
+        "url": "https://www.facebook.com/61563512425769/posts/122204574824450414",
+        "posted": "2026-09-09T12:37:11.000Z"
+      }
+    },
+    {
+      "fact": "line:BHNS:card",
+      "value": 5,
+      "kind": "change",
+      "note": "\"البطاقة + أول رحلة: 10 دراهم\", \"تسعيرة الرحلة: 5 دراهم\"",
+      "source": {
+        "type": "operator-announcement",
+        "name": "Amalway Facebook",
+        "date": "2026-05-06",
+        "url": "https://www.facebook.com/61563512425769/posts/122191987238450414",
+        "posted": "2026-05-06T16:16:37.000Z"
+      }
+    },
+    {
+      "fact": "line:BHNS:card",
+      "value": 5,
+      "kind": "change",
+      "note": "\"Carte + un trajet : 10 DH, prix du trajet : 5 DH\"",
+      "source": {
+        "type": "operator-announcement",
+        "name": "Amalway Facebook",
+        "date": "2026-05-10",
+        "url": "https://www.facebook.com/61563512425769/posts/122192381330450414",
+        "posted": "2026-05-10T18:02:59.000Z"
+      }
+    },
+    {
+      "fact": "line:BHNS:fare",
+      "value": 5,
+      "kind": "change",
+      "note": "\"تسعيرة الرحلة: 5 دراهم\"",
+      "source": {
+        "type": "operator-announcement",
+        "name": "Amalway Facebook",
+        "date": "2026-05-06",
+        "url": "https://www.facebook.com/61563512425769/posts/122191987238450414",
+        "posted": "2026-05-06T16:16:37.000Z"
+      }
+    },
+    {
+      "fact": "line:22:runs",
+      "value": false,
+      "kind": "change",
+      "note": "\"la ligne BHNS Amalway, qui remplacera la ligne 22\", from 7 May 2026, El Hajeb – Port de Pêche",
+      "source": {
+        "type": "operator-announcement",
+        "name": "Amalway Facebook",
+        "date": "2026-05-06",
+        "url": "https://www.facebook.com/61563512425769/posts/122191987238450414",
+        "posted": "2026-05-06T16:16:37.000Z"
+      }
+    },
+    {
+      "fact": "network:trambustickets",
+      "kind": "change",
+      "value": "Trambus: tickets and the card only from the machines in its stations; validate on boarding",
+      "source": {
+        "type": "operator-announcement",
+        "name": "Amalway Facebook",
+        "date": "2026-05-06",
+        "url": "https://www.facebook.com/61563512425769/posts/122191987238450414",
+        "posted": "2026-05-06T16:16:37.000Z"
+      }
+    },
+    {
+      "fact": "network:bustickets",
+      "kind": "change",
+      "value": "new buses: the Ikhlass card isn't valid; buy the ticket from the driver",
+      "note": "why the card prices went with the January 2026 grid",
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2025-12-31",
+        "url": "https://www.facebook.com/100064858474347/posts/1288085550030049",
+        "posted": "2025-12-31T06:08:13.000Z"
+      }
     }
   ],
   "ignored": [
@@ -873,6 +962,714 @@
       "posted": "2025-09-05T18:58:33.000Z",
       "date": "2025-09-05",
       "why": "sales agencies for student cards: Inezgane (Place Al-Massira), Agadir (Place Salam), Vallée des Oiseaux hub"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122095501310450414",
+      "posted": "2024-07-26T12:19:52.000Z",
+      "date": "2024-07-26",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122099808608450414",
+      "posted": "2024-07-31T20:45:09.000Z",
+      "date": "2024-07-31",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122101467662450414",
+      "posted": "2024-08-02T12:30:46.000Z",
+      "date": "2024-08-02",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122138806586450414",
+      "posted": "2025-02-19T15:31:29.000Z",
+      "date": "2025-02-19",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122159350052450414",
+      "posted": "2025-07-11T17:02:58.000Z",
+      "date": "2025-07-11",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122159445290450414",
+      "posted": "2025-07-12T12:14:25.000Z",
+      "date": "2025-07-12",
+      "why": "greeting or occasion"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122159684246450414",
+      "posted": "2025-07-14T15:30:49.000Z",
+      "date": "2025-07-14",
+      "why": "Port to Tikiouine in 45 minutes (before the launch)"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122159799608450414",
+      "posted": "2025-07-15T15:30:55.000Z",
+      "date": "2025-07-15",
+      "why": "greeting or occasion"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122160152804450414",
+      "posted": "2025-07-18T15:30:58.000Z",
+      "date": "2025-07-18",
+      "why": "78 ticket machines in the stations"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122160275216450414",
+      "posted": "2025-07-19T14:15:21.000Z",
+      "date": "2025-07-19",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122160497156450414",
+      "posted": "2025-07-21T16:04:00.000Z",
+      "date": "2025-07-21",
+      "why": "greeting or occasion"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122160848606450414",
+      "posted": "2025-07-24T10:42:20.000Z",
+      "date": "2025-07-24",
+      "why": "tender for the delegated management contract"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122161010864450414",
+      "posted": "2025-07-25T16:35:22.000Z",
+      "date": "2025-07-25",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122161093682450414",
+      "posted": "2025-07-26T10:01:58.000Z",
+      "date": "2025-07-26",
+      "why": "works, tests or launch news before service began"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122161515608450414",
+      "posted": "2025-07-29T16:04:34.000Z",
+      "date": "2025-07-29",
+      "why": "works, tests or launch news before service began"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122161536038450414",
+      "posted": "2025-07-29T20:02:20.000Z",
+      "date": "2025-07-29",
+      "why": "greeting or occasion"
+    },
+    {
+      "url": "https://www.facebook.com/100064858474347/posts/1160789299426342",
+      "posted": "2025-07-31T16:38:04.000Z",
+      "date": "2025-07-31",
+      "why": "national holiday greeting"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122162438918450414",
+      "posted": "2025-08-05T16:24:40.000Z",
+      "date": "2025-08-05",
+      "why": "greeting or occasion"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122162560754450414",
+      "posted": "2025-08-06T15:30:55.000Z",
+      "date": "2025-08-06",
+      "why": "works, tests or launch news before service began"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122162828912450414",
+      "posted": "2025-08-08T16:30:52.000Z",
+      "date": "2025-08-08",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122163393110450414",
+      "posted": "2025-08-13T12:58:28.000Z",
+      "date": "2025-08-13",
+      "why": "5 interchange hubs"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122163509282450414",
+      "posted": "2025-08-14T10:02:04.000Z",
+      "date": "2025-08-14",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122164041212450414",
+      "posted": "2025-08-18T16:03:39.000Z",
+      "date": "2025-08-18",
+      "why": "35 stations"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122164235420450414",
+      "posted": "2025-08-20T08:30:40.000Z",
+      "date": "2025-08-20",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122164354226450414",
+      "posted": "2025-08-21T08:30:42.000Z",
+      "date": "2025-08-21",
+      "why": "greeting or occasion"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122164529420450414",
+      "posted": "2025-08-22T15:03:21.000Z",
+      "date": "2025-08-22",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122165128136450414",
+      "posted": "2025-08-27T16:10:50.000Z",
+      "date": "2025-08-27",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122165841260450414",
+      "posted": "2025-09-02T16:07:22.000Z",
+      "date": "2025-09-02",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122166109184450414",
+      "posted": "2025-09-04T20:30:46.000Z",
+      "date": "2025-09-04",
+      "why": "greeting or occasion"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122166574394450414",
+      "posted": "2025-09-08T16:11:07.000Z",
+      "date": "2025-09-08",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122166694100450414",
+      "posted": "2025-09-09T16:03:42.000Z",
+      "date": "2025-09-09",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/100064858474347/posts/1194449642726974",
+      "posted": "2025-09-10T11:06:53.000Z",
+      "date": "2025-09-10",
+      "why": "student card reminder"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122166800618450414",
+      "posted": "2025-09-10T15:17:32.000Z",
+      "date": "2025-09-10",
+      "why": "works, tests or launch news before service began"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122167755038450414",
+      "posted": "2025-09-18T15:31:20.000Z",
+      "date": "2025-09-18",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122167850942450414",
+      "posted": "2025-09-19T14:31:10.000Z",
+      "date": "2025-09-19",
+      "why": "works, tests or launch news before service began"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122167942910450414",
+      "posted": "2025-09-20T10:02:04.000Z",
+      "date": "2025-09-20",
+      "why": "greeting or occasion"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122168289266450414",
+      "posted": "2025-09-23T12:03:11.000Z",
+      "date": "2025-09-23",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122168614868450414",
+      "posted": "2025-09-26T16:37:29.000Z",
+      "date": "2025-09-26",
+      "why": "works, tests or launch news before service began"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122169053270450414",
+      "posted": "2025-09-30T15:03:24.000Z",
+      "date": "2025-09-30",
+      "why": "works, tests or launch news before service began"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122169156482450414",
+      "posted": "2025-10-01T17:00:20.000Z",
+      "date": "2025-10-01",
+      "why": "rules of use"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122169678614450414",
+      "posted": "2025-10-06T16:58:22.000Z",
+      "date": "2025-10-06",
+      "why": "works, tests or launch news before service began"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122169861116450414",
+      "posted": "2025-10-08T14:03:25.000Z",
+      "date": "2025-10-08",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122169972032450414",
+      "posted": "2025-10-09T15:30:55.000Z",
+      "date": "2025-10-09",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122170360958450414",
+      "posted": "2025-10-13T12:33:26.000Z",
+      "date": "2025-10-13",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122170554020450414",
+      "posted": "2025-10-15T12:36:38.000Z",
+      "date": "2025-10-15",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122171200268450414",
+      "posted": "2025-10-21T15:39:25.000Z",
+      "date": "2025-10-21",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122171412308450414",
+      "posted": "2025-10-23T17:41:41.000Z",
+      "date": "2025-10-23",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122171507894450414",
+      "posted": "2025-10-24T16:06:25.000Z",
+      "date": "2025-10-24",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122172191438450414",
+      "posted": "2025-10-31T15:30:45.000Z",
+      "date": "2025-10-31",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122172470210450414",
+      "posted": "2025-11-03T17:03:46.000Z",
+      "date": "2025-11-03",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122172683642450414",
+      "posted": "2025-11-05T20:02:32.000Z",
+      "date": "2025-11-05",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/100064858474347/posts/1261421419363129",
+      "posted": "2025-11-25T18:01:34.000Z",
+      "date": "2025-11-25",
+      "why": "awareness campaign"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122176596332450414",
+      "posted": "2025-12-10T10:02:24.000Z",
+      "date": "2025-12-10",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122176646438450414",
+      "posted": "2025-12-10T20:03:32.000Z",
+      "date": "2025-12-10",
+      "why": "safety message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122176705178450414",
+      "posted": "2025-12-11T10:02:06.000Z",
+      "date": "2025-12-11",
+      "why": "works, tests or launch news before service began"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122176765946450414",
+      "posted": "2025-12-11T22:25:12.000Z",
+      "date": "2025-12-11",
+      "why": "launch ceremony"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122176769498450414",
+      "posted": "2025-12-11T23:57:51.000Z",
+      "date": "2025-12-11",
+      "why": "works, tests or launch news before service began"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122176924538450414",
+      "posted": "2025-12-13T10:01:37.000Z",
+      "date": "2025-12-13",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122177195606450414",
+      "posted": "2025-12-15T14:10:36.000Z",
+      "date": "2025-12-15",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122177227850450414",
+      "posted": "2025-12-15T20:02:38.000Z",
+      "date": "2025-12-15",
+      "why": "the new buses' ticket notice, as in ALSA's 31 December post"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122177414492450414",
+      "posted": "2025-12-17T10:02:41.000Z",
+      "date": "2025-12-17",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122177475788450414",
+      "posted": "2025-12-17T21:03:35.000Z",
+      "date": "2025-12-17",
+      "why": "works, tests or launch news before service began"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122177527598450414",
+      "posted": "2025-12-18T10:02:33.000Z",
+      "date": "2025-12-18",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122177571614450414",
+      "posted": "2025-12-18T18:31:40.000Z",
+      "date": "2025-12-18",
+      "why": "works, tests or launch news before service began"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122177745374450414",
+      "posted": "2025-12-20T10:01:38.000Z",
+      "date": "2025-12-20",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122178203474450414",
+      "posted": "2025-12-24T14:03:32.000Z",
+      "date": "2025-12-24",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122178222560450414",
+      "posted": "2025-12-24T17:04:08.000Z",
+      "date": "2025-12-24",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122178294842450414",
+      "posted": "2025-12-25T10:02:37.000Z",
+      "date": "2025-12-25",
+      "why": "a bus every 5 minutes at peak (before the launch; the September post says 8)"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122178510608450414",
+      "posted": "2025-12-27T10:01:51.000Z",
+      "date": "2025-12-27",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122178981122450414",
+      "posted": "2025-12-31T22:30:33.000Z",
+      "date": "2025-12-31",
+      "why": "greeting or occasion"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122179452506450414",
+      "posted": "2026-01-05T13:31:29.000Z",
+      "date": "2026-01-05",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122179636016450414",
+      "posted": "2026-01-07T10:02:19.000Z",
+      "date": "2026-01-07",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122179728680450414",
+      "posted": "2026-01-08T10:02:13.000Z",
+      "date": "2026-01-08",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122179849076450414",
+      "posted": "2026-01-09T15:03:42.000Z",
+      "date": "2026-01-09",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122179921442450414",
+      "posted": "2026-01-10T10:01:36.000Z",
+      "date": "2026-01-10",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122179942538450414",
+      "posted": "2026-01-10T15:02:12.000Z",
+      "date": "2026-01-10",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122180014994450414",
+      "posted": "2026-01-11T10:01:43.000Z",
+      "date": "2026-01-11",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122180040476450414",
+      "posted": "2026-01-11T15:02:49.000Z",
+      "date": "2026-01-11",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122180236082450414",
+      "posted": "2026-01-13T12:02:47.000Z",
+      "date": "2026-01-13",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122182405904450414",
+      "posted": "2026-02-04T16:59:35.000Z",
+      "date": "2026-02-04",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122182499384450414",
+      "posted": "2026-02-05T17:04:08.000Z",
+      "date": "2026-02-05",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122182727522450414",
+      "posted": "2026-02-07T17:01:59.000Z",
+      "date": "2026-02-07",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122183740058450414",
+      "posted": "2026-02-18T10:30:49.000Z",
+      "date": "2026-02-18",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122183928110450414",
+      "posted": "2026-02-20T10:33:56.000Z",
+      "date": "2026-02-20",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122184517286450414",
+      "posted": "2026-02-26T13:59:40.000Z",
+      "date": "2026-02-26",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122184584300450414",
+      "posted": "2026-02-27T10:02:34.000Z",
+      "date": "2026-02-27",
+      "why": "greeting or occasion"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122185041074450414",
+      "posted": "2026-03-03T12:02:13.000Z",
+      "date": "2026-03-03",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122185157126450414",
+      "posted": "2026-03-04T10:30:42.000Z",
+      "date": "2026-03-04",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122186041340450414",
+      "posted": "2026-03-12T12:02:05.000Z",
+      "date": "2026-03-12",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122186296388450414",
+      "posted": "2026-03-14T17:30:35.000Z",
+      "date": "2026-03-14",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122191984124450414",
+      "posted": "2026-05-06T15:10:45.000Z",
+      "date": "2026-05-06",
+      "why": "rules of use"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122192109536450414",
+      "posted": "2026-05-07T20:02:28.000Z",
+      "date": "2026-05-07",
+      "why": "how to ride: buy a ticket, board by any door, validate"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122192110028450414",
+      "posted": "2026-05-07T20:10:44.000Z",
+      "date": "2026-05-07",
+      "why": "how to ride: buy a ticket, board by any door, validate"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122192205716450414",
+      "posted": "2026-05-08T21:41:27.000Z",
+      "date": "2026-05-08",
+      "why": "tickets from the station machines (as in the 6 May post)"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122192253338450414",
+      "posted": "2026-05-09T12:10:27.000Z",
+      "date": "2026-05-09",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122192441696450414",
+      "posted": "2026-05-11T10:30:42.000Z",
+      "date": "2026-05-11",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122193147128450414",
+      "posted": "2026-05-18T17:04:18.000Z",
+      "date": "2026-05-18",
+      "why": "35 stations, Port to Tikiouine"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122198028980450414",
+      "posted": "2026-07-08T14:22:23.000Z",
+      "date": "2026-07-08",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122198150138450414",
+      "posted": "2026-07-09T16:24:05.000Z",
+      "date": "2026-07-09",
+      "why": "greeting or occasion"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122198257394450414",
+      "posted": "2026-07-10T16:26:03.000Z",
+      "date": "2026-07-10",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122198530430450414",
+      "posted": "2026-07-13T16:31:04.000Z",
+      "date": "2026-07-13",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122198611178450414",
+      "posted": "2026-07-14T16:34:03.000Z",
+      "date": "2026-07-14",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122198810132450414",
+      "posted": "2026-07-16T16:30:03.000Z",
+      "date": "2026-07-16",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122199295238450414",
+      "posted": "2026-07-21T17:27:39.000Z",
+      "date": "2026-07-21",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122200033802450414",
+      "posted": "2026-07-28T13:25:15.000Z",
+      "date": "2026-07-28",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122200148402450414",
+      "posted": "2026-07-29T15:26:02.000Z",
+      "date": "2026-07-29",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122200620554450414",
+      "posted": "2026-08-02T15:29:03.000Z",
+      "date": "2026-08-02",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122200857836450414",
+      "posted": "2026-08-04T15:34:03.000Z",
+      "date": "2026-08-04",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122201084330450414",
+      "posted": "2026-08-06T15:41:03.000Z",
+      "date": "2026-08-06",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122201382530450414",
+      "posted": "2026-08-09T15:47:06.000Z",
+      "date": "2026-08-09",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122201568560450414",
+      "posted": "2026-08-11T15:49:05.000Z",
+      "date": "2026-08-11",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122204660870450414",
+      "posted": "2026-09-10T12:39:02.000Z",
+      "date": "2026-09-10",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122204742536450414",
+      "posted": "2026-09-11T12:42:02.000Z",
+      "date": "2026-09-11",
+      "why": "30 buses, up to 150 passengers"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122204832812450414",
+      "posted": "2026-09-12T14:48:04.000Z",
+      "date": "2026-09-12",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122207447000450414",
+      "posted": "2026-10-05T12:35:55.000Z",
+      "date": "2026-10-05",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122207591330450414",
+      "posted": "2026-10-06T16:40:04.000Z",
+      "date": "2026-10-06",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122207708906450414",
+      "posted": "2026-10-07T14:41:02.000Z",
+      "date": "2026-10-07",
+      "why": "safety, etiquette or promotion message"
+    },
+    {
+      "url": "https://www.facebook.com/61563512425769/posts/122207823062450414",
+      "posted": "2026-10-08T15:00:11.000Z",
+      "date": "2026-10-08",
+      "why": "safety, etiquette or promotion message"
     }
   ]
 }

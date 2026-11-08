@@ -258,7 +258,7 @@ const S = {
   noteWaitUnknown: { fr: "attente estimée ~{x}", ar: "التسناية شي {x} تقريبا", en: "estimated wait ~{x}" },
   fare: { fr: "Tarif", ar: "التيكي", en: "Fare" },
   cardPlus: { fr: "+ carte {x}", ar: "+ الكارط {x}", en: "+ {x} card" },
-  cardFirst: { fr: "Le Trambus se paie avec sa carte : {x} à l'achat la première fois, puis vous la rechargez. Chaque trajet : {y}.", ar: "الترامبيس كيتخلّص بالكارط ديالو: كتشريها ب {x} أول مرة، ومن بعد كتشارجيها. كل طريق: {y}.", en: "The Trambus is paid with its card: {x} to buy the first time, then you top it up. Each trip: {y}." },
+  cardFirst: { fr: "Le Trambus se paie avec sa carte, vendue aux distributeurs des stations : {x} la carte, puis {y} chaque trajet.", ar: "الترامبيس كيتخلّص بالكارط ديالو، كتلقاها فالآلات ديال المحطات: {x} الكارط، و{y} كل طريق.", en: "The Trambus is paid with its card, sold at the machines in its stations: {x} for the card, then {y} a trip." },
   cardLine: { fr: "carte {x} la 1re fois", ar: "الكارط {x} أول مرة", en: "card {x} the first time" },
   haveCardSetting: { fr: "J'ai la carte du Trambus", ar: "عندي الكارط ديال الترامبيس", en: "I have the Trambus card" },
   skipBrt: { fr: "Ne pas proposer le Trambus", ar: "ما تقترحش الترامبيس", en: "Don't suggest the Trambus" },
