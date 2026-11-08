@@ -50,22 +50,25 @@ function readExport(f, known) {
   const posts = JSON.parse(readFileSync(join(INBOX, f), "utf8"));
   if (!Array.isArray(posts)) return console.log(`${f}: not a list of posts, skipped`);
   const { claims, ignored = [] } = JSON.parse(readFileSync(`${DIR}/claims.json`, "utf8"));
-  const cited = new Set([...claims.map((c) => c.source.url), ...ignored.map((i) => i.url)].filter(Boolean));
+  // Facebook gives a post a different link on each visit; its time (to the second) stays the same.
+  const cited = new Set([...claims.flatMap((c) => [c.source.url, c.source.posted]), ...ignored.flatMap((i) => [i.url, i.posted])].filter(Boolean));
   let fresh = 0;
   for (const p of posts) {
     const url = String(p.url ?? "").split("?")[0];
     const date = String(p.time ?? "").slice(0, 10);
-    if (!p.text || !url || cited.has(url)) continue;
+    // A post can be only a picture (a route map): it still gets a draft, to look at.
+    if ((!p.text && !p.media?.length) || !url || cited.has(url) || cited.has(p.time)) continue;
+    p.text ??= "";
     const found = extract(p.text, known);
     // The post itself gives the link and the day; what it says still needs a person.
-    for (const c of found.claims) c.source = { ...c.source, url, date: /^\d{4}-\d{2}-\d{2}$/.test(date) ? date : c.source.date };
+    for (const c of found.claims) c.source = { ...c.source, url, posted: p.time, date: /^\d{4}-\d{2}-\d{2}$/.test(date) ? date : c.source.date };
     // Fare grids and maps are pictures: their links go with the draft, to look at.
     const pictures = (p.media ?? []).map((m) => m.photo_image?.uri ?? m.thumbnail).filter(Boolean);
-    const id = url.split("/").pop().slice(0, 24);
+    const id = (url.split("/").filter(Boolean).pop() ?? "post").slice(0, 24);
     const out = join(DRAFTS, `${date}-${id}.json`);
-    writeFileSync(out, JSON.stringify({ file: f, post: url, ...found, pictures, text: p.text }, null, 2) + "\n");
+    writeFileSync(out, JSON.stringify({ file: f, post: url, posted: p.time, ...found, pictures, text: p.text }, null, 2) + "\n");
     console.log(`${date}: lines ${found.lines.join(", ") || "none"} · ${found.kinds.join(", ") || "no change words"} · ${pictures.length} picture(s) · ${found.claims.length} draft claim(s) → ${out}`);
-    report.push(`- ${date} · [post](${url}) · lines ${found.lines.join(", ") || "none named"} · ${found.kinds.join(", ") || "no change words"} · ${pictures.length} picture(s)\n  > ${p.text.replace(/\s+/g, " ").slice(0, 240)}`);
+    report.push(`- ${date} · [post](${url}) · lines ${found.lines.join(", ") || "none named"} · ${found.kinds.join(", ") || "no change words"} · ${pictures.length} picture(s)\n  > ${p.text.replace(/\s+/g, " ").slice(0, 240) || "(a picture, no text)"}`);
     fresh++;
   }
   console.log(`${f}: ${posts.length} posts, ${fresh} not yet in the claims or set aside`);
@@ -98,7 +101,7 @@ function ignore(path, why) {
   if (!draft.post) throw new Error("only posts from an export can be set aside; delete a .txt draft instead");
   const file = `${DIR}/claims.json`;
   const all = JSON.parse(readFileSync(file, "utf8"));
-  all.ignored = [...(all.ignored ?? []), { url: draft.post, date: draft.claims[0]?.source.date ?? basename(path).slice(0, 10), why }];
+  all.ignored = [...(all.ignored ?? []), { url: draft.post, ...(draft.posted ? { posted: draft.posted } : {}), date: draft.claims[0]?.source.date ?? basename(path).slice(0, 10), why }];
   writeFileSync(file, JSON.stringify(all, null, 2) + "\n");
   renameSync(path, join(EVIDENCE, basename(path)));
   console.log(`set aside: ${draft.post}`);
