@@ -752,6 +752,8 @@ async function runProfile(P) {
     ok(/Version [0-9a-f]{7}/.test(await text(".sheet-body .fine")), "no version line");
     ok(await run(() => !![...document.querySelectorAll(".gh-link")].find((a) => a.href === "https://github.com/zkousama/tobis")?.querySelector("svg")), "no GitHub link with its mark");
     ok(await run(() => [...document.querySelectorAll(".gh-link")].some((a) => a.href.includes("template=data-correction.yml"))), "no 'Signaler une erreur' link");
+    // Sharing ride times is the rider's choice: the switch is there, and off until they turn it on.
+    ok(await run(() => [...document.querySelectorAll(".setting-row")].find((b) => /Partager mes temps/.test(b.textContent))?.getAttribute("aria-checked") === "false"), "the ride-times switch is missing or on by default");
     await shot("settings");
     await audit("settings");
     await click(".about .segmented button", "English");

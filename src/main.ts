@@ -18,6 +18,7 @@ import { resultsBody } from "./views/results.ts";
 import { pickStopBody } from "./views/tripopts.ts";
 import { tripBody } from "./views/trip.ts";
 import { rideBody } from "./views/ride.ts";
+import { flush as flushTimes } from "./triptimes.ts";
 import { lineBody, linesBody, pointBody, stopBody } from "./views/lines.ts";
 import { aboutBody } from "./views/settings.ts";
 import { helpBody } from "./views/help.ts";
@@ -50,6 +51,9 @@ async function boot() {
   addEventListener("offline", signal);
   addEventListener("online", signal);
   signal();
+  // Ride times the rider chose to share, kept while offline: sent now, and when the signal comes back.
+  void flushTimes();
+  addEventListener("online", () => void flushTimes());
   const { BusMap } = await mapModule;
   setBmap(new BusMap(mapEl, net, getLang(), {
     onStop: (s) => go({ name: "stop", stop: s }),

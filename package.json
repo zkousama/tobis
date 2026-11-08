@@ -18,7 +18,8 @@
     "data:pack": "node scripts/pack-data.mjs",
     "screenshots": "node scripts/screenshots.mjs",
     "council:fetch": "node scripts/fetch-facebook.mjs",
-    "council:inbox": "node scripts/inbox.mjs"
+    "council:inbox": "node scripts/inbox.mjs",
+    "council:times": "node scripts/fetch-times.mjs"
   },
   "dependencies": {
     "@fontsource-variable/rubik": "5.3.0",

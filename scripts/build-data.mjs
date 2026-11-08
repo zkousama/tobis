@@ -4,6 +4,7 @@
 import { readFile, writeFile, mkdir, access } from "node:fs/promises";
 import { RoadGraph } from "./roadgraph.mjs";
 import { deliberate, report as councilReport } from "./council.mjs";
+import { rideClock } from "../src/router.ts";
 
 const city = process.argv[2] ?? "agadir";
 const cfg = JSON.parse(await readFile(`cities/${city}.json`, "utf8"));
@@ -1089,9 +1090,37 @@ const json = JSON.stringify(out);
 await writeFile(`public/data/${city}.json`, json);
 await mkdir(`data/reports`, { recursive: true });
 await writeFile(`data/reports/${city}.json`, JSON.stringify(report, null, 2));
+// Ride times riders shared (data/council/measured.json, from scripts/fetch-times.mjs), against the
+// estimate: reported for now; the app keeps its estimates until enough rides are in.
+const measuredMd = await (async () => {
+  const m = JSON.parse(await readFile("data/council/measured.json", "utf8").catch(() => "null"));
+  if (!m?.items?.length) return "";
+  const rows = [];
+  for (const it of m.items.filter((x) => x.k === "hop")) {
+    const line = lines.find((l) => l.ref === it.line);
+    const v = line?.variants.find((x) => String(x.rel) === it.dir);
+    const i = v ? v.stops.findIndex((si, k) => String(stops[si].id) === it.a && String(stops[v.stops[k + 1]]?.id) === it.b) : -1;
+    if (i < 0) continue;
+    const clock = rideClock(v.along, line.runtime);
+    const est = Math.round(clock[i + 1] - clock[i]);
+    rows.push({ line: it.line, from: stops[v.stops[i]].n.d, to: stops[v.stops[i + 1]].n.d, measured: it.median, est, rides: it.rides, off: it.median / est - 1 });
+  }
+  rows.sort((a, b) => Math.abs(b.off) - Math.abs(a.off));
+  const waits = m.items.filter((x) => x.k === "wait");
+  const fmt = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+  return [
+    "",
+    "## Measured by riders",
+    "",
+    `From ${m.fetched}: ${rows.length} stop-to-stop times and ${waits.length} waits where at least ${m.minRides} rides on ${m.minDays} days agree. The app still uses its estimates.`,
+    "",
+    ...rows.slice(0, 20).map((r) => `- line ${r.line}, ${r.from} → ${r.to}: ${fmt(r.measured)} measured (${r.rides} rides), ${fmt(r.est)} estimated (${r.off >= 0 ? "+" : ""}${Math.round(r.off * 100)} %)`),
+    "",
+  ].join("\n");
+})();
 await writeFile(
   `data/reports/council.md`,
-  councilReport(decisions) + (missing.length ? `\n## Announced lines missing from the data\n\n${missing.map((d) => `- ${d.fact.split(":")[1]}: ${d.by[0].note ?? ""} <${d.by[0].source.url ?? ""}>`).join("\n")}\n` : ""),
+  councilReport(decisions) + measuredMd + (missing.length ? `\n## Announced lines missing from the data\n\n${missing.map((d) => `- ${d.fact.split(":")[1]}: ${d.by[0].note ?? ""} <${d.by[0].source.url ?? ""}>`).join("\n")}\n` : ""),
 );
 await writeFile(`data/reports/council.json`, JSON.stringify(decisions, null, 2));
 const tally = (v) => decisions.filter((d) => d.verdict === v).length;

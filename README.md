@@ -87,6 +87,12 @@ The built data in `public/data/` is a derived database of OpenStreetMap and is a
 
 Where OpenStreetMap's bus routes are incomplete, the build says so in `data/reports/agadir.json`, and `scripts/osm-draft-trambus.mjs` writes a JOSM file that fills in the Trambus routes for review and upload.
 
+### Ride times from riders
+
+Nobody publishes how long Agadir's buses really take, so riders can measure it: with "Share my ride times" on (Settings, off by default), ride mode notes when the bus passes each stop and how long the rider waited, and sends only that (line, direction, two stop ids, seconds, day and hour; no position, no account, no device id) to a Pages Function ([`functions/api/times.js`](functions/api/times.js)) that keeps it in a D1 database. Records that look like GPS trouble or walking are dropped on the phone and again on the server. `GET /api/times` gives medians only, where at least 5 rides on 3 different days agree; `bun run council:times` saves them for the build, which compares them with its estimates in the council's report. The app keeps its estimates until enough rides are in.
+
+Set up once: `wrangler d1 create tobis-times`, `wrangler d1 execute tobis-times --remote --file migrations/0001_times.sql`, then bind it to the Pages project as `DB`. Without it the endpoint answers 503 and phones keep their times for later.
+
 ## Build
 
 ```sh

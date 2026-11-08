@@ -8,6 +8,7 @@ import { install, installEvent, isIos, standalone } from "../app/install.ts";
 import { go } from "../app/nav.ts";
 import { replan, skipBrt } from "../app/plan.ts";
 import { dataNote, header, reportUrl, segmented, settingToggle } from "./common.ts";
+import { flush, setSharing, sharing } from "../triptimes.ts";
 
 export function installBlock() {
   if (standalone()) return h("p", { class: "notice" }, icon.check(), " ", t("installed"));
@@ -73,6 +74,16 @@ export function aboutBody() {
       },
     ),
     ...trambusSettings(),
+    h("h3", { class: "section-title label" }, t("shareTimesTitle")),
+    h(
+      "div",
+      { class: "setting-list" },
+      settingToggle(t("shareTimes"), sharing, () => {
+        setSharing(!sharing());
+        void flush();
+      }),
+    ),
+    h("p", { class: "fine" }, t("shareTimesNote")),
     h("h3", { class: "section-title label" }, t("helpOfflineTitle")),
     h("p", { class: "notice" }, offline.total && offline.done >= offline.total ? [icon.check(), " ", t("offlineReady")] : offline.total ? `${t("downloading")} · ${Math.floor((offline.done / offline.total) * 100)} %` : t("helpOffline")),
     h("h3", { class: "section-title label" }, t("helpInstallTitle")),

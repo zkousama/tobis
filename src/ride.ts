@@ -5,6 +5,7 @@ import { dist, projectOnLine, sliceLine, type LngLat } from "./geo.ts";
 import type { Network } from "./network.ts";
 import type { Journey, RideLeg } from "./router.ts";
 import { PaceLearner } from "./pace.ts";
+import { flush, keep, LegTimer, sharing } from "./triptimes.ts";
 
 export interface RideUpdate {
   status: "ok" | "nogps" | "waiting";
@@ -29,6 +30,7 @@ export class RideTracker {
   private net: Network;
   private j: Journey;
   private cb: (u: RideUpdate) => void;
+  private timers = new Map<number, LegTimer>(); // ride legs' measured times (only when sharing)
 
   constructor(net: Network, j: Journey, cb: (u: RideUpdate) => void) {
     this.net = net;
@@ -52,8 +54,30 @@ export class RideTracker {
       navigator.geolocation.clearWatch(this.watch);
       this.pace.save();
     }
+    for (const k of this.timers.keys()) this.endLeg(k); // deleting while iterating a Map is safe
+    void flush();
     this.wake?.release().catch(() => {});
     this.watch = undefined;
+  }
+
+  /** The timer for ride leg `k`, when the rider shares ride times. */
+  private timer(k: number): LegTimer | undefined {
+    const leg = this.j.legs[k];
+    if (leg?.kind !== "ride" || !sharing()) return undefined;
+    let t = this.timers.get(k);
+    if (!t) {
+      const line = this.net.lines[leg.line];
+      const v = line.variants[leg.variant];
+      t = new LegTimer(line.ref, String(v.rel), v.stops.map((i) => String(this.net.stops[i].id)), v.along, leg.board, leg.alight);
+      this.timers.set(k, t);
+    }
+    return t;
+  }
+  private endLeg(k: number) {
+    const t = this.timers.get(k);
+    if (!t) return;
+    keep(t.records());
+    this.timers.delete(k);
   }
 
   /** Where `me` sits along a ride leg, in metres along the line's shape. */
@@ -74,6 +98,9 @@ export class RideTracker {
       if (leg.kind === "walk") {
         if (next?.kind === "ride") {
           const a = this.along(next, me);
+          const now = Date.now();
+          if (dist(me, this.net.stops[a.v.stops[next.board]].ll) < 40) this.timer(this.leg + 1)?.atStop(now);
+          if (a.offset < ON_LINE) this.timer(this.leg + 1)?.track(a.along, now, acc, false);
           if (a.offset < ON_LINE && a.along > a.v.along[next.board] + 80) {
             this.leg++;
             continue;
@@ -85,6 +112,7 @@ export class RideTracker {
       } else {
         const a = this.along(leg, me);
         if (a.along > a.v.along[leg.alight] + 60 || (a.offset > 150 && dist(me, this.net.stops[a.v.stops[leg.alight]].ll) < 200)) {
+          this.endLeg(this.leg);
           this.leg++;
           continue;
         }
@@ -99,7 +127,10 @@ export class RideTracker {
       return this.cb({ status: "ok", leg: this.leg, me, acc, follow: true, remaining: dist(me, leg.to) });
     }
 
-    const { along, v } = this.along(leg, me);
+    const { along, offset, v } = this.along(leg, me);
+    // Where the bus is, for the stop-to-stop times (only when sharing).
+    const timer = offset < ON_LINE ? this.timer(this.leg) : undefined;
+    timer?.track(along, Date.now(), acc);
     let nextIdx = leg.alight;
     for (let i = leg.board; i <= leg.alight; i++)
       if (v.along[i] > along - PASSED) {
