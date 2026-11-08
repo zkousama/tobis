@@ -1029,6 +1029,17 @@ lines.forEach((l, i) => (l.colour = l.brt ? "#ed6c36" : (l.colour ?? PALETTE[i %
 for (const l of lines) if (l.taxi) l.variants.forEach((v) => (v.inferred = undefined));
 // Where each line's data comes from, and unconfirmed reports about it (the council's).
 for (const l of lines) if (!l.taxi) Object.assign(l, provenance(l));
+// One ticket for two lines (the council's network:transfer): which stops the change happens at.
+const transfers = [];
+{
+  const t = accepted("network:transfer");
+  if (t?.lines?.length === 2 && t.at && t.within) {
+    const refIdx = new Set(lines.flatMap((l) => (t.lines.includes(l.ref) ? l.variants.flatMap((v) => v.stops) : [])));
+    const at = [...refIdx].filter((si) => normKey(stops[si].n.d) === normKey(t.at));
+    if (at.length) transfers.push({ lines: t.lines, at, within: t.within });
+    else console.log(`  transfer ${t.lines.join(" ⇄ ")}: no stop named ${t.at} on those lines`);
+  }
+}
 // Lines the operator announced that nobody has mapped yet: listed in the council's report.
 const missing = decisions.filter((d) => /^line:[^:]+:runs$/.test(d.fact) && d.verdict === "apply" && d.value === true && !byRef.has(d.fact.split(":")[1]));
 for (const d of missing) console.log(`  line ${d.fact.split(":")[1]} announced but not in the data: ${d.by[0].note ?? ""}`);
@@ -1084,6 +1095,7 @@ const out = {
   stops,
   places,
   lines,
+  ...(transfers.length ? { transfers } : {}),
 };
 await mkdir("public/data", { recursive: true });
 const json = JSON.stringify(out);

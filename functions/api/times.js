@@ -1,7 +1,8 @@
 // Cloudflare Pages Function: ride times that riders chose to share (Settings → "Share my ride times").
 //
 //   POST /api/times   { v: 1, items: [ { k: "hop" | "wait", l, v, a, b?, s, d, h, w } ] }
-//   GET  /api/times   medians per stop-to-stop hop (and per stop for waits), only where enough rides agree
+//   GET  /api/times   medians per stop-to-stop hop (and per stop for waits), only where enough rides agree;
+//                     only with the key (Authorization: Bearer <TIMES_KEY>, a secret of the Pages project)
 //
 // Stored: the line, direction, stop ids, seconds, day, hour and weekday. Nothing about who sent it:
 // no IP, no device id, no position. Kept in the D1 database bound as DB (see wrangler.toml).
@@ -77,9 +78,20 @@ export function summarise(rows) {
   return out;
 }
 
-export async function onRequestGet({ env }) {
+// The same length and every character, without stopping at the first difference.
+function sameKey(a, b) {
+  if (typeof a !== "string" || typeof b !== "string" || a.length !== b.length) return false;
+  let d = 0;
+  for (let i = 0; i < a.length; i++) d |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return d === 0;
+}
+
+export async function onRequestGet({ request, env }) {
+  // The measured times are the project's own data: only its owner reads them. No key set, no reading.
+  const given = (request.headers.get("authorization") ?? "").replace(/^Bearer\s+/i, "");
+  if (!env.TIMES_KEY || !sameKey(given, env.TIMES_KEY)) return json({ error: "needs the key" }, 401);
   if (!env.DB) return json({ error: "not set up" }, 503);
   // The last six months: a line that changed shouldn't keep its old times forever.
   const { results } = await env.DB.prepare("SELECT k, line, dir, a, b, s, day FROM times WHERE day >= date('now', '-183 days')").all();
-  return json({ since: "183 days", minRides: MIN_RIDES, minDays: MIN_DAYS, items: summarise(results) }, 200, "public, max-age=3600");
+  return json({ since: "183 days", minRides: MIN_RIDES, minDays: MIN_DAYS, items: summarise(results) }, 200, "private, no-store");
 }

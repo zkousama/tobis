@@ -3,7 +3,7 @@ import type { Line } from "../network.ts";
 import { dist } from "../geo.ts";
 import { getLang, t } from "../i18n.ts";
 import { h, icon, lineBadge } from "../ui/dom.ts";
-import { fareFor, fmtDH, hasCard, setHasCard } from "../fares.ts";
+import { fmtDH, hasCard, setHasCard, tripFare } from "../fares.ts";
 import { bmap, current, net, nm, state } from "../app/state.ts";
 import { back } from "../app/nav.ts";
 import { startTime } from "../app/plan.ts";
@@ -48,16 +48,7 @@ export function legChips(j: Journey) {
 
 export const variantOf = (l: RideLeg) => net.lines[l.line].variants[l.variant];
 
-export function journeyFare(j: Journey) {
-  let total = 0;
-  for (const l of j.legs) {
-    if (l.kind !== "ride") continue;
-    const f = fareFor(net.lines[l.line], variantOf(l), l.board, l.alight);
-    if (!f) return undefined;
-    total += f.normal;
-  }
-  return total || undefined;
-}
+export const journeyFare = (j: Journey) => tripFare(net, j);
 
 export function settingToggle(label: string, on: () => boolean, flip: () => void) {
   const b = h(

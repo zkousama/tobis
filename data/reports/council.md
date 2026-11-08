@@ -268,11 +268,11 @@ Announced change (ALSA Facebook, 2026-07-29) and no feed changed this after it.
 
 - for: ALSA Facebook (operator-announcement, 2026-07-29) <https://www.facebook.com/100064858474347/posts/1466793372159265>
 
-## network:transfer: apply → `"8B ⇄ BHNS at the Port terminus, same ticket within one hour, from 13 October 2026"`
+## network:transfer: apply → `{"lines":["8B","BHNS"],"at":"Port","within":60}`
 
 Announced change (ALSA Facebook, 2026-10-12) and no feed changed this after it.
 
-- for: ALSA Facebook (operator-announcement, 2026-10-12) <https://www.facebook.com/100064858474347/posts/1536171421888126>
+- for: ALSA Facebook (operator-announcement, 2026-10-12) <https://www.facebook.com/100064858474347/posts/1536171421888126>: "avec le même ticket valable pendant une heure", 8B → BHNS or the reverse, at the Port terminus, from 13 October 2026
 
 ## network:trambustickets: apply → `"Trambus: tickets and the card only from the machines in its stations; validate on boarding"`
 

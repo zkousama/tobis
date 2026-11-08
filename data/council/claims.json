@@ -682,7 +682,14 @@
     },
     {
       "fact": "network:transfer",
-      "value": "8B ⇄ BHNS at the Port terminus, same ticket within one hour, from 13 October 2026",
+      "value": {
+        "lines": [
+          "8B",
+          "BHNS"
+        ],
+        "at": "Port",
+        "within": 60
+      },
       "kind": "change",
       "source": {
         "type": "operator-announcement",
@@ -690,7 +697,8 @@
         "date": "2026-10-12",
         "url": "https://www.facebook.com/100064858474347/posts/1536171421888126",
         "posted": "2026-10-12T18:36:13.000Z"
-      }
+      },
+      "note": "\"avec le même ticket valable pendant une heure\", 8B → BHNS or the reverse, at the Port terminus, from 13 October 2026"
     },
     {
       "fact": "line:BHNS:headway",

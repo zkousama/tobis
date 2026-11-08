@@ -77,6 +77,9 @@ export interface Network {
   stops: Stop[];
   places: Place[];
   lines: Line[];
+  // One ticket for two lines: changing from one to the other at these stops, within `within` minutes
+  // of the first boarding, costs nothing more.
+  transfers?: { lines: [string, string]; at: number[]; within: number }[];
 }
 
 export function nameOf(n: Names, lang: string): string {

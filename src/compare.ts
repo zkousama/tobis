@@ -3,7 +3,7 @@
 import { dist, inPolygon, type LngLat } from "./geo.ts";
 import type { Network } from "./network.ts";
 import type { Journey, RideLeg } from "./router.ts";
-import { fareFor } from "./fares.ts";
+import { tripFare } from "./fares.ts";
 import { visible } from "./ui/colour.ts";
 
 // Taxis ride in dark grey, so they can't be mistaken for a bus line's colour.
@@ -53,8 +53,6 @@ export function buildOptions(net: Network, journeys: Journey[], from: LngLat, to
   const options: Option[] = [];
   journeys.forEach((j, i) => {
     const parts: Part[] = [];
-    let low = 0;
-    let known = true;
     // Range: no wait at all at the quick end; at the slow end, a full gap between
     // buses (twice the expected wait when nobody publishes it) and slow traffic.
     let quick = 0;
@@ -71,10 +69,8 @@ export function buildOptions(net: Network, journeys: Journey[], from: LngLat, to
       parts.push({ k: "wait", s: l.wait }, { k: "ride", s: l.seconds, colour: visible(line.colour) });
       quick += l.seconds * 0.9;
       slow += (line.headway ? line.headway * 60 : l.wait * 2) + l.seconds * (line.brt ? 1.1 : 1.35);
-      const f = fareFor(line, line.variants[l.variant], l.board, l.alight);
-      if (f) low += f.normal;
-      else known = false;
     }
+    const fare = tripFare(net, j);
     const rides = j.legs.filter((l): l is RideLeg => l.kind === "ride").length;
     const seconds = parts.reduce((n, p) => n + p.s, 0);
     options.push({
@@ -82,7 +78,7 @@ export function buildOptions(net: Network, journeys: Journey[], from: LngLat, to
       journey: i,
       seconds,
       range: [Math.min(quick, seconds), Math.max(slow, seconds)],
-      cost: !rides ? { low: 0, high: 0 } : known ? { low, high: low } : undefined,
+      cost: !rides ? { low: 0, high: 0 } : fare !== undefined ? { low: fare, high: fare } : undefined,
       walkMetres: j.walkMetres,
       parts,
     });

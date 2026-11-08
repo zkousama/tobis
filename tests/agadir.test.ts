@@ -285,3 +285,19 @@ test("the Trambus end to end takes the published 45 minutes, not the street-bus 
   const v12 = net.lines.find((l) => l.ref === "12")!.variants[0];
   assert.ok(rideClock(v12.along)[1] > 0);
 });
+
+test("Trambus then 8B at the Port within the hour is one ticket (ALSA, 13 October 2026)", { skip: !have }, async () => {
+  const { tripFare } = await import("../src/fares.ts");
+  const li = (ref: string) => net.lines.findIndex((l) => l.ref === ref);
+  const brt = li("BHNS"), b8 = li("8B");
+  const vToPort = net.lines[brt].variants.findIndex((v) => net.stops[v.stops.at(-1)!].n.d === "Port");
+  const v8 = net.lines[b8].variants.findIndex((v) => net.stops[v.stops[0]].n.d === "Port");
+  const vb = net.lines[brt].variants[vToPort], w8 = net.lines[b8].variants[v8];
+  const ride = (line: number, variant: number, board: number, alight: number, seconds: number, wait: number) => ({ kind: "ride" as const, line, variant, board, alight, metres: 1000, seconds, wait });
+  const trip = (gap: number) => ({ legs: [ride(brt, vToPort, vb.stops.length - 6, vb.stops.length - 1, 600, 120), ride(b8, v8, 0, w8.stops.length - 1, 900, gap)] }) as never;
+  assert.equal(tripFare(net, trip(300)), 5); // the 8B leg rides on the Trambus ticket
+  // Past the hour, the second ticket is due: 8B's price isn't published, so the total is unknown.
+  assert.equal(tripFare(net, trip(3600)), undefined);
+  // Two Trambus rides aren't a change between the two lines.
+  assert.equal(tripFare(net, { legs: [ride(brt, vToPort, 0, 3, 300, 60), ride(brt, vToPort, 5, 8, 300, 60)] } as never), 10);
+});

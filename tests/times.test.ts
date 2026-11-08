@@ -48,7 +48,8 @@ function d1() {
 }
 
 test("the endpoint keeps clean records, drops the rest, and only gives medians where enough rides agree", async () => {
-  const env = { DB: d1() };
+  const env = { DB: d1(), TIMES_KEY: "k3y-for-tests" };
+  const get = (key?: string) => onRequestGet({ request: new Request("https://x/api/times", key ? { headers: { authorization: `Bearer ${key}` } } : {}), env });
   const today = new Date();
   const day = (n: number) => new Date(today.getTime() - n * 86_400_000).toISOString().slice(0, 10);
   const hop = (s: number, d: string) => ({ k: "hop", l: "32", v: "alsa:L32:outgoing", a: "70410", b: "70883", s, d, h: 8, w: 1 });
@@ -57,7 +58,10 @@ test("the endpoint keeps clean records, drops the rest, and only gives medians w
   assert.deepEqual(await res.json(), { kept: 6, dropped: 3 });
   // The extra "ip" field never reaches the table.
   assert.deepEqual(Object.keys(env.DB.db.prepare("SELECT * FROM times LIMIT 1").get()!).sort(), ["a", "b", "day", "dir", "hour", "id", "k", "line", "received", "s", "wday"]);
-  const sum = await (await onRequestGet({ env })).json();
+  // The summary is the owner's: no key or a wrong one gets nothing.
+  assert.equal((await get()).status, 401);
+  assert.equal((await get("k3y-for-test")).status, 401);
+  const sum = await (await get("k3y-for-tests")).json();
   assert.equal(sum.items.length, 1);
   assert.deepEqual({ ...sum.items[0] }, { k: "hop", line: "32", dir: "alsa:L32:outgoing", a: "70410", b: "70883", median: 66, rides: 6, days: 3 }); // 60 64 65 66 70 500: the 500 doesn't drag it
   // Four rides, or rides on two days only, aren't enough.
@@ -68,4 +72,9 @@ test("the endpoint keeps clean records, drops the rest, and only gives medians w
 test("without a database the endpoint says so, and the app keeps its queue", async () => {
   const res = await onRequestPost({ request: new Request("https://x/api/times", { method: "POST", body: "{}" }), env: {} });
   assert.equal(res.status, 503);
+});
+
+test("with no key set on the site, nobody can read the summary", async () => {
+  const res = await onRequestGet({ request: new Request("https://x/api/times", { headers: { authorization: "Bearer " } }), env: { DB: {} } });
+  assert.equal(res.status, 401);
 });
