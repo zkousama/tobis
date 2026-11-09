@@ -18,9 +18,15 @@
           "date": "2026-09-02",
           "url": "https://www.facebook.com/100064858474347/posts/1498321405673128",
           "posted": "2026-09-02T17:28:37.000Z"
+        },
+        {
+          "type": "rider",
+          "name": "rider (GitHub issue #1)",
+          "date": "2026-11-09",
+          "url": "https://github.com/zkousama/tobis/issues/1"
         }
       ],
-      "note": "stops from the July post (picture 3); the September post says it also serves Hay Al Hassania without saying where, so that one isn't placed; the Port hub is the Trambus Port station, where the 8B ⇄ Trambus transfer happens",
+      "note": "stops from the July post (picture 3); since the September change it goes up the RN1 to Hay Al Hassania and back (the post's map, and a rider's drawing, issue #1), drawn through El Hassania Stade, the stop lines 31 to 33 use there; the Port hub is the Trambus Port station, where the 8B ⇄ Trambus transfer happens",
       "directions": [
         {
           "from": "Tadart",
@@ -60,11 +66,9 @@
               }
             },
             {
-              "name": {
-                "fr": "Hay Al Hassania",
-                "ar": "حي الحسنية",
-                "en": "Hay Al Hassania"
-              }
+              "id": "70411",
+              "stop": "El Hassania Stade",
+              "as": "Hay Al Hassania"
             },
             {
               "id": "70884",
@@ -123,11 +127,9 @@
               "stop": "Souk Anza"
             },
             {
-              "name": {
-                "fr": "Hay Al Hassania",
-                "ar": "حي الحسنية",
-                "en": "Hay Al Hassania"
-              }
+              "id": "70410",
+              "stop": "El Hassania Stade",
+              "as": "Hay Al Hassania"
             },
             {
               "name": {
@@ -391,7 +393,7 @@
         "url": "https://www.facebook.com/100064858474347/posts/1413700894135180",
         "posted": "2026-05-30T09:39:57.000Z"
       },
-      "note": "the stop list in the post follows the Trambus (Salam, Place Al Ouid, Dakhla); Salam and Place Al Ouid use the street stops next to those stations; no bus stop is within 430 m of Dakhla, so that one is the Trambus station of the name",
+      "note": "the stop list in the post: Salam and Place Al Ouid are the street stops next to those Trambus stations; Dakhla is the neighbourhood north of the faculties, not the Trambus station (a rider's correction, issue #1): the bus goes north through it to the RN1 and along it to the CHU, drawn through a waypoint on the RN1; its stop isn't placed",
       "changes": [
         {
           "after": "70443",
@@ -408,9 +410,15 @@
               "as": "Place Al Ouid"
             },
             {
-              "id": "12475932654",
-              "stop": "Dakhla",
-              "as": "Dakhla"
+              "via": [
+                -9.54718,
+                30.41551
+              ],
+              "name": {
+                "fr": "Dakhla",
+                "ar": "الداخلة",
+                "en": "Dakhla"
+              }
             },
             {
               "id": "700266",
@@ -429,9 +437,15 @@
               "as": "CHU Mohammed VI"
             },
             {
-              "id": "12475932655",
-              "stop": "Dakhla",
-              "as": "Dakhla"
+              "via": [
+                -9.54718,
+                30.41551
+              ],
+              "name": {
+                "fr": "Dakhla",
+                "ar": "الداخلة",
+                "en": "Dakhla"
+              }
             },
             {
               "id": "70291",
@@ -446,7 +460,15 @@
           ]
         }
       ],
-      "name": "CHU Mohammed VI – Mesdoura"
+      "name": "CHU Mohammed VI – Mesdoura",
+      "also": [
+        {
+          "type": "rider",
+          "name": "rider (GitHub issue #1)",
+          "date": "2026-11-09",
+          "url": "https://github.com/zkousama/tobis/issues/1"
+        }
+      ]
     },
     {
       "ref": "31",
@@ -492,6 +514,22 @@
           ]
         }
       ]
+    },
+    {
+      "ref": "2",
+      "name": "Vallée des Oiseaux – Aït Taoukt",
+      "rename": {
+        "Ait El Mouden Terminus": "Taoukt terminus",
+        "Wilaya-Jardin Belvedere": "P.E. Vallée des oiseaux"
+      },
+      "source": {
+        "type": "operator-announcement",
+        "name": "ALSA Facebook",
+        "date": "2026-04-10",
+        "url": "https://www.facebook.com/100064858474347/posts/1371498468355423",
+        "posted": "2026-04-10T15:02:14.000Z"
+      },
+      "note": "the route in ALSA's data already ends at Taoukt terminus; only its direction names still said Ait El Mouden (a rider's report, issue #1)"
     }
   ]
 }

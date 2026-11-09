@@ -535,10 +535,12 @@ for (const rel of alsa ? [] : rels) {
 
 // ---- ALSA: the operator's own lines, with stops in order ----
 function cleanName(raw) {
-  let n = String(raw ?? "").replace(/\s+V$/, "").replace(/\s+/g, " ").trim();
+  // "MosquÚe": ALSA's é read in the wrong character set (DOS's code page 850 puts Ú where é is).
+  let n = String(raw ?? "").replace(/(\p{Ll})Ú(\p{Ll})/gu, "$1é$2").replace(/\s+V$/, "").replace(/\s+/g, " ").trim();
   // ALL-CAPS names read better in title case; keep abbreviations like "H.R.ATLAS".
   if (n === n.toUpperCase() && /[A-Z]{4}/.test(n) && !/\.[A-Z]/.test(n)) n = n.toLowerCase().replace(/(^|[\s(/-])(\p{L})/gu, (_, a, b) => a + b.toUpperCase());
-  return n;
+  // "farah 2" → "Farah 2": a name starts with a capital.
+  return n.replace(/^\p{Ll}/u, (x) => x.toUpperCase());
 }
 const alsaStopIndex = new Map();
 function addAlsaStop(s) {
@@ -554,7 +556,7 @@ function addAlsaStop(s) {
     return -1;
   }
   const i = stops.length;
-  stops.push({ id: s.id, src: "alsa", ll: [round5(s.lon), round5(s.lat)], n: { d: cleanName(s.name) } });
+  stops.push({ id: s.id, src: "alsa", ll: [round5(s.lon), round5(s.lat)], n: { d: cfg.stopNames?.[String(s.id)] ?? cleanName(s.name) } });
   alsaStopIndex.set(s.id, i);
   return i;
 }
@@ -890,17 +892,37 @@ const announced = new Map(); // ref → { source, missing names }
 {
   const file = JSON.parse(await readFile("data/council/routes.json", "utf8").catch(() => '{"routes":[]}'));
   const byId = new Map(stops.map((s, i) => [String(s.id), i]));
+  // A route is stops (indexes) and waypoints ({ via: [lng, lat] }): a street the bus takes without a
+  // stop we can place there, so the line is drawn the way it really goes.
+  const isVia = (x) => typeof x === "object";
   const place = (list, where) => {
-    const seq = [], missing = [];
+    const items = [], missing = [];
     for (const x of list) {
-      if (x.name) { missing.push(x.name); continue; }
+      if (x.via) items.push({ via: x.via });
+      if (x.name) missing.push(x.name);
+      if (x.via || x.name) continue;
       const i = byId.get(String(x.id));
       if (i === undefined) throw new Error(`routes.json ${where}: no stop ${x.id} (${x.stop})`);
       if (normKey(stops[i].n.d) !== normKey(x.stop)) throw new Error(`routes.json ${where}: stop ${x.id} is "${stops[i].n.d}" now, not "${x.stop}"`);
-      seq.push(i);
+      items.push(i);
     }
-    return { seq, missing };
+    return { items, seq: items.filter((x) => !isVia(x)), missing };
   };
+  // Traced through the waypoints too; what comes out is about the stops only.
+  function traceVia(rel, items) {
+    const seq = items.filter((x) => !isVia(x));
+    if (!items.some(isVia)) return trace(rel, seq);
+    if (!graph || seq.length < 2) return null;
+    const tr = traceStops(rel, items.map((x) => (isVia(x) ? x.via : stops[x].ll)));
+    const real = items.map((x, k) => (isVia(x) ? -1 : k)).filter((k) => k >= 0);
+    const legStats = real.slice(1).map((k, j) => {
+      const parts = tr.legStats.slice(real[j], k);
+      const metres = parts.reduce((n, p) => n + p.metres, 0);
+      return { crow: dist(stops[items[real[j]]].ll, stops[items[k]].ll), metres, onRel: parts.reduce((n, p) => n + p.onRel * p.metres, 0) / Math.max(1, metres), path: parts.flatMap((p) => p.path) };
+    });
+    const { breaks, passes } = findBreaks(seq, legStats);
+    return { ...tr, along: real.map((k) => tr.along[k]), legStats, seqIdx: seq, breaks, passes, share: breaks.length / Math.max(1, seq.length - 1) };
+  }
   const has = (e, id) => e.seqIdx.some((si) => String(stops[si].id) === String(id));
   for (const r of file.routes) {
     if (accepted(`line:${r.ref}:runs`) === false) continue;
@@ -911,35 +933,41 @@ const announced = new Map(); // ref → { source, missing names }
         continue;
       }
       r.directions.forEach((d, k) => {
-        const { seq, missing: m } = place(d.stops, `${r.ref} direction ${k + 1}`);
+        const { items, seq, missing: m } = place(d.stops, `${r.ref} direction ${k + 1}`);
         missing.push(...m);
         const rel = { id: `announced:${r.ref}:${k}`, members: osmWaysFor(r.ref) };
-        entries.push({ rel, t: { from: d.from, to: d.to, name: r.name }, ref: r.ref, isBrt: false, seqIdx: seq, tr: trace(rel, seq), alsa: true });
+        entries.push({ rel, t: { from: d.from, to: d.to, name: r.name }, ref: r.ref, isBrt: false, seqIdx: seq, items, tr: traceVia(rel, items), alsa: true });
       });
     } else {
+      // Ends the operator's data still names the old way ("→ Ait El Mouden" after the terminus moved).
+      for (const e of entries) if (e.ref === r.ref && r.rename) e.t = { ...e.t, from: r.rename[e.t.from] ?? e.t.from, to: r.rename[e.t.to] ?? e.t.to };
       // A new end makes the operator's line name stale.
       if (r.name) for (const e of entries) if (e.ref === r.ref) e.t = { ...e.t, name: r.name };
-      for (const [k, op] of r.changes.entries()) {
+      for (const [k, op] of (r.changes ?? []).entries()) {
         const where = `${r.ref} change ${k + 1}`;
         const key = op.after ?? op.before ?? op.between[0];
         const targets = entries.filter((e) => e.ref === r.ref && has(e, key) && (!op.between || has(e, op.between[1])));
         if (targets.length !== 1) throw new Error(`routes.json ${where}: ${targets.length} directions have stop ${key}`);
         const e = targets[0];
-        const { seq, missing: m } = place(op.add ?? op.with, where);
+        const { items, seq, missing: m } = place(op.add ?? op.with, where);
         missing.push(...m);
         // Already in the operator's data: nothing to do.
-        if (seq.every((si) => e.seqIdx.includes(si)) && !op.between) continue;
-        const at = (id) => e.seqIdx.findIndex((si) => String(stops[si].id) === String(id));
+        if (seq.every((si) => e.seqIdx.includes(si)) && !op.between && !items.some(isVia)) continue;
+        const base = e.items ?? e.seqIdx;
+        const at = (id) => base.findIndex((x) => !isVia(x) && String(stops[x].id) === String(id));
         let next;
-        if (op.after) next = [...e.seqIdx.slice(0, at(op.after) + 1), ...seq, ...e.seqIdx.slice(at(op.after) + 1)];
-        else if (op.before) next = [...e.seqIdx.slice(0, at(op.before)), ...seq, ...e.seqIdx.slice(at(op.before))];
-        else next = [...e.seqIdx.slice(0, at(op.between[0]) + 1), ...seq, ...e.seqIdx.slice(at(op.between[1]))];
-        e.seqIdx = next;
-        e.tr = trace(e.rel, next);
+        if (op.after) next = [...base.slice(0, at(op.after) + 1), ...items, ...base.slice(at(op.after) + 1)];
+        else if (op.before) next = [...base.slice(0, at(op.before)), ...items, ...base.slice(at(op.before))];
+        else next = [...base.slice(0, at(op.between[0]) + 1), ...items, ...base.slice(at(op.between[1]))];
+        e.items = next;
+        e.seqIdx = next.filter((x) => !isVia(x));
+        e.tr = traceVia(e.rel, next);
         if (op.to) e.t = { ...e.t, to: op.to };
         if (op.from) e.t = { ...e.t, from: op.from };
       }
     }
+    // Only a route drawn from the announcement says so in the app; renaming an end doesn't.
+    if (!r.directions && !r.changes?.length) continue;
     const seen = new Set();
     announced.set(r.ref, { source: r.source, missing: missing.filter((n) => !seen.has(n.fr) && seen.add(n.fr)) });
   }

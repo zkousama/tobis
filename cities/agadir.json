@@ -138,5 +138,16 @@
         ]
       }
     ]
+  },
+  "stopNames": {
+    "_why": "ALSA's data has names with letters cut off or the wrong character set; fixed by stop id",
+    "71421": "Mosquée Mokhtar Soussi",
+    "71422": "Mosquée Mokhtar Soussi",
+    "71423": "Crédit agricole",
+    "71424": "Crédit agricole",
+    "71425": "Afoulki",
+    "71426": "Afoulki",
+    "71417": "Terminus hôpital Hassan II",
+    "71418": "Terminus hôpital Hassan II"
   }
 }
