@@ -283,6 +283,13 @@ const S = {
   fromGoogle: { fr: "depuis Google Maps", ar: "من Google Maps", en: "from Google Maps" },
   away: { fr: "à {x}", ar: "على {x}", en: "{x} away" },
   rideNow: { fr: "En route", ar: "فالطريق", en: "On the way" },
+  voice: { fr: "Annonces vocales", ar: "الإعلانات بالصوت", en: "Spoken announcements" },
+  voiceOn: { fr: "Annonces vocales activées.", ar: "الإعلانات بالصوت خدامة.", en: "Spoken announcements on." },
+  sayNext: { fr: "Prochain arrêt : {x}.", ar: "اللاري الجاية: {x}.", en: "Next stop: {x}." },
+  sayGetOffNext: { fr: "Prochain arrêt : {x}. Préparez-vous à descendre.", ar: "اللاري الجاية: {x}. وجّد راسك تهبط.", en: "Next stop: {x}. Get ready to get off." },
+  sayGetOffNow: { fr: "{x}. Descendez ici.", ar: "{x}. هبط هنا.", en: "{x}. Get off here." },
+  sayBoard: { fr: "Votre bus : {x}, direction {y}.", ar: "الطوبيس ديالك: {x}، فاتجاه {y}.", en: "Your bus: {x}, towards {y}." },
+  sayArrived: { fr: "Vous y êtes.", ar: "وصلتي.", en: "You're there." },
   nextIs: { fr: "Prochain arrêt", ar: "اللاري الجاية", en: "Next stop" },
   card: { fr: "carte", ar: "كارط", en: "card" },
   orderInferred: {

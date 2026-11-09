@@ -18,6 +18,8 @@ import checkSvg from "../../node_modules/@tabler/icons/icons/outline/check.svg?r
 import globeSvg from "../../node_modules/@tabler/icons/icons/outline/world.svg?raw";
 import infoSvg from "../../node_modules/@tabler/icons/icons/outline/info-circle.svg?raw";
 import flagSvg from "../../node_modules/@tabler/icons/icons/outline/flag.svg?raw";
+import volumeSvg from "../../node_modules/@tabler/icons/icons/outline/volume.svg?raw";
+import volumeOffSvg from "../../node_modules/@tabler/icons/icons/outline/volume-off.svg?raw";
 import carSvg from "../../node_modules/@tabler/icons/icons/outline/car.svg?raw";
 import bellSvg from "../../node_modules/@tabler/icons/icons/outline/bell-ringing.svg?raw";
 import linkSvg from "../../node_modules/@tabler/icons/icons/outline/link.svg?raw";
@@ -108,6 +110,8 @@ export const icon = {
   globe: tabler(globeSvg),
   info: tabler(infoSvg),
   flag: tabler(flagSvg),
+  volume: tabler(volumeSvg),
+  volumeOff: tabler(volumeOffSvg),
   car: tabler(carSvg),
   bell: tabler(bellSvg),
   link: tabler(linkSvg),

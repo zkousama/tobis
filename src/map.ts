@@ -385,22 +385,30 @@ export class BusMap {
     const placed: DOMRect[] = obstacles.map((e) => e.getBoundingClientRect()).filter((r) => r.width && r.height);
     const box = this.map.getContainer().getBoundingClientRect();
     const order = [...this.callouts].sort((a, b) => Number(b.on) - Number(a.on));
+    const gap = 8;
+    // How much of `r` sits on things already placed (0 = clear).
+    const overlap = (r: DOMRect) =>
+      placed.reduce((n, p) => n + Math.max(0, Math.min(r.right + gap, p.right) - Math.max(r.left - gap, p.left)) * Math.max(0, Math.min(r.bottom + gap, p.bottom) - Math.max(r.top - gap, p.top)), 0);
+    // Spots along the route, the middle first.
+    const spots = [0.5, ...Array.from({ length: 9 }, (_, i) => [0.5 - (i + 1) * 0.05, 0.5 + (i + 1) * 0.05]).flat()];
     for (const c of order) {
       const el = c.mk.getElement();
-      let ok = false;
-      for (const f of [0.5, 0.35, 0.65, 0.2, 0.8, 0.1, 0.9]) {
-        c.mk.setLngLat(c.path[Math.min(c.path.length - 1, Math.floor(c.path.length * f))]);
+      const at = (f: number) => c.path[Math.min(c.path.length - 1, Math.floor(c.path.length * f))];
+      let best: { f: number; cost: number } | undefined;
+      for (const f of spots) {
+        c.mk.setLngLat(at(f));
         const r = el.getBoundingClientRect();
-        const inside = r.left >= box.left && r.right <= box.right && r.top >= box.top && r.bottom <= box.bottom;
-        const gap = 8;
-        if (inside && placed.every((p) => r.right + gap < p.left || p.right + gap < r.left || r.bottom + gap < p.top || p.bottom + gap < r.top)) {
-          placed.push(r);
-          ok = true;
-          break;
-        }
+        if (r.left < box.left || r.right > box.right || r.top < box.top || r.bottom > box.bottom) continue;
+        const cost = overlap(r);
+        if (!best || cost < best.cost) best = { f, cost };
+        if (cost === 0) break;
       }
-      el.style.visibility = ok || c.on ? "" : "hidden";
-      if (!ok && c.on) placed.push(el.getBoundingClientRect());
+      // A clear spot always; the chosen trip's label also on the least crowded spot when none is clear.
+      // Off screen everywhere, it's hidden: half a label over a button helps nobody.
+      const show = !!best && (best.cost === 0 || c.on);
+      if (best) c.mk.setLngLat(at(best.f));
+      el.style.visibility = show ? "" : "hidden";
+      if (show) placed.push(el.getBoundingClientRect());
       el.style.zIndex = c.on ? "2" : "1";
     }
   }

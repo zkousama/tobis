@@ -977,6 +977,11 @@ button:active,
   display: grid;
   gap: 10px;
 }
+/* Spoken announcements on: the button says so in the accent colour, not only by its icon. */
+.btn-voice[aria-pressed="true"] {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
 .actions.two {
   grid-template-columns: 1fr 1fr;
   position: static;

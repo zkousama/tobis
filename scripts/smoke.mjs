@@ -200,7 +200,7 @@ async function runProfile(P) {
     ok(!bad.length, `accessibility, ${screen}:\n${bad.map((v) => `${v.impact} ${v.id}: ${v.help}\n  at ${v.where.join("\n  at ")}`).join("\n")}`);
   };
   const setLang = (l) => run((l) => (localStorage.setItem("lang", l), true), l);
-  const clearPrefs = () => run(() => (["skipBrt", "skipBus", "avoidLines", "card:BHNS", "avoidWalk", "route", "vot"].forEach((k) => localStorage.removeItem(k)), true));
+  const clearPrefs = () => run(() => (["skipBrt", "skipBus", "avoidLines", "card:BHNS", "avoidWalk", "route", "vot", "speak"].forEach((k) => localStorage.removeItem(k)), true));
   const tripOptions = () => until("trip options", () => document.querySelectorAll(".option").length);
   const optionLines = () => run(() => [...document.querySelectorAll(".option")].map((o) => [...o.querySelectorAll(".badge")].map((b) => b.textContent.trim())));
 
@@ -561,10 +561,28 @@ async function runProfile(P) {
     ok(path, `can't find ${leg.line} from ${leg.board} to ${leg.alight} in the data`);
     await click(".trip-start .btn-primary");
     await until("the ride screen", () => document.querySelector(".ride"));
+    // Spoken announcements: caught instead of played, then turned on with the button.
+    await run(() => {
+      globalThis.__said = [];
+      if (globalThis.speechSynthesis) {
+        speechSynthesis.speak = (u) => globalThis.__said.push(u.text);
+        speechSynthesis.cancel = () => {};
+      }
+      return true;
+    });
+    const voice = await run(() => !!document.querySelector(".ride .btn-voice"));
+    if (voice) {
+      ok(await run(() => document.querySelector(".btn-voice").getAttribute("aria-pressed") === "false"), "spoken announcements are on before the rider asked");
+      await click(".ride .btn-voice");
+      ok(await run(() => document.querySelector(".btn-voice").getAttribute("aria-pressed") === "true"), "the voice button doesn't turn on");
+    }
     await where(...path[0]);
     await until("walking or waiting at the stop", () => document.querySelector(".ride-body")?.textContent.length > 0);
     const lefts = [];
-    for (const ll of path.slice(1)) {
+    // Stop by stop, plus one fix halfway along the last stretch, as a real phone reports between stops
+    // (that's when "get ready to get off" comes).
+    const [x1, y1] = path.at(-2), [x2, y2] = path.at(-1);
+    for (const ll of [...path.slice(1, -1), [(x1 + x2) / 2, (y1 + y2) / 2], path.at(-1)]) {
       await where(...ll);
       await sleep(400);
       const n = await run(() => Number(document.querySelector(".ride-big .num")?.textContent ?? -1));
@@ -592,6 +610,16 @@ async function runProfile(P) {
     await until("'Descendez ici'", () => /Descendez ici/.test(document.querySelector(".ride-body").textContent), 8000);
     await where(...DCHEIRA);
     await until("arrived", () => /Arriv/.test(document.querySelector(".ride-body").textContent), 8000);
+    if (voice) {
+      const said = await run(() => globalThis.__said);
+      ok(said[0] === "Annonces vocales activées.", `first announcement: ${said[0]}`);
+      ok(said.some((x) => /^Prochain arrêt : .+\.$/.test(x)), `no "Prochain arrêt": ${said.join(" | ")}`);
+      const get = said.findIndex((x) => /Préparez-vous à descendre/.test(x)), now = said.findIndex((x) => /Descendez ici/.test(x));
+      ok(get >= 0 && now > get, `"get ready" then "get off here", in that order: ${said.join(" | ")}`);
+      ok(said.at(-1) === "Vous y êtes.", `last announcement: ${said.at(-1)}`);
+      ok(new Set(said).size === said.length, `something was said twice: ${said.join(" | ")}`);
+    }
+    await clearPrefs();
     await where(...TALBORJT);
   });
 
