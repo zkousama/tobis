@@ -1,7 +1,7 @@
 // Turns the raw OSM snapshot in data/raw/<city>/ into public/data/<city>.json,
 // the compact network the app routes on.
 // Usage: node scripts/build-data.mjs agadir
-import { readFile, writeFile, mkdir, access } from "node:fs/promises";
+import { readFile, writeFile, mkdir, access, rm } from "node:fs/promises";
 import { RoadGraph } from "./roadgraph.mjs";
 import { deliberate, report as councilReport } from "./council.mjs";
 import { rideClock } from "../src/router.ts";
@@ -1103,7 +1103,7 @@ await writeFile(`public/data/${city}.json`, json);
 await mkdir(`data/reports`, { recursive: true });
 await writeFile(`data/reports/${city}.json`, JSON.stringify(report, null, 2));
 // Ride times riders shared (data/council/measured.json, from scripts/fetch-times.mjs), against the
-// estimate: reported for now; the app keeps its estimates until enough rides are in.
+// estimate: reported for now (data/reports/measured.md, not in git); the app keeps its estimates.
 const measuredMd = await (async () => {
   const m = JSON.parse(await readFile("data/council/measured.json", "utf8").catch(() => "null"));
   if (!m?.items?.length) return "";
@@ -1132,9 +1132,12 @@ const measuredMd = await (async () => {
 })();
 await writeFile(
   `data/reports/council.md`,
-  councilReport(decisions) + measuredMd + (missing.length ? `\n## Announced lines missing from the data\n\n${missing.map((d) => `- ${d.fact.split(":")[1]}: ${d.by[0].note ?? ""} <${d.by[0].source.url ?? ""}>`).join("\n")}\n` : ""),
+  councilReport(decisions) + (missing.length ? `\n## Announced lines missing from the data\n\n${missing.map((d) => `- ${d.fact.split(":")[1]}: ${d.by[0].note ?? ""} <${d.by[0].source.url ?? ""}>`).join("\n")}\n` : ""),
 );
 await writeFile(`data/reports/council.json`, JSON.stringify(decisions, null, 2));
+// The riders' times are the project's own: their report stays on this machine (gitignored).
+if (measuredMd) await writeFile(`data/reports/measured.md`, `# Measured by riders\n${measuredMd.replace(/^\n## Measured by riders\n/, "")}`);
+else await rm(`data/reports/measured.md`, { force: true });
 const tally = (v) => decisions.filter((d) => d.verdict === v).length;
 console.log(`council: ${decisions.length} facts, ${tally("apply")} decided, ${tally("flag")} unconfirmed, ${tally("watch")} on watch`);
 const variants = lines.reduce((n, l) => n + l.variants.length, 0);

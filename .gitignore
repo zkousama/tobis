@@ -11,3 +11,6 @@ data-pack/
 data/council/inbox/
 data/council/drafts/
 data/council/evidence/
+# Riders' measured times: the project's own data, read with the key, never published
+data/council/measured.json
+data/reports/measured.md
