@@ -710,6 +710,9 @@ if (alsa) {
     const fareNow = accepted(`line:${ref}:fare`);
     const fare = fareWith(feedFare, fareNow);
     const published = parseHours(alsaDetails[l.id]?.horario);
+    // The council's hours when it settled them (an announcement can give a line's first and last bus).
+    const first = accepted(`line:${ref}:first`), last = accepted(`line:${ref}:last`);
+    const hours = first && last ? { first, last } : published?.hours;
     for (const dirKey of ["outgoing", "return"]) {
       const dir = l[dirKey];
       const seqIdx = [];
@@ -731,7 +734,7 @@ if (alsa) {
         to: cleanName(copied ? dir.lineHeader : dir.lineEnd),
         name: cleanName(l.surname.replace(/^[^A-Z]*:\s*/, "")),
       };
-      entries.push({ rel, t, ref, isBrt: false, seqIdx, tr, alsa: true, fare, colour: `#${String(l.color).replace("#", "")}`, ...(published?.hours ? { hours: published.hours } : {}), ...(published?.headway ? { headway: published.headway } : {}) });
+      entries.push({ rel, t, ref, isBrt: false, seqIdx, tr, alsa: true, fare, colour: `#${String(l.color).replace("#", "")}`, ...(hours ? { hours } : {}), ...(published?.headway ? { headway: published.headway } : {}) });
       if (tr) report.sides.push({ rel: rel.id, ref, clean: tr.share <= SCRAMBLED, ...rightSide(tr) });
     }
   }

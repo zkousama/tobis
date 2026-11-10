@@ -186,10 +186,10 @@ test("each line's two directions head to different places (ALSA copies the outbo
   }
 });
 
-test("ALSA hours: only line 26's look real (06:30-21:00, every 30 min), so it's off the table at 01:30", { skip: !have }, async () => {
+test("ALSA hours: only line 26's look real on its site (06:30-21:00, every 30 min); 34's come from its announcement", { skip: !have }, async () => {
   const { runsAt } = await import("../src/router.ts");
   const withHours = net.lines.filter((l) => !l.brt && l.hours).map((l) => l.ref);
-  assert.deepEqual(withHours, ["26"]);
+  assert.deepEqual(withHours, ["26", "34"]);
   const l26 = net.lines.find((l) => l.ref === "26")!;
   assert.deepEqual(l26.hours, { first: "06:30", last: "21:00" });
   assert.equal(l26.headway, 30);
@@ -300,4 +300,20 @@ test("Trambus then 8B at the Port within the hour is one ticket (ALSA, 13 Octobe
   assert.equal(tripFare(net, trip(3600)), undefined);
   // Two Trambus rides aren't a change between the two lines.
   assert.equal(tripFare(net, { legs: [ride(brt, vToPort, 0, 3, 300, 60), ride(brt, vToPort, 5, 8, 300, 60)] } as never), 10);
+});
+
+test("lines with announced hours: 34 runs 6:30 to 20:30, and from 21:00 lines without hours may have stopped", { skip: !have }, async () => {
+  const { isEvening, isNight } = await import("../src/compare.ts");
+  assert.deepEqual(net.lines.find((l) => l.ref === "34")!.hours, { first: "06:30", last: "20:30" });
+  const at = (h: number, m = 0) => { const d = new Date(2026, 10, 9, h, m); return d; };
+  assert.equal(isEvening(at(20, 59)), false);
+  assert.equal(isEvening(at(21, 0)), true);
+  assert.equal(isNight(at(21, 30)), false); // the "it's late" note still waits for 22:00
+  // From Douar Tinfoul (only line 34 stops there) to Tikiouine: in the day line 34, at 21:00 not.
+  const amskroud = net.stops.find((s) => s.n.d === "Douar Tinfoul")!.ll;
+  const tikiouine = net.stops.find((s) => s.n.d === "Rn1 Souk Tikiouine")!.ll;
+  const day = router.plan(amskroud, tikiouine, { at: at(10) });
+  assert.ok(day.some((j) => refs(j).includes("34")), "line 34 runs in the day");
+  const late = router.plan(amskroud, tikiouine, { at: at(21) });
+  assert.ok(!late.some((j) => refs(j).includes("34")), `line 34 offered at 21:00: ${late.map((j) => refs(j).join("+")).join(", ")}`);
 });

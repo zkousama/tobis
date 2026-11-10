@@ -459,6 +459,15 @@ async function runProfile(P) {
     ok(!(await optionLines()).flat().includes("26"), "line 26 offered at 01:28 (it runs 06:30-21:00)");
   });
 
+  await step("evening: from 21:00 buses without hours say they may not run, before the late-night note", async () => {
+    await open(SITE + "?evening" + TRIP);
+    await tripOptions();
+    await setWhen(1, "21:15");
+    await until("21:15 results", () => /21:\d\d/.test(document.querySelector(".opt-clock")?.textContent ?? ""));
+    ok(/Peut-être pas de bus/.test(await text(".opt-tag-warn")), "no 'may not run' tag at 21:15");
+    ok(await run(() => !document.querySelector(".compare > .tip-night")), "the late-night note shows at 21:15 (it's for 22:00)");
+  });
+
   await step("options: buses off, Trambus off, a line avoided, reset", async () => {
     await clearPrefs();
     await open(SITE + "?opts" + TRIP);

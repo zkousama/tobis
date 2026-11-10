@@ -48,8 +48,11 @@ export function townOf(net: Network, ll: LngLat): string | undefined {
 
 /** Late evening and early morning, when buses are rare and the Trambus hasn't started. */
 export const isNight = (d: Date) => d.getHours() >= 22 || d.getHours() < 6;
+/** From 21:00 the lines that publish their hours start stopping (34 at 20:30, 26 at 21:00): a line
+ * that publishes none may have stopped too. The network runs about 17 hours a day (Agadir Mobilité). */
+export const isEvening = (d: Date) => d.getHours() >= 21 || d.getHours() < 6;
 
-export function buildOptions(net: Network, journeys: Journey[], from: LngLat, to: LngLat, now = new Date(), pace = 1.25): { options: Option[]; note?: TaxiNote; night: boolean } {
+export function buildOptions(net: Network, journeys: Journey[], from: LngLat, to: LngLat, now = new Date(), pace = 1.25): { options: Option[]; note?: TaxiNote; night: boolean; evening: boolean } {
   const options: Option[] = [];
   journeys.forEach((j, i) => {
     const parts: Part[] = [];
@@ -109,7 +112,8 @@ export function buildOptions(net: Network, journeys: Journey[], from: LngLat, to
       }
     }
   }
-  return { options, note, night: isNight(now) && options.some((o) => o.kind === "transit") };
+  const transit = options.some((o) => o.kind === "transit");
+  return { options, note, night: isNight(now) && transit, evening: isEvening(now) && transit };
 }
 
 /**

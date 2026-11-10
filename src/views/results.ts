@@ -85,7 +85,7 @@ export function compareBlock(extraNote: Node | null = null) {
   // Arrive by: the night note and the clock work from when the trip would leave, about an hour before.
   const w = state.when;
   const at = w.mode === "arrive" ? new Date(w.at - 3600_000) : startTime();
-  const { options, note, night } = buildOptions(net, state.journeys, state.from.ll, state.to.ll, at, walkPace());
+  const { options, note, night, evening } = buildOptions(net, state.journeys, state.from.ll, state.to.ll, at, walkPace());
   // What a maps app shows on each trip: leave – arrive, when the bus comes and from where, the walk to it.
   const cardTimes = (o: Option): CardTimes => {
     const j = o.journey !== undefined ? state.journeys[o.journey] : undefined;
@@ -116,9 +116,9 @@ export function compareBlock(extraNote: Node | null = null) {
   // it changes what every trip below can promise.
   const notes = [extraNote].filter(Boolean) as Node[];
   const nightWarning = night ? h("p", { class: "tip tip-night", role: "note" }, icon.clock(), h("span", null, t("nightNote"))) : null;
-  // Late at night, a bus whose line publishes no hours may well not come.
+  // From the evening on, a bus whose line publishes no hours may well not come.
   const unsure = (o: Option) => {
-    if (!night || o.journey === undefined) return false;
+    if (!evening || o.journey === undefined) return false;
     return state.journeys[o.journey].legs.some((l) => l.kind === "ride" && !net.lines[l.line].hours);
   };
   const draw = (preview = true) => {
