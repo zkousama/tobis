@@ -26,7 +26,7 @@
           "url": "https://github.com/zkousama/tobis/issues/1"
         }
       ],
-      "note": "stops from the July post (picture 3); since the September change it goes up the RN1 to Hay Al Hassania and back (the post's map, and a rider's drawing, issue #1), drawn through El Hassania Stade, the stop lines 31 to 33 use there; the Port hub is the Trambus Port station, where the 8B ⇄ Trambus transfer happens",
+      "note": "drawn after ALSA's September map (enlarged and lined up with the streets on the Hassania turn and the Cimenterie junction, checked on the weekly market): round the west and north of Tadart, Souk Anza, up the RN1 to Hay Al Hassania and back (also a rider's drawing, issue #1), a loop through old Anza west of the RN1, then the road beside the RN1 to the Port; waypoints are where the map shows the bus, not stops; the Port hub is the Trambus Port station, where the 8B ⇄ Trambus transfer happens",
       "directions": [
         {
           "from": "Tadart",
@@ -43,6 +43,24 @@
             {
               "id": "70920",
               "stop": "Taddart 1"
+            },
+            {
+              "via": [
+                -9.64561,
+                30.46716
+              ]
+            },
+            {
+              "via": [
+                -9.65067,
+                30.46489
+              ]
+            },
+            {
+              "via": [
+                -9.65207,
+                30.46036
+              ]
             },
             {
               "name": {
@@ -66,13 +84,31 @@
               }
             },
             {
+              "id": "70884",
+              "stop": "Souk Anza"
+            },
+            {
               "id": "70411",
               "stop": "El Hassania Stade",
               "as": "Hay Al Hassania"
             },
             {
-              "id": "70884",
-              "stop": "Souk Anza"
+              "via": [
+                -9.65906,
+                30.44926
+              ]
+            },
+            {
+              "via": [
+                -9.65898,
+                30.44744
+              ]
+            },
+            {
+              "via": [
+                -9.65433,
+                30.44353
+              ]
             },
             {
               "name": {
@@ -123,13 +159,31 @@
               }
             },
             {
-              "id": "70883",
-              "stop": "Souk Anza"
+              "via": [
+                -9.65433,
+                30.44353
+              ]
+            },
+            {
+              "via": [
+                -9.65898,
+                30.44744
+              ]
+            },
+            {
+              "via": [
+                -9.65906,
+                30.44926
+              ]
             },
             {
               "id": "70410",
               "stop": "El Hassania Stade",
               "as": "Hay Al Hassania"
+            },
+            {
+              "id": "70883",
+              "stop": "Souk Anza"
             },
             {
               "name": {
@@ -151,6 +205,24 @@
                 "ar": "البلوك C / D (تدارت)",
                 "en": "Blocs C/D (Tadart)"
               }
+            },
+            {
+              "via": [
+                -9.65207,
+                30.46036
+              ]
+            },
+            {
+              "via": [
+                -9.65067,
+                30.46489
+              ]
+            },
+            {
+              "via": [
+                -9.64561,
+                30.46716
+              ]
             },
             {
               "id": "70919",
